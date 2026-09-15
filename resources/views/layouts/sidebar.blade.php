@@ -1,5 +1,4 @@
-﻿<aside
-    :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
+﻿<aside :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
     class="fixed inset-y-0 left-0 w-56 z-50 bg-white border-r flex flex-col
            transform -translate-x-full transition-transform duration-300 ease-in-out
            md:translate-x-0">
@@ -14,7 +13,8 @@
 
         <nav class="space-y-1">
 
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('ficha-infantes.index')" :active="request()->routeIs('ficha-infantes.*')" wire:navigate>
+
                 <x-slot:icon>
                     <x-lucide-shopping-cart class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
@@ -29,7 +29,7 @@
 
                 Usuarios
             </x-sidebar-link>
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('control-infantes.index')" :active="request()->routeIs('control-infantes.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-box class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
@@ -77,29 +77,6 @@
                 Configuración
             </x-sidebar-link>
             </a>
-
-        </nav>
-        <div class="mt-auto space-y-1">
-
-            <!-- usuario -->
-            <a href="{{ route('profile.edit') }}" wire:navigate
-                class="flex items-center gap-3 px-3 py-2 rounded text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100">
-
-                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                    <x-lucide-user-round class="w-4 h-4 text-gray-600" />
-                </div>
-
-                <div class="min-w-0">
-                    <p class="truncate">
-                        {{ Auth::user()->name }}
-                    </p>
-
-                    <p class="text-xs text-gray-400 truncate">
-                        Perfil
-                    </p>
-                </div>
-            </a>
-
             <!-- cerrar sesion -->
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
@@ -112,6 +89,29 @@
                     <span>Cerrar sesión</span>
                 </button>
             </form>
+
+        </nav>
+        <div class="mt-auto space-y-1">
+
+            <!-- usuario -->
+            <a href="{{ route('profile.edit') }}" wire:navigate @class([
+                'flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition-colors',
+                'bg-gray-100 text-gray-900' => request()->routeIs('profile.*'),
+                'text-gray-600 hover:text-gray-800 hover:bg-gray-100' => !request()->routeIs(
+                    'profile.*'),
+            ])>
+
+                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
+                    <x-lucide-user-round class="w-4 h-4" />
+                </div>
+
+                <div class="min-w-0">
+                    <p class="truncate">{{ Auth::user()->name }}</p>
+                    <p class="text-xs text-gray-400 truncate">Perfil</p>
+                </div>
+            </a>
+
+
 
         </div>
 

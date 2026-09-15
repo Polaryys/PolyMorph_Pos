@@ -1,5 +1,7 @@
 <x-app-layout>
-
+<x-slot name="module_nav">
+        @include('layouts.navigation')
+    </x-slot>
     <div class="space-y-6">
         <div class="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>

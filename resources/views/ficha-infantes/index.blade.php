@@ -1,13 +1,6 @@
 <x-app-layout>
     <x-slot name="module_nav">
-        <div class="flex space-x-4">
-            <x-nav-link :href="route('ficha-infantes.index')" :active="request()->routeIs('ficha-infantes.index')">
-                {{ __('Listado de Infantes') }}
-            </x-nav-link>
-            <x-nav-link :href="route('ficha-infantes.create')" :active="request()->routeIs('ficha-infantes.create')">
-                {{ __('Nueva Ficha') }}
-            </x-nav-link>
-        </div>
+        @include('layouts.navigation')
     </x-slot>
 
     <div class="space-y-6">
