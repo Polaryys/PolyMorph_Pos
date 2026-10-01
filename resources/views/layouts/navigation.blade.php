@@ -29,7 +29,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex w-full">
-                <!-- Agregado: overflow-x-auto para scroll suave en móviles -->
+
                 <div class="flex space-x-8 -my-px ms-2 sm:ms-10 whitespace-nowrap overflow-x-auto no-scrollbar">
                     @foreach ($menus[$module] ?? [] as $item)
                         @if ($item['disabled'] ?? false)
@@ -38,7 +38,6 @@
                                 {{ __($item['label']) }}
                             </span>
                         @else
-                            {{-- Se evalúa 'active' si existe; de lo contrario usa 'route' --}}
                             @php
                                 $activePattern = $item['active'] ?? $item['route'];
                             @endphp
