@@ -26,7 +26,6 @@
 
         @include('layouts.navigation')
 
-        <!-- pt-28 alineado a los 112px de las dos barras fijas -->
         <div class="flex-1 flex flex-col md:pl-56 pt-28">
 
             @isset($header)
@@ -37,7 +36,6 @@
                 </header>
             @endisset
 
-            <!-- CAMBIO: pt-1 o pt-0 elimina la franja gris bajo la barra de navegación -->
             <main class="flex-1 px-3 sm:px-3 pb-6">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded p-5 text-gray-900">
                     {{ $slot }}
