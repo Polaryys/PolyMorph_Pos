@@ -1,77 +1,55 @@
 @php
-    if (request()->routeIs('ficha-infantes.*')) {
-        $module = 'infantes';
-    } elseif (request()->routeIs('control-infantes.*')) {
-        $module = 'inventario';
-    } elseif (request()->routeIs('inventario.*')) {
-        $module = 'inventario';
-    } elseif (request()->routeIs('profile.*')) {
-        $module = 'profile';
-    } else {
-        $module = 'dashboard';
-    }
+
+    $module = match (true) {
+        request()->routeIs('ficha-infantes.*') => 'infantes',
+        request()->routeIs('control-infantes.*', 'inventario.*') => 'inventario',
+        request()->routeIs('profile.*') => 'profile',
+        default => 'dashboard',
+    };
 
     $menus = [
-        'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard']],
+        'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
         'profile' => [
-            [
-                'label' => 'Perfil',
-                'route' => 'profile.edit',
-                'active' => 'profile.edit',
-            ],
-            [
-                'label' => 'Contraseña',
-                'route' => 'profile.password',
-                'disabled' => true,
-            ],
+            ['label' => 'Perfil', 'route' => 'profile.edit', 'active' => 'profile.*'],
+            ['label' => 'Contraseña', 'route' => null, 'disabled' => true],
         ],
         'infantes' => [
-            ['label' => 'Ficha Infantes', 'route' => 'ficha-infantes.index'],
+            ['label' => 'Ficha Infantes', 'route' => 'ficha-infantes.index', 'active' => 'ficha-infantes.*'],
             ['label' => 'Ventas', 'route' => null, 'disabled' => true],
         ],
-
         'inventario' => [
-            ['label' => 'Control Infantes', 'route' => 'control-infantes.index'],
+            ['label' => 'Control Infantes', 'route' => 'control-infantes.index', 'active' => 'control-infantes.*'],
             ['label' => 'Categorías', 'route' => null, 'disabled' => true],
         ],
     ];
 @endphp
 
+<nav x-data="{ open: false }" class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-100">
 
-<nav x-data="{ open: false }"
-    class="fixed top-12 left-0 right-0 md:left-56 md:right-0 z-30 bg-white border-b border-gray-100">
-
-    <!-- Primary Navigation Menu -->
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-
         <div class="flex justify-between h-16">
-
-            <div class="flex">
-
-                <!-- Navigation Links -->
-                <div class="flex space-x-8 -my-px ms-2 sm:ms-10 whitespace-nowrap">
-
-                    @foreach ($menus[$module] as $item)
+            <div class="flex w-full">
+                <!-- Agregado: overflow-x-auto para scroll suave en móviles -->
+                <div class="flex space-x-8 -my-px ms-2 sm:ms-10 whitespace-nowrap overflow-x-auto no-scrollbar">
+                    @foreach ($menus[$module] ?? [] as $item)
                         @if ($item['disabled'] ?? false)
                             <span
-                                class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-400 cursor-not-allowed">
+                                class="inline-flex items-center px-1 pt-1 text-sm font-medium text-gray-400 cursor-not-allowed select-none">
                                 {{ __($item['label']) }}
                             </span>
                         @else
-                            <x-nav-link :href="route($item['route'])" :active="request()->routeIs($item['route'])">
+                            {{-- Se evalúa 'active' si existe; de lo contrario usa 'route' --}}
+                            @php
+                                $activePattern = $item['active'] ?? $item['route'];
+                            @endphp
 
+                            <x-nav-link :href="route($item['route'])" :active="request()->routeIs($activePattern)">
                                 {{ __($item['label']) }}
-
                             </x-nav-link>
                         @endif
                     @endforeach
-
                 </div>
-
             </div>
-
         </div>
-
     </div>
-
 </nav>

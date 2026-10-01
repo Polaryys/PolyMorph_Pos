@@ -76,7 +76,7 @@
 
                 Configuración
             </x-sidebar-link>
-            </a>
+
             <!-- cerrar sesion -->
             <form method="POST" action="{{ route('logout') }}">
                 @csrf

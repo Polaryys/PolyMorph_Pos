@@ -7,7 +7,6 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="icon" type="image/x-icon" href="{{ asset('icon_sistema.png') }}">
 
-
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
@@ -18,34 +17,35 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans antialiased">
-    <div x-data="{ open: false }" class="flex min-h-screen bg-gray-100">
+<body class="font-sans antialiased bg-gray-100">
+    <div x-data="{ open: false }" class="min-h-screen flex flex-col">
+
         @include('layouts.sidebar')
 
-        <div class="flex-1 flex flex-col md:ml-56 pt-16">
-            @include('layouts.top_bar')
+        @include('layouts.top_bar')
 
+        @include('layouts.navigation')
 
-            @include('layouts.navigation')
+        <!-- pt-28 alineado a los 112px de las dos barras fijas -->
+        <div class="flex-1 flex flex-col md:pl-56 pt-28">
 
-            <!-- Page Heading -->
             @isset($header)
-                <header class="bg-white shadow">
-                    <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
+                <header class="bg-white shadow-sm mt-1 mb-1 mx-4 sm:mx-6 sm:rounded-lg">
+                    <div class="w-full px-4 sm:px-6 py-2">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
-            <!-- Page Content -->
-            <main class="py-12 flex-1 overflow-y-auto">
-                <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900">
-                        {{ $slot }}
-                    </div>
+            <!-- CAMBIO: pt-1 o pt-0 elimina la franja gris bajo la barra de navegación -->
+            <main class="flex-1 px-3 sm:px-3 pb-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded p-5 text-gray-900">
+                    {{ $slot }}
                 </div>
             </main>
+
         </div>
+
     </div>
 </body>
 
