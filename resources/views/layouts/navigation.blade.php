@@ -2,7 +2,7 @@
 
     $module = match (true) {
         request()->routeIs('ficha-infantes.*') => 'infantes',
-        request()->routeIs('control-infantes.*', 'inventario.*') => 'inventario',
+        request()->routeIs('control-infantes.*', 'inventario.*', 'marcas.*') => 'inventario',
         request()->routeIs('profile.*') => 'profile',
         default => 'dashboard',
     };
@@ -19,12 +19,18 @@
         ],
         'inventario' => [
             ['label' => 'Control Infantes', 'route' => 'control-infantes.index', 'active' => 'control-infantes.*'],
+            ['label' => 'Artículos', 'route' => null, 'disabled' => true],
+            ['label' => 'Presentaciones', 'route' => null, 'disabled' => true],
             ['label' => 'Categorías', 'route' => null, 'disabled' => true],
+            ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],
+            ['label' => 'Compras', 'route' => null, 'disabled' => true],
+            ['label' => 'Ajuste', 'route' => null, 'disabled' => true],
+            ['label' => 'Movimientos', 'route' => null, 'disabled' => true]
         ],
     ];
 @endphp
 
-<nav x-data="{ open: false }" class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-100">
+<nav x-data="{ open: false }" class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-200/60 shadow-2xs">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">

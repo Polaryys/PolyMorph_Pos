@@ -29,15 +29,15 @@
         <div class="flex-1 flex flex-col md:pl-56 pt-28">
 
             @isset($header)
-                <header class="bg-white shadow-sm mt-1 mb-1 mx-4 sm:mx-6 sm:rounded-lg">
-                    <div class="w-full px-4 sm:px-6 py-2">
+                <header class="bg-white border-b border-gray-200/60 shadow-2xs">
+                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
                         {{ $header }}
                     </div>
                 </header>
             @endisset
 
-            <main class="flex-1 px-3 sm:px-3 pb-6">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded p-5 text-gray-900">
+            <main class="flex-1 p-4 sm:p-6">
+                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 border border-gray-200/60">
                     {{ $slot }}
                 </div>
             </main>
