@@ -1,39 +1,25 @@
 ﻿<aside :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
-    class="fixed inset-y-0 left-0 w-56 z-50 bg-white border-r flex flex-col
-           transform -translate-x-full transition-transform duration-300 ease-in-out
-           md:translate-x-0">
+    class="fixed inset-y-0 left-0 w-60 z-50 bg-white border-r border-gray-200 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0">
 
-    <!-- Logo eben ezer -->
-    <div class="flex justify-center items-center h-28">
-        <img src="{{ asset('icon_sistema.png') }}" alt="Logo Sistema" class="h-24 w-auto object-contain drop-shadow-md">
+    <div class="flex justify-center items-center h-32 px-4 pt-16 pb-12 border-b border-gray-100">
+        <img src="{{ asset('icon_sistema.png') }}" alt="Logo Sistema" class="h-24 w-auto object-contain drop-shadow-sm">
     </div>
 
-    <!-- Botones de navegacion de sidebar -->
-    <div class="p-4 flex-1 flex flex-col">
+    <!-- sidebar principal -->
+    <div class="p-4 flex-1 flex flex-col justify-between overflow-y-auto">
 
-        <nav class="space-y-1">
-
+        <nav class="space-y-1.5">
             <x-sidebar-link :href="route('ficha-infantes.index')" :active="request()->routeIs('ficha-infantes.*')" wire:navigate>
-
                 <x-slot:icon>
                     <x-lucide-shopping-cart class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
-
                 Punto de venta
             </x-sidebar-link>
 
-            <x-sidebar-link href="#" wire:navigate>
-                <x-slot:icon>
-                    <x-lucide-users class="w-5 h-5 shrink-0" />
-                </x-slot:icon>
-
-                Usuarios
-            </x-sidebar-link>
-            <x-sidebar-link :href="route('control-infantes.index')" :active="request()->routeIs('control-infantes.*')" wire:navigate>
+            <x-sidebar-link :href="route('categorias.index')" :active="request()->routeIs('categorias.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-box class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
-
                 Inventario
             </x-sidebar-link>
 
@@ -41,7 +27,6 @@
                 <x-slot:icon>
                     <x-lucide-users class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
-
                 Clientes
             </x-sidebar-link>
 
@@ -49,7 +34,6 @@
                 <x-slot:icon>
                     <x-lucide-truck class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
-
                 Proveedores
             </x-sidebar-link>
 
@@ -57,15 +41,22 @@
                 <x-slot:icon>
                     <x-lucide-file-text class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
+                Reportes
+            </x-sidebar-link>
 
-                Reporte
+
+
+            <x-sidebar-link href="#" wire:navigate>
+                <x-slot:icon>
+                    <x-lucide-users class="w-5 h-5 shrink-0" />
+                </x-slot:icon>
+                Usuarios
             </x-sidebar-link>
 
             <x-sidebar-link href="#" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-image class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
-
                 Medios
             </x-sidebar-link>
 
@@ -73,50 +64,41 @@
                 <x-slot:icon>
                     <x-lucide-settings class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
-
                 Configuración
             </x-sidebar-link>
-
-            <!-- cerrar sesion -->
-            <form method="POST" action="{{ route('logout') }}">
-                @csrf
-
-                <button type="submit"
-                    class="w-full flex items-center gap-3 px-3 py-2 rounded text-sm font-medium text-gray-600 hover:text-gray-800 hover:bg-gray-100">
-
-                    <x-lucide-log-out class="w-5 h-5 shrink-0" />
-
-                    <span>Cerrar sesión</span>
-                </button>
-            </form>
-
         </nav>
-        <div class="mt-auto space-y-1">
-
-            <!-- usuario -->
+        <div class="pt-4 border-t border-gray-100 space-y-1">
+            
+            <!-- user -->
             <a href="{{ route('profile.edit') }}" wire:navigate @class([
-                'flex items-center gap-3 px-3 py-2 rounded text-sm font-medium transition-colors',
-                'bg-gray-100 text-gray-900' => request()->routeIs('profile.*'),
-                'text-gray-600 hover:text-gray-800 hover:bg-gray-100' => !request()->routeIs(
-                    'profile.*'),
+                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
+                'bg-indigo-50 text-indigo-700' => request()->routeIs('profile.*'),
+                'text-gray-600 hover:text-gray-900 hover:bg-gray-100' => !request()->routeIs('profile.*'),
             ])>
-
-                <div class="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center shrink-0">
-                    <x-lucide-user-round class="w-4 h-4" />
+                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 font-semibold text-xs">
+                    {{ substr(Auth::user()->name, 0, 2) }}
                 </div>
 
-                <div class="min-w-0">
-                    <p class="truncate">{{ Auth::user()->name }}</p>
-                    <p class="text-xs text-gray-400 truncate">Perfil</p>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate font-semibold leading-tight">{{ Auth::user()->name }}</p>
+                    <p class="text-xs text-gray-400 truncate">Ver Perfil</p>
                 </div>
             </a>
 
-
+            <!-- cierre de sesión -->
+            <form method="POST" action="{{ route('logout') }}">
+                @csrf
+                <button type="submit"
+                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+                    <x-lucide-log-out class="w-5 h-5 shrink-0 text-red-500" />
+                    <span>Cerrar sesión</span>
+                </button>
+            </form>
 
         </div>
 
     </div>
 </aside>
 
-<!-- capa oscuro de movil -->
-<div x-show="open" @click="open = false" x-transition.opcity class="fixed inset-0 z-40 bg-black/40 md:hidden"></div>
+<!-- Capa oscura móvil -->
+<div x-show="open" @click="open = false" x-transition.opacity class="fixed inset-0 z-40 bg-gray-900/40 backdrop-blur-sm md:hidden"></div>

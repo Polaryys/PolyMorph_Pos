@@ -2,7 +2,7 @@
 
     $module = match (true) {
         request()->routeIs('ficha-infantes.*') => 'infantes',
-        request()->routeIs('control-infantes.*', 'inventario.*', 'marcas.*') => 'inventario',
+        request()->routeIs('inventario.*', 'marcas.*', 'categorias.*') => 'inventario',
         request()->routeIs('profile.*') => 'profile',
         default => 'dashboard',
     };
@@ -18,10 +18,9 @@
             ['label' => 'Ventas', 'route' => null, 'disabled' => true],
         ],
         'inventario' => [
-            ['label' => 'Control Infantes', 'route' => 'control-infantes.index', 'active' => 'control-infantes.*'],
             ['label' => 'Artículos', 'route' => null, 'disabled' => true],
             ['label' => 'Presentaciones', 'route' => null, 'disabled' => true],
-            ['label' => 'Categorías', 'route' => null, 'disabled' => true],
+            ['label' => 'Categorías', 'route' => 'categorias.index', 'active' => 'categorias.*'],
             ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],
             ['label' => 'Compras', 'route' => null, 'disabled' => true],
             ['label' => 'Ajuste', 'route' => null, 'disabled' => true],
@@ -30,10 +29,10 @@
     ];
 @endphp
 
-<nav x-data="{ open: false }" class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-200/60 shadow-2xs">
+<nav x-data="{ open: false }" class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-200">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+        <div class="flex justify-between h-14">
             <div class="flex w-full">
 
                 <div class="flex space-x-8 -my-px ms-2 sm:ms-10 whitespace-nowrap overflow-x-auto no-scrollbar">

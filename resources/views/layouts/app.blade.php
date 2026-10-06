@@ -26,7 +26,7 @@
 
         @include('layouts.navigation')
 
-        <div class="flex-1 flex flex-col md:pl-56 pt-28">
+        <div class="flex-1 flex flex-col md:pl-56 pt-16">
 
             @isset($header)
                 <header class="bg-white border-b border-gray-200/60 shadow-2xs">
@@ -36,8 +36,8 @@
                 </header>
             @endisset
 
-            <main class="flex-1 p-4 sm:p-6">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 border border-gray-200/60">
+            <main class="flex-1 flex">
+                <div class="flex-1 min-w-0 bg-white overflow-hidden p-5 ml-2.5 mt-2 text-gray-900 border border-gray-200/60">
                     {{ $slot }}
                 </div>
             </main>
