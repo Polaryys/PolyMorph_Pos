@@ -3,8 +3,10 @@
     $module = match (true) {
         request()->routeIs('ficha-infantes.*') => 'infantes',
         request()->routeIs('inventario.*', 'marcas.*', 'categorias.*') => 'inventario',
+        request()->routeIs('clientes.*') => 'clientes',
+        request()->routeIs('proveedores.*') => 'proveedores',
         request()->routeIs('profile.*') => 'profile',
-        default => 'dashboard',
+        default => 'inventario',
     };
 
     $menus = [
@@ -26,6 +28,12 @@
             ['label' => 'Ajuste', 'route' => null, 'disabled' => true],
             ['label' => 'Movimientos', 'route' => null, 'disabled' => true]
         ],
+        'clientes' => [
+            ['label' => 'Clientes', 'route' => 'clientes.index', 'active' => 'clientes.*']
+        ],
+        'proveedores' => [
+            ['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']
+        ]
     ];
 @endphp
 

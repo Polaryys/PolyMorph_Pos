@@ -23,14 +23,14 @@
                 Inventario
             </x-sidebar-link>
 
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-users class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
                 Clientes
             </x-sidebar-link>
 
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-truck class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
