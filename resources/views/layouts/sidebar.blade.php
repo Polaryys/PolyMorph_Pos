@@ -44,9 +44,7 @@
                 Reportes
             </x-sidebar-link>
 
-
-
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-users class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
@@ -68,21 +66,27 @@
             </x-sidebar-link>
         </nav>
         <div class="pt-4 border-t border-gray-100 space-y-1">
-            
+ 
             <!-- user -->
-            <a href="{{ route('profile.edit') }}" wire:navigate @class([
+            <a href="{{ route('profile.show') }}" wire:navigate @class([
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
                 'bg-indigo-50 text-indigo-700' => request()->routeIs('profile.*'),
-                'text-gray-600 hover:text-gray-900 hover:bg-gray-100' => !request()->routeIs('profile.*'),
+                'text-gray-600 hover:text-gray-900 hover:bg-gray-100' => !request()->routeIs(
+                    'profile.*'),
             ])>
-                <div class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 font-semibold text-xs">
-                    {{ substr(Auth::user()->name, 0, 2) }}
+                <div
+                    class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 font-semibold text-xs">
+                    {{ strtoupper(substr(Auth::user()->nombres, 0, 1) . substr(Auth::user()->apellidos, 0, 1)) }}
+                </div>
+                <div class="min-w-0 flex-1">
+                    <p class="truncate font-semibold leading-tight">
+                        {{ Auth::user()->username }}
+                    </p>
+                    <p class="text-xs text-gray-400 truncate">
+                        {{ Auth::user()->rol }}
+                    </p>
                 </div>
 
-                <div class="min-w-0 flex-1">
-                    <p class="truncate font-semibold leading-tight">{{ Auth::user()->name }}</p>
-                    <p class="text-xs text-gray-400 truncate">Ver Perfil</p>
-                </div>
             </a>
 
             <!-- cierre de sesión -->
@@ -101,4 +105,5 @@
 </aside>
 
 <!-- Capa oscura móvil -->
-<div x-show="open" @click="open = false" x-transition.opacity class="fixed inset-0 z-40 bg-gray-900/40 backdrop-blur-sm md:hidden"></div>
+<div x-show="open" @click="open = false" x-transition.opacity
+    class="fixed inset-0 z-40 bg-gray-900/40 backdrop-blur-sm md:hidden"></div>

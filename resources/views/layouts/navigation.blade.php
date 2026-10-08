@@ -6,14 +6,14 @@
         request()->routeIs('clientes.*') => 'clientes',
         request()->routeIs('proveedores.*') => 'proveedores',
         request()->routeIs('profile.*') => 'profile',
+        request()->routeIs('usuarios.*') => 'usuarios',
         default => 'inventario',
     };
 
     $menus = [
         'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
         'profile' => [
-            ['label' => 'Perfil', 'route' => 'profile.edit', 'active' => 'profile.*'],
-            ['label' => 'Contraseña', 'route' => null, 'disabled' => true],
+            ['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*'],
         ],
         'infantes' => [
             ['label' => 'Ficha Infantes', 'route' => 'ficha-infantes.index', 'active' => 'ficha-infantes.*'],
@@ -33,7 +33,11 @@
         ],
         'proveedores' => [
             ['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']
-        ]
+        ],
+        'usuarios' => [
+            ['label' => 'Usuarios', 'route' => 'usuarios.index', 'active' => 'usuarios.*']
+        ],
+
     ];
 @endphp
 
