@@ -7,6 +7,7 @@
         request()->routeIs('proveedores.*') => 'proveedores',
         request()->routeIs('profile.*') => 'profile',
         request()->routeIs('usuarios.*') => 'usuarios',
+        request()->routeIs('imagenes.*') => 'medios',
         default => 'inventario',
     };
 
@@ -36,6 +37,9 @@
         ],
         'usuarios' => [
             ['label' => 'Usuarios', 'route' => 'usuarios.index', 'active' => 'usuarios.*']
+        ],
+        'medios' => [
+            ['label' => 'Imagenes', 'route' => 'imagenes.index', 'active' => 'imagenes.*']
         ],
 
     ];

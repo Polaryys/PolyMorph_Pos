@@ -51,7 +51,7 @@
                 Usuarios
             </x-sidebar-link>
 
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('imagenes.index')" :active="request()->routeIs('imagenes.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-image class="w-5 h-5 shrink-0" />
                 </x-slot:icon>

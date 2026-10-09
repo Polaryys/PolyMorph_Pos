@@ -3,7 +3,7 @@
 use App\Http\Controllers\ControlInfanteController;
 use App\Http\Controllers\FichaInfanteController;
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\ImagenesController;
+use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\CategoriaController;
@@ -35,7 +35,8 @@ Route::middleware('auth')->group(function () {
         'proveedores' => 'proveedor'
     ]);
     Route::resource('usuarios', UserController::class);
-    Route::resource('imagenes', ImagenesController::class);
+    Route::resource('imagenes', ImagenController::class)
+    ->except(['show']);
 
 });
 
