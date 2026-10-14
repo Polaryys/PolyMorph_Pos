@@ -1,19 +1,18 @@
-<div
-    x-data="{
-        abierto: false,
-        imagen: {},
-        nombre: '',
-        urlActualizar: '',
-        urlEliminar: '',
+<div x-data="{
+    abierto: false,
+    imagen: {},
+    nombre: '',
+    urlActualizar: '',
+    urlEliminar: '',
 
-        abrir(datos) {
-            this.imagen = datos;
-            this.nombre = datos.nombre;
-            this.urlActualizar = datos.url;
-            this.urlEliminar = datos.urlEliminar;
-            this.abierto = true;
-        }
-    }" @abrir-edicion-imagen.window="abrir($event.detail)" @keydown.escape.window="abierto = false">
+    abrir(datos) {
+        this.imagen = datos;
+        this.nombre = datos.nombre;
+        this.urlActualizar = datos.url;
+        this.urlEliminar = datos.urlEliminar;
+        this.abierto = true;
+    }
+}" @abrir-edicion-imagen.window="abrir($event.detail)" @keydown.escape.window="abierto = false">
     <div x-cloak x-show="abierto" x-transition.opacity
         class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/60 p-4" @click.self="abierto = false">
         <div x-show="abierto" x-transition class="w-full max-w-4xl overflow-hidden  bg-white shadow-2xl">
@@ -40,93 +39,98 @@
 
             {{-- Contenido --}}
             <div class="grid grid-cols-1 gap-6 p-5 md:grid-cols-5">
-     
+
                 <div
                     class="flex min-h-64 items-center justify-center overflow-hidden border border-gray-200 p-3 md:col-span-3 md:min-h-[400px]">
                     <img :src="imagen.src" :alt="nombre" class="max-h-[400px] w-full object-contain">
                 </div>
 
                 <div class="flex flex-col md:col-span-2">
+
+                    {{-- Información de la imagen --}}
                     <div>
                         <h3 class="text-sm font-semibold uppercase tracking-wide text-gray-500">
                             Información de la imagen
                         </h3>
 
-                        <div class="mt-4 space-y-3 p-4">
-                            <div>
-                                <p class="text-xs text-gray-500">Nombre actual</p>
-                                <p class="mt-1 break-words text-sm font-medium text-gray-900" x-text="imagen.nombre">
+                        <div class="mt-4 space-y-4 rounded-xl border border-gray-200 bg-gray-50 p-4">
+
+                            <div class="min-w-0">
+                                <p class="text-xs font-medium text-gray-500">Nombre actual</p>
+                                <p class="mt-1 break-words text-sm font-semibold text-gray-900" x-text="imagen.nombre">
                                 </p>
                             </div>
 
-                            <div>
-                                <p class="text-xs text-gray-500">Dimensiones</p>
-                                <p class="mt-1 text-sm text-gray-800">
-                                    <span x-text="imagen.ancho"></span>
-                                    ×
-                                    <span x-text="imagen.alto"></span> px
-                                </p>
-                            </div>
+                            <div class="grid grid-cols-2 gap-4 border-t border-gray-200 pt-3">
 
-                            <div>
-                                <p class="text-xs text-gray-500">Tamaño del archivo</p>
-                                <p class="mt-1 text-sm text-gray-800">
-                                    <span x-text="imagen.peso"></span> KB
-                                </p>
+                                <div class="min-w-0">
+                                    <p class="text-xs font-medium text-gray-500">Dimensiones</p>
+                                    <p class="mt-1 text-sm font-medium text-gray-800">
+                                        <span x-text="imagen.ancho ?? 'Calculando...'"></span>
+                                        ×
+                                        <span x-text="imagen.alto ?? 'Calculando...'"></span>
+                                        <span class="text-xs text-gray-500">px</span>
+                                    </p>
+                                </div>
+
+                                <div class="min-w-0">
+                                    <p class="text-xs font-medium text-gray-500">Tamaño del archivo</p>
+                                    <p class="mt-1 text-sm font-medium text-gray-800">
+                                        <span x-text="imagen.peso ?? 'Calculando...'"></span>
+                                        <span x-show="imagen.peso" class="text-xs text-gray-500">KB</span>
+                                    </p>
+                                </div>
+
                             </div>
                         </div>
                     </div>
 
-                    <form :action="urlActualizar" method="POST" class="mt-5">
+                    {{-- Edición del nombre --}}
+                    <form :action="urlActualizar" method="POST" class="mt-6">
                         @csrf
                         @method('PUT')
 
-                        <label for="nombre_imagen" class="mb-2 block text-sm font-medium text-gray-700">
-                            Nuevo nombre
+                        <label for="nombre_imagen" class="mb-2 block text-sm font-semibold text-gray-700">
+                            Editar nombre
                         </label>
 
                         <input id="nombre_imagen" type="text" name="nombre" x-model="nombre" maxlength="50" required
-                            class="w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            class="w-full rounded-lg border-gray-300 bg-white px-3 py-2.5 text-sm text-gray-900 shadow-sm transition placeholder:text-gray-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20">
 
                         @error('nombre')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                            <p class="mt-2 text-sm font-medium text-red-600">{{ $message }}</p>
                         @enderror
-                        <p class="mt-2 text-xs text-gray-500">
-                            Solo se actualizará el nombre; el archivo original no cambiará.
-                        </p>
 
-                        {{-- Guardar y cancelar --}}
-                        <div class="mt-5 flex flex-wrap justify-end gap-2">
+                        {{-- Guardado y cancelación de edición --}}
+                        <div class="mt-5 flex flex-wrap justify-end gap-3">
                             <button type="button" @click="abierto = false"
-                                class="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                                class="rounded-lg border border-gray-300 bg-white px-4 py-2.5 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-300">
                                 Cancelar
                             </button>
 
                             <button type="submit"
-                                class="rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-indigo-700">
+                                class="rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
                                 Guardar
                             </button>
                         </div>
                     </form>
 
-                    {{-- Eliminar, separado de las acciones principales --}}
-                    <div class="mt-auto border-t border-gray-200 pt-5 md:mt-8">
-                        <p class="mb-3 text-xs text-gray-500">
-                            Esta acción es independiente y no se puede deshacer.
-                        </p>
-
+                    {{-- Eliminación de imagen --}}
+                    <div class="mt-8 border-t border-gray-200 pt-5 md:mt-auto md:pt-6">
                         <form :action="urlEliminar" method="POST"
                             onsubmit="return confirm('¿Deseas eliminar esta imagen? Esta acción no se puede deshacer.')">
                             @csrf
                             @method('DELETE')
 
                             <button type="submit"
-                                class="w-full rounded-lg border border-red-200 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-50">
+                                class="w-full rounded-lg border border-red-200 bg-white px-4 py-2.5 text-sm font-semibold text-red-600 transition hover:border-red-300 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
                                 Eliminar imagen
                             </button>
                         </form>
                     </div>
+
                 </div>
+
             </div>
         </div>
     </div>

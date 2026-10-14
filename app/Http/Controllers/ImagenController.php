@@ -16,26 +16,17 @@ class ImagenController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
+        $buscar = trim($request->query('buscar', ''));
+
         $imagenes = Imagen::query()
-            ->orderByDesc('id')
-            ->paginate(24);
-
-        foreach ($imagenes as $imagen) {
-            $ruta = 'imagenes/' . $imagen->nombre_archivo;
-
-            if (Storage::disk('public')->exists($ruta)) {
-                $imagen->peso_archivo = Storage::disk('public')->size($ruta);
-
-                $datos = Image::decode(
-                    Storage::disk('public')->path($ruta)
-                );
-
-                $imagen->ancho = $datos->width();
-                $imagen->alto = $datos->height();
-            }
-        }
+            ->when($buscar !== '', function ($query) use ($buscar) {
+                $query->where('nombre', 'like', '%' . $buscar . '%');
+            })
+            ->orderBy('nombre')
+            ->paginate(24)
+            ->withQueryString();
 
         return view('imagenes.index', compact('imagenes'));
     }

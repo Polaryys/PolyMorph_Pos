@@ -1,13 +1,33 @@
 <x-app-layout>
-    <!-- Encabezado y acción -->
-    <div class="flex items-center justify-between mb-3">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
+
+        {{-- search imagen --}}
+        <form action="{{ route('imagenes.index') }}" method="GET" class="flex flex-1 items-center gap-2">
+
+            <input type="search" name="buscar" value="{{ request('buscar') }}" placeholder="Buscar imagen por nombre..."
+                class="w-full max-w-md  border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+
+            <button type="submit"
+                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
+                Buscar
+            </button>
+
+            @if (request()->filled('buscar'))
+                <a href="{{ route('imagenes.index') }}" wire:navigate class="text-sm text-gray-600 hover:text-gray-900">
+                    Limpiar
+                </a>
+            @endif
+        </form>
+
+        {{-- subir imagenes --}}
         <a href="{{ route('imagenes.create') }}" wire:navigate
-            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
+            class="shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
             + Cargar imágenes
         </a>
+
     </div>
 
-    <!-- Mensajes -->
+    {{-- Mensajes --}}
     @if (session('success'))
         <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
             {{ session('success') }}
@@ -20,7 +40,7 @@
         </div>
     @endif
 
-    <!-- imagenes -->
+    {{-- Imágenes --}}
     <div class="bg-white">
         @forelse ($imagenes as $imagen)
             @if ($loop->first)
@@ -28,35 +48,37 @@
             @endif
 
             <div class="min-w-0 border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
-                <!-- vista previo iamgen -->
+                {{-- Vista previa --}}
                 <div class="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                     <img src="{{ asset('storage/imagenes/' . $imagen->nombre_archivo) }}" alt="{{ $imagen->nombre }}"
                         loading="lazy" class="w-full h-full object-contain">
                 </div>
 
-                <!-- info  y acciones -->
+                {{-- Información y acciones --}}
                 <div class="p-3 border-t border-gray-200">
                     <h3 class="text-sm font-medium text-gray-900 truncate" title="{{ $imagen->nombre }}">
                         {{ $imagen->nombre }}
                     </h3>
 
-                    <p class="text-xs text-gray-500">
-                        {{ $imagen->ancho }} × {{ $imagen->alto }} px
-                        ·
-                        {{ number_format($imagen->peso_archivo / 1024, 1) }} KB
+                    <p class="text-xs text-gray-500" data-info-imagen
+                        data-src="{{ asset('storage/imagenes/' . $imagen->nombre_archivo) }}">
+                        Calculando dimensiones y peso...
                     </p>
 
-                    <div class="flex items-center justify-between gap-2  pt-2 border-t border-gray-100">
+                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
                         <button type="button"
-                            @click="$dispatch('abrir-edicion-imagen', {
+                            @click="
+                                const info = $el.closest('.min-w-0').querySelector('[data-info-imagen]');
+                                $dispatch('abrir-edicion-imagen', {
                                 nombre: {{ Js::from($imagen->nombre) }},
                                 src: {{ Js::from(asset('storage/imagenes/' . $imagen->nombre_archivo)) }},
-                                ancho: {{ Js::from($imagen->ancho) }},
-                                alto: {{ Js::from($imagen->alto) }},
-                                peso: {{ Js::from(number_format($imagen->peso_archivo / 1024, 1)) }},
+                                ancho: info.dataset.ancho || null,
+                                alto: info.dataset.alto || null,
+                                peso: info.dataset.peso || null,
                                 url: {{ Js::from(route('imagenes.update', $imagen)) }},
                                 urlEliminar: {{ Js::from(route('imagenes.destroy', $imagen)) }}
-                            })"
+                            })
+                        "
                             class="text-sm font-medium text-indigo-600 transition hover:text-indigo-900">
                             Editar
                         </button>
@@ -67,6 +89,7 @@
             @if ($loop->last)
     </div>
     @endif
+
 @empty
     <div class="py-12 px-4 text-center">
         <div class="flex justify-center mb-3">
@@ -79,16 +102,24 @@
         </div>
 
         <p class="text-sm font-medium text-gray-600">
-            No hay imágenes registradas.
+            @if (request()->filled('buscar'))
+                No se encontraron imágenes que coincidan con "{{ request('buscar') }}".
+            @else
+                No hay imágenes registradas.
+            @endif
         </p>
 
         <p class="mt-1 text-sm text-gray-400">
-            Registra una imagen para que aparezca en este espacio.
+            @if (request()->filled('buscar'))
+                Prueba con otro nombre o limpia la búsqueda.
+            @else
+                Registra una imagen para que aparezca en este espacio.
+            @endif
         </p>
     </div>
     @endforelse
 
-    <!-- Paginación -->
+    {{-- Paginación --}}
     @if ($imagenes->hasPages())
         <div class="mt-4 pt-3 border-t border-gray-200">
             {{ $imagenes->links() }}
@@ -97,9 +128,56 @@
     </div>
 
 
-    <!-- Modal  edicion -->
+    <script>
+        async function cargarInfoImagenes() {
+            const elementos = document.querySelectorAll('[data-info-imagen]');
+
+            elementos.forEach((elemento) => {
+                if (elemento.dataset.procesado === 'true') return;
+                elemento.dataset.procesado = 'true';
+
+                const src = elemento.dataset.src;
+                const imagen = new Image();
+
+                imagen.onload = async () => {
+                    const ancho = imagen.naturalWidth;
+                    const alto = imagen.naturalHeight;
+                    let peso = null;
+
+                    try {
+                        const respuesta = await fetch(src, {
+                            method: 'HEAD'
+                        });
+                        const bytes = Number(respuesta.headers.get('content-length'));
+
+                        if (respuesta.ok && Number.isFinite(bytes) && bytes > 0) {
+                            peso = (bytes / 1024).toFixed(1);
+                        }
+                    } catch (error) {
+                        // El peso puede no estar disponible en el servidor.
+                    }
+
+                    elemento.textContent =
+                        `${ancho} × ${alto} px · ${peso !== null ? peso + ' KB' : 'Peso no disponible'}`;
+
+                    elemento.dataset.ancho = ancho;
+                    elemento.dataset.alto = alto;
+                    elemento.dataset.peso = peso ?? '';
+                };
+
+                imagen.onerror = () => {
+                    elemento.textContent = 'No se pudo cargar la información';
+                };
+
+                imagen.src = src;
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', cargarInfoImagenes);
+        document.addEventListener('livewire:navigated', cargarInfoImagenes);
+    </script>
+
+
+    {{-- Modal de edición --}}
     @include('imagenes.partials.edit')
-
-
-
 </x-app-layout>

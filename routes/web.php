@@ -39,6 +39,7 @@ Route::middleware('auth')->group(function () {
     ->except(['show', 'edit'])
     ->parameters(['imagenes' => 'imagen']);
 
+
 });
 
 require __DIR__ . '/auth.php';
