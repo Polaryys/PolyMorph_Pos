@@ -36,7 +36,8 @@ Route::middleware('auth')->group(function () {
     ]);
     Route::resource('usuarios', UserController::class);
     Route::resource('imagenes', ImagenController::class)
-    ->except(['show']);
+    ->except(['show', 'edit'])
+    ->parameters(['imagenes' => 'imagen']);
 
 });
 

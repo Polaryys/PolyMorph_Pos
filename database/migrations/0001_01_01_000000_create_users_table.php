@@ -19,7 +19,7 @@ return new class extends Migration {
             $table->string('telefono', 20)->nullable();
             $table->string('email', 255)->unique()->nullable();
             $table->string('password');
-            $table->unsignedBigInteger('imagen_id')->nullable();
+            $table->foreignId('imagen_id')->nullable();
             $table->boolean('estado')->default(true);
             $table->rememberToken();
             $table->timestamps();

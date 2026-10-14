@@ -9,16 +9,34 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Intervention\Image\Laravel\Facades\Image;
 use Illuminate\View\View;
+use Intervention\Image\Format;
 
 class ImagenController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(): View
     {
-        $imagenes = Imagen::orderBy('id')
-            ->paginate(10);
+        $imagenes = Imagen::query()
+            ->orderByDesc('id')
+            ->paginate(24);
+
+        foreach ($imagenes as $imagen) {
+            $ruta = 'imagenes/' . $imagen->nombre_archivo;
+
+            if (Storage::disk('public')->exists($ruta)) {
+                $imagen->peso_archivo = Storage::disk('public')->size($ruta);
+
+                $datos = Image::decode(
+                    Storage::disk('public')->path($ruta)
+                );
+
+                $imagen->ancho = $datos->width();
+                $imagen->alto = $datos->height();
+            }
+        }
+
         return view('imagenes.index', compact('imagenes'));
     }
 
@@ -36,8 +54,8 @@ class ImagenController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
-            'nombre' => ['required', 'string', 'max:50'],
-            'archivo' => [
+            'archivos' => ['required', 'array', 'min:1'],
+            'archivos.*' => [
                 'required',
                 'image',
                 'mimes:jpg,jpeg,png,webp,gif',
@@ -45,31 +63,49 @@ class ImagenController extends Controller
             ],
         ]);
 
-        $archivo = $request->file('archivo');
+        foreach ($validated['archivos'] as $archivo) {
+            $nombre = Str::of(
+                pathinfo(
+                    $archivo->getClientOriginalName(),
+                    PATHINFO_FILENAME
+                )
+            )
+                ->squish()
+                ->limit(50, '')
+                ->toString();
 
-        $imagenWebp = Image::read($archivo)
-            ->toWebp(80);
+            if ($nombre === '') {
+                $nombre = 'Imagen';
+            }
 
-        $nombreArchivo = str()->uuid() . '.webp';
+            $nombreArchivo = Str::uuid() . '.webp';
 
-        Storage::disk('public')->put(
-            'imagenes/' . $nombreArchivo,
-            (string) $imagenWebp
-        );
+            $imagenWebp = Image::decode($archivo)
+                ->scaleDown(width: 1024, height: 1024)
+                ->encodeUsingFormat(Format::WEBP, quality: 80);
 
-        try {
-            Imagen::create([
-                'nombre' => $validated['nombre'],
-                'nombre_archivo' => $nombreArchivo,
-            ]);
-        } catch (\Throwable $e) {
-            Storage::disk('public')->delete('imagenes/' . $nombreArchivo);
-            throw $e;
+            Storage::disk('public')->put(
+                'imagenes/' . $nombreArchivo,
+                (string) $imagenWebp
+            );
+
+            try {
+                Imagen::create([
+                    'nombre' => $nombre,
+                    'nombre_archivo' => $nombreArchivo,
+                ]);
+            } catch (\Throwable $e) {
+                Storage::disk('public')->delete(
+                    'imagenes/' . $nombreArchivo
+                );
+
+                throw $e;
+            }
         }
 
         return redirect()
             ->route('imagenes.index')
-            ->with('success', 'Imagen registrada correctamente.');
+            ->with('success', 'Imágenes cargadas correctamente.');
     }
 
 
@@ -83,18 +119,21 @@ class ImagenController extends Controller
 
     /**
      * Show the form for editing the specified resource.
+     *     public function edit(Imagen $imagen): View
+     *{
+     *   return view('imagenes.edit', compact('imagen'));
+     *}
      */
-    public function edit(Imagen $imagen): View
-    {
-        return view('imagenes.edit', compact('imagen'));
-    }
+
 
     /**
      * Update the specified resource in storage.
      */
 
+
     public function update(Request $request, Imagen $imagen): RedirectResponse
     {
+
         $validated = $request->validate([
             'nombre' => [
                 'required',
@@ -102,60 +141,22 @@ class ImagenController extends Controller
                 'max:50',
                 'regex:/^[\pL\s]+$/u',
             ],
-            'archivo' => [
-                'nullable',
-                'image',
-                'mimes:jpg,jpeg,png,webp',
-                'max:2048',
-            ],
         ]);
 
-        $nombreAnterior = $imagen->nombre_archivo;
-        $nombreNuevo = $nombreAnterior;
-
-        if ($request->hasFile('archivo')) {
-            $archivo = $request->file('archivo');
-
-            $imagenWebp = Image::read($archivo)->toWebp(80);
-
-            $nombreNuevo = Str::uuid() . '.webp';
-
-            Storage::disk('public')->put(
-                'imagenes/' . $nombreNuevo,
-                (string) $imagenWebp
-            );
-        }
-
-        try {
-            $imagen->update([
-                'nombre' => $validated['nombre'],
-                'nombre_archivo' => $nombreNuevo,
-            ]);
-        } catch (\Throwable $e) {
-
-            if ($nombreNuevo !== $nombreAnterior) {
-                Storage::disk('public')->delete(
-                    'imagenes/' . $nombreNuevo
-                );
-            }
-
-            throw $e;
-        }
-
-        if ($nombreNuevo !== $nombreAnterior) {
-            Storage::disk('public')->delete(
-                'imagenes/' . $nombreAnterior
-            );
-        }
+        $imagen->update([
+            'nombre' => $validated['nombre'],
+        ]);
 
         return redirect()
             ->route('imagenes.index')
-            ->with('success', 'Imagen actualizada correctamente.');
+            ->with('success', 'Nombre de la imagen actualizado correctamente.');
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
+
 
     public function destroy(Imagen $imagen): RedirectResponse
     {
@@ -171,4 +172,5 @@ class ImagenController extends Controller
             ->route('imagenes.index')
             ->with('success', 'Imagen eliminada correctamente.');
     }
+
 }
