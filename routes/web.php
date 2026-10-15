@@ -7,6 +7,7 @@ use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\MarcaController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\MetodoPagoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProveedorController;
 use Illuminate\Support\Facades\Route;
@@ -36,8 +37,13 @@ Route::middleware('auth')->group(function () {
     ]);
     Route::resource('usuarios', UserController::class);
     Route::resource('imagenes', ImagenController::class)
-    ->except(['show', 'edit'])
-    ->parameters(['imagenes' => 'imagen']);
+        ->except(['show', 'edit'])
+        ->parameters(['imagenes' => 'imagen']);
+    Route::get('/imagenes/selector', [ImagenController::class, 'selector'])
+        ->name('imagenes.selector');
+    Route::resource('metodos-pago', MetodoPagoController::class)
+    ->parameters(['metodos-pago' => 'metodoPago']);
+
 
 
 });

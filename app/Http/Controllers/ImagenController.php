@@ -13,6 +13,30 @@ use Intervention\Image\Format;
 
 class ImagenController extends Controller
 {
+
+
+    public function selector(Request $request)
+    {
+        $buscar = trim($request->query('buscar', ''));
+
+        $imagenes = Imagen::query()
+            ->when($buscar !== '', function ($query) use ($buscar) {
+                $query->where('nombre', 'like', '%' . $buscar . '%');
+            })
+            ->orderByDesc('id')
+            ->paginate(12)
+            ->withQueryString();
+
+        return response()->json([
+            'data' => $imagenes->getCollection()->map(fn($imagen) => [
+                'id' => $imagen->id,
+                'nombre' => $imagen->nombre,
+                'url' => asset('storage/imagenes/' . $imagen->nombre_archivo),
+            ]),
+            'current_page' => $imagenes->currentPage(),
+            'last_page' => $imagenes->lastPage(),
+        ]);
+    }
     /**
      * Display a listing of the resource.
      */
@@ -24,7 +48,7 @@ class ImagenController extends Controller
             ->when($buscar !== '', function ($query) use ($buscar) {
                 $query->where('nombre', 'like', '%' . $buscar . '%');
             })
-            ->orderBy('nombre')
+            ->orderByDesc('id')
             ->paginate(24)
             ->withQueryString();
 

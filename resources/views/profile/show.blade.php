@@ -7,9 +7,15 @@
             <!-- imagen -->
             <div class="flex flex-col items-center justify-center space-y-3 pt-2">
                 <div class="relative w-28 h-28">
-                    <img src="{{ $user->foto ? asset('storage/' . $user->foto) : asset('images/default-avatar.png') }}"
+
+                    <img src="{{ $user->imagen_id && $user->imagen
+                        ? asset('storage/imagenes/' . $user->imagen->nombre_archivo)
+                        : ($user->foto
+                            ? asset('storage/' . $user->foto)
+                            : asset('images/default-avatar.png')) }}"
                         alt="Foto de perfil"
                         class="w-28 h-28 rounded-full object-cover border-2 border-indigo-100 shadow-sm" />
+
                 </div>
             </div>
         </div>

@@ -20,15 +20,22 @@
         <div class="space-y-4">
 
             <!-- imagen -->
-            <div class="flex flex-col items-center justify-center space-y-3 ">
-                <div class="relative w-28 h-28">
 
-                    <img src="{{ $usuario->foto ? asset('storage/' . $usuario->foto) : asset('images/default-avatar.png') }}"
+            <!-- Imagen del usuario -->
+            <div class="flex flex-col items-center justify-center space-y-3">
+                <div class="relative h-28 w-28">
+
+                    <img src="{{ $usuario->imagen_id && $usuario->imagen
+                        ? asset('storage/imagenes/' . $usuario->imagen->nombre_archivo)
+                        : ($usuario->foto
+                            ? asset('storage/' . $usuario->foto)
+                            : asset('images/default-avatar.png')) }}"
                         alt="Foto de perfil"
-                        class="w-28 h-28 rounded-full object-cover border-2 border-indigo-100 shadow-sm" />
+                        class="h-28 w-28 rounded-full object-cover border-2 border-indigo-100 shadow-sm">
 
                 </div>
             </div>
+
 
         </div>
 

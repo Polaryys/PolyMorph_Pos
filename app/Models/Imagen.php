@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+
 use Illuminate\Database\Eloquent\Model;
 
 class Imagen extends Model
@@ -13,4 +14,9 @@ class Imagen extends Model
         'nombre',
         'nombre_archivo'
     ];
+
+        public function Imagen()
+    {
+        return $this->hasMany(User::class);
+    }
 }

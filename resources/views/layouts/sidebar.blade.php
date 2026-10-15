@@ -58,7 +58,7 @@
                 Medios
             </x-sidebar-link>
 
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('metodos-pago.index')" :active="request()->routeIs('metodos-pago.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-settings class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
@@ -66,7 +66,7 @@
             </x-sidebar-link>
         </nav>
         <div class="pt-4 border-t border-gray-100 space-y-1">
- 
+
             <!-- user -->
             <a href="{{ route('profile.show') }}" wire:navigate @class([
                 'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
@@ -74,9 +74,20 @@
                 'text-gray-600 hover:text-gray-900 hover:bg-gray-100' => !request()->routeIs(
                     'profile.*'),
             ])>
-                <div
-                    class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center shrink-0 font-semibold text-xs">
-                    {{ strtoupper(substr(Auth::user()->nombres, 0, 1) . substr(Auth::user()->apellidos, 0, 1)) }}
+                @php
+                    $usuarioActual = Auth::user();
+                @endphp
+
+                <div class="shrink-0">
+                    @if ($usuarioActual->imagen_id && $usuarioActual->imagen)
+                        <img src="{{ asset('storage/imagenes/' . $usuarioActual->imagen->nombre_archivo) }}"
+                            alt="Foto de perfil" class="w-8 h-8 rounded-full object-cover border border-indigo-100">
+                    @else
+                        <div
+                            class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold text-xs">
+                            {{ strtoupper(substr($usuarioActual->nombres, 0, 1) . substr($usuarioActual->apellidos, 0, 1)) }}
+                        </div>
+                    @endif
                 </div>
                 <div class="min-w-0 flex-1">
                     <p class="truncate font-semibold leading-tight">
