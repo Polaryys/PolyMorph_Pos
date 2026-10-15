@@ -20,7 +20,7 @@ return new class extends Migration {
                 ->nullable()->constrained('clientes')
                 ->nullOnDelete();
             $table->enum('tipo_transacción', ['ENTRADA', 'SALIDA', 'CAMBIO',]);
-            $table->enum('estadp_venta', ['Completada', 'Reembolsada', 'Cambiado',]);
+            $table->enum('estadp_venta', ['Completada', 'Reembolsada', 'Cambiada','Anulada']);
             $table->enum('estado_pago', ['Parcial', 'Completo', 'Pendiente']);
             $table->foreignId('venta_referencia_id')
                 ->nullable()
