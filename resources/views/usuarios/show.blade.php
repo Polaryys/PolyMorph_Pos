@@ -1,28 +1,29 @@
 <x-app-layout>
 
-    <div class="flex items-center justify-left gap-3">
-
-        <a href="{{ route('usuarios.index') }}" wire:navigate
-            class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium
-                       text-gray-700 hover:bg-gray-50 transition">
-            Volver
-        </a>
-
-        <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
-            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white
-                       text-sm font-medium rounded-md shadow-sm transition">
-            Editar Usuario
-        </a>
-
-    </div>
     <div class="space-y-6">
 
-        <div class="space-y-4">
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="flex items-center justify-start gap-3">
 
-            <!-- imagen -->
+            <a href="{{ route('usuarios.index') }}" wire:navigate
+                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium
+                       text-gray-700 transition hover:bg-gray-50">
+                Volver
+            </a>
 
-            <!-- Imagen del usuario -->
-            <div class="flex flex-col items-center justify-center space-y-3">
+            <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
+                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium
+                       text-white shadow-sm transition hover:bg-indigo-700">
+                Editar Usuario
+            </a>
+
+        </div>
+
+        <!-- FOTO DEL USUARIO -->
+        <section class="space-y-4">
+
+            <div class="flex flex-col items-center justify-center space-y-3 pt-2">
+
                 <div class="relative h-28 w-28">
 
                     <img src="{{ $usuario->imagen_id && $usuario->imagen
@@ -31,124 +32,130 @@
                             ? asset('storage/' . $usuario->foto)
                             : asset('images/default-avatar.png')) }}"
                         alt="Foto de perfil"
-                        class="h-28 w-28 rounded-full object-cover border-2 border-indigo-100 shadow-sm">
+                        class="h-28 w-28 rounded-full border-2 border-indigo-100 object-cover shadow-sm">
 
                 </div>
+
             </div>
 
+        </section>
 
-        </div>
+        <!-- INFORMACIÓN DEL USUARIO -->
+        <section class="space-y-4">
 
-        <!-- datos user -->
-        <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6 pt-4">
+            <h2 class="border-t border-gray-200 pt-2 text-base font-semibold text-indigo-600">
+                Información del usuario
+            </h2>
 
-            <!-- NOMBRES -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Nombres') }}
-                </label>
+            <div class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->nombres }}
+                <!-- NOMBRES -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Nombres') }}
+                    </label>
+
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->nombres }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- APELLIDOS -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Apellidos') }}
-                </label>
+                <!-- APELLIDOS -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Apellidos') }}
+                    </label>
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->apellidos }}
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->apellidos }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- USUARIO -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Usuario') }}
-                </label>
+                <!-- USUARIO -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Usuario') }}
+                    </label>
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->username }}
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->username }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- ROL -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Rol') }}
-                </label>
+                <!-- ROL -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Rol') }}
+                    </label>
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->rol }}
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->rol }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- TELÉFONO -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Teléfono') }}
-                </label>
+                <!-- TELÉFONO -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Teléfono') }}
+                    </label>
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->telefono ?: 'No registrado' }}
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->telefono ?: 'No registrado' }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- email -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Correo electrónico') }}
-                </label>
+                <!-- CORREO ELECTRÓNICO -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Correo electrónico') }}
+                    </label>
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->email ?: 'No registrado' }}
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->email ?: 'No registrado' }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- ESTADO -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Estado') }}
-                </label>
+                <!-- ESTADO -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Estado') }}
+                    </label>
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->estado ? 'Activo' : 'Inactivo' }}
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->estado ? 'Activo' : 'Inactivo' }}
+                    </div>
                 </div>
-            </div>
 
-            <!-- creado en  -->
-            <div class="sm:col-span-3">
-                <label class="block text-sm font-medium text-gray-700">
-                    {{ __('Fecha de creación') }}
-                </label>
+                <!-- FECHA DE CREACIÓN -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                        {{ __('Fecha de creación') }}
+                    </label>
 
-                <div
-                    class="mt-1 block w-full rounded-md border-gray-300 bg-gray-50
-                           shadow-sm sm:text-sm p-2 border text-gray-700">
-                    {{ $usuario->created_at->format('d/m/Y H:i') }}
+                    <div
+                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
+                                p-2 text-sm text-gray-700 shadow-sm">
+                        {{ $usuario->created_at->format('d/m/Y H:i') }}
+                    </div>
                 </div>
+
             </div>
 
-        </div>
-
-
+        </section>
 
     </div>
 

@@ -28,9 +28,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('/ficha-infantes', FichaInfanteController::class);
     Route::resource('/control-infantes', ControlInfanteController::class);
     Route::post('/control-infantes/{infante}/store', [ControlInfanteController::class, 'store'])->name('infante.stores');
-    Route::resource('marcas', MarcaController::class);
+    Route::resource('marcas', MarcaController::class)
+    ->except(['create', 'edit','show']);
 
-    Route::resource('categorias', CategoriaController::class);
+    Route::resource('categorias', CategoriaController::class)
+    ->except(['create', 'edit','show']);
     Route::resource('clientes', ClienteController::class);
     Route::resource('proveedores', ProveedorController::class)->parameters([
         'proveedores' => 'proveedor'

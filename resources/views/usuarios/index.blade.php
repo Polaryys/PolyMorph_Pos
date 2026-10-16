@@ -8,11 +8,21 @@
     </div>
 
     <!-- mensajes -->
+
+
     @if (session('success'))
-        <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
+        <div id="success-message" class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
             {{ session('success') }}
         </div>
+
+        <script>
+            setTimeout(() => {
+                document.getElementById('success-message')?.remove();
+            }, 3000);
+        </script>
     @endif
+
+
 
     <!-- tabla de usuarios -->
     <div class="bg-white border border-gray-300 overflow-hidden">
@@ -87,13 +97,11 @@
                                 </a>
 
                                 <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST"
-                                    class="inline-block"
-                                    onsubmit="return confirm('¿Deseas eliminar este usuario?')">
+                                    class="inline-block" onsubmit="return confirm('¿Deseas eliminar este usuario?')">
                                     @csrf
                                     @method('DELETE')
 
-                                    <button type="submit"
-                                        class="text-red-600 hover:text-red-900 font-medium">
+                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
                                         Eliminar
                                     </button>
                                 </form>

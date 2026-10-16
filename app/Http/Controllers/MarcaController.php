@@ -21,7 +21,7 @@ class MarcaController extends Controller
      */
     public function create()
     {
-        return view('marcas.create');
+
     }
 
     /**
@@ -45,7 +45,7 @@ class MarcaController extends Controller
      */
     public function show(Marca $marca)
     {
-        return view('marcas.show', compact('marca'));
+
     }
 
     /**
@@ -53,7 +53,7 @@ class MarcaController extends Controller
      */
     public function edit(Marca $marca)
     {
-        return view('marcas.edit', compact('marca'));
+
     }
 
     /**

@@ -54,22 +54,22 @@
                         loading="lazy" class="w-full h-full object-contain">
                 </div>
 
-                {{-- Información y acciones --}}
+                {{-- Info imageny edicion --}}
                 <div class="p-3 border-t border-gray-200">
                     <h3 class="text-sm font-medium text-gray-900 truncate" title="{{ $imagen->nombre }}">
                         {{ $imagen->nombre }}
                     </h3>
 
-                    <p class="text-xs text-gray-500" data-info-imagen
-                        data-src="{{ asset('storage/imagenes/' . $imagen->nombre_archivo) }}">
-                        Calculando dimensiones y peso...
-                    </p>
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <p class="text-xs text-gray-500 min-w-0" data-info-imagen
+                            data-src="{{ asset('storage/imagenes/' . $imagen->nombre_archivo) }}">
+                            Calculando dimensiones y peso...
+                        </p>
 
-                    <div class="flex items-center justify-between gap-2 pt-2 border-t border-gray-100">
                         <button type="button"
                             @click="
-                                const info = $el.closest('.min-w-0').querySelector('[data-info-imagen]');
-                                $dispatch('abrir-edicion-imagen', {
+                            const info = $el.closest('.min-w-0').querySelector('[data-info-imagen]');
+                            $dispatch('abrir-edicion-imagen', {
                                 nombre: {{ Js::from($imagen->nombre) }},
                                 src: {{ Js::from(asset('storage/imagenes/' . $imagen->nombre_archivo)) }},
                                 ancho: info.dataset.ancho || null,
@@ -79,11 +79,12 @@
                                 urlEliminar: {{ Js::from(route('imagenes.destroy', $imagen)) }}
                             })
                         "
-                            class="text-sm font-medium text-indigo-600 transition hover:text-indigo-900">
+                            class="shrink-0 text-sm font-medium text-indigo-600 transition hover:text-indigo-900">
                             Editar
                         </button>
                     </div>
                 </div>
+
             </div>
 
             @if ($loop->last)

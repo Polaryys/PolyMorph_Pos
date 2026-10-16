@@ -27,6 +27,9 @@
                 </button>
 
             </div>
+            <h1 class="ml-3 text-sm font-semibold text-gray-700">
+                Inventario
+            </h1>
 
         </div>
 
