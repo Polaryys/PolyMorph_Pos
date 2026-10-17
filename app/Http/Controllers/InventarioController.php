@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Inventario;
+use App\Models\Presentacion;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
@@ -18,15 +19,24 @@ class InventarioController extends Controller
     public function index()
     {
         $articulos = Inventario::with([
-            'categoria',
             'marca',
-            'presentaciones',
+            'presentaciones' => function ($query) {
+                $query->select(
+                    'id',
+                    'inventario_id',
+                    'codigoSKU',
+                    'codigoBarras',
+                    'nombre',
+                    'precioUnitario'
+                )->where('base', true);
+            },
         ])
             ->latest()
             ->paginate(10);
 
         return view('articulos.index', compact('articulos'));
     }
+
 
     /**
      * Show the form for creating a new resource.

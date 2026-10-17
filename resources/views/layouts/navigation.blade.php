@@ -1,7 +1,8 @@
 @php
 
     $module = match (true) {
-        request()->routeIs('inventario.*', 'marcas.*', 'categorias.*') => 'inventario',
+        request()->routeIs('pos.*') => 'pos',
+        request()->routeIs('inventario.*','articulos.*', 'marcas.*', 'categorias.*') => 'inventario',
         request()->routeIs('clientes.*') => 'clientes',
         request()->routeIs('proveedores.*') => 'proveedores',
         request()->routeIs('profile.*') => 'profile',
@@ -17,7 +18,7 @@
             ['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*'],
         ],
         'inventario' => [
-            ['label' => 'Artículos', 'route' => null, 'disabled' => true],
+            ['label' => 'Artículos', 'route' => 'articulos.index', 'active' => 'articulos.*'],
             ['label' => 'Presentaciones', 'route' => null, 'disabled' => true],
             ['label' => 'Categorías', 'route' => 'categorias.index', 'active' => 'categorias.*'],
             ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],

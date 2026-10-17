@@ -16,7 +16,7 @@
                 Punto de venta
             </x-sidebar-link>
 
-            <x-sidebar-link :href="route('categorias.index')" :active="request()->routeIs('articulos.*','presentaciones.*', 'categorias.*','marcas.*', 'compras.*','ajuste.*', 'movimientos.*')" wire:navigate>
+            <x-sidebar-link :href="route('articulos.index')" :active="request()->routeIs('articulos.*','presentaciones.*', 'categorias.*','marcas.*', 'compras.*','ajuste.*', 'movimientos.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-box class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
