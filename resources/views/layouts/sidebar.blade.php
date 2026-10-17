@@ -9,7 +9,7 @@
     <div class="p-4 flex-1 flex flex-col justify-between overflow-y-auto">
 
         <nav class="space-y-1.5">
-            <x-sidebar-link :href="route('ficha-infantes.index')" :active="request()->routeIs('ficha-infantes.*')" wire:navigate>
+            <x-sidebar-link href="#" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-shopping-cart class="w-5 h-5 shrink-0" />
                 </x-slot:icon>

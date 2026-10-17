@@ -1,7 +1,6 @@
 @php
 
     $module = match (true) {
-        request()->routeIs('ficha-infantes.*') => 'infantes',
         request()->routeIs('inventario.*', 'marcas.*', 'categorias.*') => 'inventario',
         request()->routeIs('clientes.*') => 'clientes',
         request()->routeIs('proveedores.*') => 'proveedores',
@@ -16,10 +15,6 @@
         'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
         'profile' => [
             ['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*'],
-        ],
-        'infantes' => [
-            ['label' => 'Ficha Infantes', 'route' => 'ficha-infantes.index', 'active' => 'ficha-infantes.*'],
-            ['label' => 'Ventas', 'route' => null, 'disabled' => true],
         ],
         'inventario' => [
             ['label' => 'Artículos', 'route' => null, 'disabled' => true],
