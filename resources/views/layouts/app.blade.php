@@ -21,23 +21,16 @@
     <div x-data="{ open: false }" class="min-h-screen flex flex-col">
 
         @include('layouts.sidebar')
-
+        @include('layouts.navigation')
         @include('layouts.top_bar')
 
-        @include('layouts.navigation')
 
-        <div class="flex-1 flex flex-col md:pl-56 pt-16">
 
-            @isset($header)
-                <header class="bg-white border-b border-gray-200/60 shadow-2xs">
-                    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-                        {{ $header }}
-                    </div>
-                </header>
-            @endisset
+        <div class="flex-1 flex flex-col min-h-screen">
+
 
             <main class="flex-1 flex">
-                <div class="flex-1 min-w-0 bg-white overflow-hidden p-5 ml-2.5 mt-2 text-gray-900 border border-gray-200/60">
+                <div class="flex-1 min-w-0 bg-white overflow-hidden p-5 ml-2.5 text-gray-900 border border-gray-200/60">
                     {{ $slot }}
                 </div>
             </main>

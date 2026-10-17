@@ -1,7 +1,5 @@
 <?php
 
-use App\Http\Controllers\ControlInfanteController;
-use App\Http\Controllers\FichaInfanteController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ImagenController;
 use App\Http\Controllers\UserController;
@@ -10,6 +8,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\MetodoPagoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\PresentacionController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -25,9 +24,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::resource('/ficha-infantes', FichaInfanteController::class);
-    Route::resource('/control-infantes', ControlInfanteController::class);
-    Route::post('/control-infantes/{infante}/store', [ControlInfanteController::class, 'store'])->name('infante.stores');
     Route::resource('marcas', MarcaController::class)
     ->except(['create', 'edit','show']);
 
@@ -45,6 +41,8 @@ Route::middleware('auth')->group(function () {
         ->name('imagenes.selector');
     Route::resource('metodos-pago', MetodoPagoController::class)
     ->parameters(['metodos-pago' => 'metodoPago']);
+
+    Route::resource('articulos', PresentacionController::class);
 
 
 

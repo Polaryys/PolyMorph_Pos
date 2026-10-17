@@ -1,5 +1,5 @@
 ﻿<aside :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
-    class="fixed inset-y-0 left-0 w-60 z-50 bg-white border-r border-gray-200 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0">
+    class="fixed inset-y-0 left-0 w-60 z-30 bg-white border-r border-gray-200 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0">
 
     <div class="flex justify-center items-center h-32 px-4 pt-16 pb-12 border-b border-gray-100">
         <img src="{{ asset('icon_sistema.png') }}" alt="Logo Sistema" class="h-24 w-auto object-contain drop-shadow-sm">
@@ -16,7 +16,7 @@
                 Punto de venta
             </x-sidebar-link>
 
-            <x-sidebar-link :href="route('categorias.index')" :active="request()->routeIs('categorias.*')" wire:navigate>
+            <x-sidebar-link :href="route('categorias.index')" :active="request()->routeIs('articulos.*','presentaciones.*', 'categorias.*','marcas.*', 'compras.*','ajuste.*', 'movimientos.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-box class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
@@ -115,6 +115,6 @@
     </div>
 </aside>
 
-<!-- Capa oscura móvil -->
+<!-- fondo oscuro en movil -->
 <div x-show="open" @click="open = false" x-transition.opacity
     class="fixed inset-0 z-40 bg-gray-900/40 backdrop-blur-sm md:hidden"></div>

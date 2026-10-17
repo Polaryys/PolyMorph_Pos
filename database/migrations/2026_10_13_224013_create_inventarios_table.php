@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('inventarios', function (Blueprint $table) {
+        Schema::create('inventario', function (Blueprint $table) {
             $table->id();
             $table->enum('tipo', ['PRODUCTO', 'SERVICIO']);
             $table->decimal('costoPromedioUnitario', 10, 2)->nullable()->default(0);
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('inventarios');
+        Schema::dropIfExists('inventario');
     }
 };

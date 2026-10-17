@@ -32,7 +32,7 @@
             ['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']
         ],
         'usuarios' => [
-            ['label' => 'Usuarios', 'route' => 'usuarios.index', 'active' => 'usuarios.*']
+            ['label' => 'Colaboradores', 'route' => 'usuarios.index', 'active' => 'usuarios.*']
         ],
         'medios' => [
             ['label' => 'Imagenes', 'route' => 'imagenes.index', 'active' => 'imagenes.*']
@@ -44,10 +44,10 @@
     ];
 @endphp
 
-<nav x-data="{ open: false }" class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-200">
+<div class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-200">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-14">
+        <div class="flex justify-between h-12">
             <div class="flex w-full">
 
                 <div class="flex space-x-8 -my-px ms-2 sm:ms-10 whitespace-nowrap overflow-x-auto no-scrollbar">

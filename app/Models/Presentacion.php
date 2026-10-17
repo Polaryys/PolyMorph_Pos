@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Presentacion extends Model
 {
+    protected $table = 'presentaciones';
+
     protected $fillable = [
         'inventario_id',
         'codigoSKU',
