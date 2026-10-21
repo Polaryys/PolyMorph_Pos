@@ -1,3 +1,4 @@
+<template x-teleport="body">
 <div x-data="{
     abierto: false,
     imagen: {},
@@ -135,3 +136,4 @@
         </div>
     </div>
 </div>
+</template>

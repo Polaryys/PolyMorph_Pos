@@ -120,66 +120,69 @@
         </div>
 
         <!-- MODAL CREAR / EDITAR -->
-        <div x-cloak x-show="abierto" x-cloak x-transition.opacity
-            class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" @click.self="abierto = false">
-            <div x-show="abierto" x-transition
-                class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl" role="dialog"
-                aria-modal="true" aria-labelledby="titulo-modal-marca">
+        <template x-teleport="body">
+            <div x-cloak x-show="abierto" x-cloak x-transition.opacity
+                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+                @click.self="abierto = false">
+                <div x-show="abierto" x-transition
+                    class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl" role="dialog"
+                    aria-modal="true" aria-labelledby="titulo-modal-marca">
 
-                <!-- TÍTULO -->
-                <h2 id="titulo-modal-marca"
-                    class="mb-5 border-b border-gray-200 pb-3 text-lg font-semibold text-indigo-600"
-                    x-text="modo === 'editar' ? 'Editar Marca' : 'Registrar Nueva Marca'">
-                </h2>
+                    <!-- TÍTULO -->
+                    <h2 id="titulo-modal-marca"
+                        class="mb-5 border-b border-gray-200 pb-3 text-lg font-semibold text-indigo-600"
+                        x-text="modo === 'editar' ? 'Editar Marca' : 'Registrar Nueva Marca'">
+                    </h2>
 
-                <!-- FORMULARIO -->
-                <form :action="action" method="POST" class="space-y-4">
-                    @csrf
+                    <!-- FORMULARIO -->
+                    <form :action="action" method="POST" class="space-y-4">
+                        @csrf
 
-                    <input type="hidden" name="modal_mode" :value="modo">
-                    <input type="hidden" name="form_action" :value="action">
-                    <input type="hidden" name="form_method" :value="editar ? 'PUT' : 'POST'">
+                        <input type="hidden" name="modal_mode" :value="modo">
+                        <input type="hidden" name="form_action" :value="action">
+                        <input type="hidden" name="form_method" :value="editar ? 'PUT' : 'POST'">
 
-                    <template x-if="editar">
-                        <input type="hidden" name="_method" value="PUT">
-                    </template>
+                        <template x-if="editar">
+                            <input type="hidden" name="_method" value="PUT">
+                        </template>
 
-                    <div>
-                        <label for="nombre" class="mb-1 block text-sm font-medium text-gray-700">
-                            Nombre de la marca
-                            <span class="text-red-500">*</span>
-                        </label>
+                        <div>
+                            <label for="nombre" class="mb-1 block text-sm font-medium text-gray-700">
+                                Nombre de la marca
+                                <span class="text-red-500">*</span>
+                            </label>
 
-                        <input type="text" id="nombre" name="nombre" x-model="nombre" maxlength="55" required
-                            autofocus
-                            class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm
+                            <input type="text" id="nombre" name="nombre" x-model="nombre" maxlength="55" required
+                                autofocus
+                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm
                                    focus:border-indigo-500 focus:ring-indigo-500
                                    @error('nombre') border-red-500 @enderror">
 
-                        @error('nombre')
-                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                            @error('nombre')
+                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            @enderror
+                        </div>
 
-                    <!-- BOTONES -->
-                    <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+                        <!-- BOTONES -->
+                        <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
 
-                        <button type="button" @click="abierto = false"
-                            class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium
+                            <button type="button" @click="abierto = false"
+                                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium
                                    text-gray-700 transition hover:bg-gray-50">
-                            Cancelar
-                        </button>
+                                Cancelar
+                            </button>
 
-                        <button type="submit"
-                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium
+                            <button type="submit"
+                                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium
                                    text-white shadow-sm transition hover:bg-indigo-700"
-                            x-text="modo === 'editar' ? 'Guardar cambios' : 'Guardar Marca'">
-                        </button>
+                                x-text="modo === 'editar' ? 'Guardar cambios' : 'Guardar Marca'">
+                            </button>
 
-                    </div>
-                </form>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </div>
+        </template>
 
     </div>
 </x-app-layout>

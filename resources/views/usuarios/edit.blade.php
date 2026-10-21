@@ -99,6 +99,5 @@
         });
     </script>
 
-    @include('imagenes.partials.selector')
 
 </x-app-layout>
