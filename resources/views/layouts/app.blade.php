@@ -18,28 +18,25 @@
 </head>
 
 <body class="font-sans antialiased bg-gray-100">
-    <div x-data="{ open: false }" class="min-h-screen flex flex-col">
+    <div x-data="{ open: false }" class="h-screen flex flex-col overflow-hidden">
 
         @include('layouts.sidebar')
         @include('layouts.navigation')
         @include('layouts.top_bar')
 
+        <div class="flex-1 flex flex-col min-h-0 bg-white">
 
-
-        <div class="flex-1 flex flex-col min-h-screen">
-
-
-            <main class="flex-1 flex">
-                <div class="flex-1 min-w-0 bg-white overflow-hidden p-5 ml-2.5 text-gray-900 border border-gray-200/60">
+            <main class="flex-1 flex min-h-0 overflow-hidden">
+                <div
+                    class="flex-1 min-w-0 bg-white h-[calc(100vh-6rem)] overflow-y-auto p-5 ml-2.5 text-gray-900 border border-gray-200/60">
                     {{ $slot }}
                 </div>
             </main>
 
         </div>
-
     </div>
-    @include('imagenes.partials.selector')
 
+    @include('imagenes.partials.selector')
 </body>
 
 </html>
