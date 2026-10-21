@@ -9,7 +9,7 @@
         x-cloak
         x-show="abierto"
         x-transition.opacity
-        class="fixed inset-0 z-50 flex items-center justify-center bg-gray-900/50 p-4"
+        class="fixed inset-0 z-[100] flex items-center justify-center bg-gray-900/50 p-4"
         @click.self="cerrar()"
     >
         <div

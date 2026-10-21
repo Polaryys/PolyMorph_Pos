@@ -134,7 +134,7 @@
 
         <!-- modal de edicion y creacion -->
         <div x-cloak x-show="abierto" x-transition.opacity
-            class="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4" @click.self="abierto = false">
+            class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4" @click.self="abierto = false">
 
             <div x-show="abierto" x-transition
                 class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl" role="dialog"

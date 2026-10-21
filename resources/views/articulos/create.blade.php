@@ -27,8 +27,54 @@
             <!-- datos del principales del artículo -->
             <div class="space-y-4">
                 <h3 class="text-lg font-semibold leading-6 text-indigo-700 flex items-center gap-2">
-                    Datos del Cliente
+                    Crear Producto / Servicio
                 </h3>
+                <!-- IMAGEN DE LA PRESENTACIÓN BASE -->
+                <div class="sm:col-span-6">
+                    <label class="block text-sm font-medium text-gray-700">
+                        Imagen del artículo
+                    </label>
+
+                    <div class="mt-2 flex items-center gap-4">
+
+                        <!-- Vista previa -->
+                        <div class="relative h-24 w-24 shrink-0">
+                            <img id="imagen-preview" src="{{ asset('images/default-avatar.png') }}"
+                                alt="Imagen del artículo"
+                                class="h-24 w-24 rounded-lg border border-gray-200 object-cover shadow-sm">
+
+                            <!-- Abrir galería -->
+                            <button type="button"
+                                onclick="window.dispatchEvent(new CustomEvent('abrir-selector-imagen'))"
+                                title="Seleccionar imagen de la galería" aria-label="Seleccionar imagen de la galería"
+                                class="absolute -bottom-2 -right-2 rounded-full bg-indigo-600 p-2
+                       text-white shadow-md transition hover:bg-indigo-700">
+
+                                <x-lucide-camera class="h-4 w-4" />
+                            </button>
+                        </div>
+
+                        <div class="flex flex-col gap-1">
+                            <p class="text-sm text-gray-600">
+                                Selecciona una imagen para identificar el artículo.
+                            </p>
+
+                            <button type="button"
+                                onclick="window.dispatchEvent(new CustomEvent('abrir-selector-imagen'))"
+                                class="w-fit text-sm font-medium text-indigo-600 hover:text-indigo-800">
+                                Elegir de la galería
+                            </button>
+                        </div>
+
+                    </div>
+
+                    <!-- Identificador de la imagen seleccionada -->
+                    <input type="hidden" id="imagen_id" name="imagen_id" value="{{ old('imagen_id') }}">
+
+                    @error('imagen_id')
+                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                    @enderror
+                </div>
                 <!-- tipo -->
                 <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
                     <div class="sm:col-span-3">
@@ -64,140 +110,142 @@
                         @enderror
                     </div>
 
-                    <!-- NIT -->
+                    <!-- Marca -->
                     <div class="sm:col-span-3">
-                        <label for="nit" class="block text-sm font-medium text-gray-700">
-                            NIT <span class="text-red-500">*</span>
+                        <label for="marca_id" class="block text-sm font-medium text-gray-700">
+                            Marca
                         </label>
 
-                        <input type="text" id="nit" name="nit" maxlength="15"
-                            value="{{ old('nit') }} CF"
+                        <select id="marca_id" name="marca_id"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                           @error('nit') border-red-500 @enderror">
+                            focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                            @error('marca_id') border-red-500 @enderror">
 
-                        @error('nit')
-                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                        @enderror
-                    </div>
+                            <option value="">Seleccionar marca</option>
 
-                    <!-- CLASIFICACIÓN -->
-                    <div class="sm:col-span-3">
-                        <label for="clasificacion" class="block text-sm font-medium text-gray-700">
-                            Clasificación <span class="text-red-500">*</span>
-                        </label>
+                            @foreach ($marcas as $marca)
+                                <option value="{{ $marca->id }}"
+                                    {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
+                                    {{ $marca->nombre }}
+                                </option>
+                            @endforeach
 
-                        <select id="clasificacion" name="clasificacion"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-           @error('clasificacion') border-red-500 @enderror">
-                            <option value="Mayorista"
-                                {{ old('clasificacion', 'Minorista') == 'Mayorista' ? 'selected' : '' }}>
-                                Mayorista
-                            </option>
-
-                            <option value="Minorista"
-                                {{ old('clasificacion', 'Minorista') == 'Minorista' ? 'selected' : '' }}>
-                                Minorista
-                            </option>
                         </select>
 
-                        @error('clasificacion')
+                        @error('categoria_id')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- NOMBRES -->
+
+                    <!-- CATEGORÍA -->
                     <div class="sm:col-span-3">
-                        <label for="nombres" class="block text-sm font-medium text-gray-700">
-                            Nombres <span class="text-red-500">*</span>
+                        <label for="categoria_id" class="block text-sm font-medium text-gray-700">
+                            Categoría
                         </label>
 
-                        <input type="text" id="nombres" name="nombres" maxlength="100"
-                            value="{{ old('nombres') }}"
+                        <select id="categoria_id" name="categoria_id"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                           @error('nombres') border-red-500 @enderror">
+                            focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                            @error('categoria_id') border-red-500 @enderror">
 
-                        @error('nombres')
+                            <option value="">Seleccionar categoría</option>
+
+                            @foreach ($categorias as $categoria)
+                                <option value="{{ $categoria->id }}"
+                                    {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
+                                    {{ $categoria->nombre }}
+                                </option>
+                            @endforeach
+
+                        </select>
+
+                        @error('categoria_id')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- APELLIDOS -->
+
+                    <!-- UMBRAL DE INVENTARIO -->
                     <div class="sm:col-span-3">
-                        <label for="apellidos" class="block text-sm font-medium text-gray-700">
-                            Apellidos
+                        <label for="umbral" class="block text-sm font-medium text-gray-700">
+                            Umbral de inventario <span class="text-red-500">*</span>
                         </label>
 
-                        <input type="text" id="apellidos" name="apellidos" maxlength="100"
-                            value="{{ old('apellidos') }}"
+                        <input type="number" id="umbral" name="umbral" min="0" step="1"
+                            value="{{ old('umbral', 0) }}"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                           @error('apellidos') border-red-500 @enderror">
+                            focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                            @error('umbral') border-red-500 @enderror">
 
-                        @error('apellidos')
+                        @error('umbral')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
-                </div>
-            </div>
 
-
-            <!-- info contacto -->
-            <div class="pt-4 space-y-4">
-                <h3 class="text-lg font-semibold leading-6 text-indigo-700 flex items-center gap-2">
-                    Información de Contacto
-                </h3>
-
-                <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
-
-                    <!-- TELÉFONO -->
+                    <!-- CÓDIGO SKU -->
                     <div class="sm:col-span-3">
-                        <label for="telefono" class="block text-sm font-medium text-gray-700">
-                            Teléfono
+                        <label for="codigoSKU" class="block text-sm font-medium text-gray-700">
+                            Código SKU <span class="text-red-500">*</span>
                         </label>
 
-                        <input type="text" id="telefono" name="telefono" maxlength="15"
-                            value="{{ old('telefono') }}"
+                        <input type="text" id="codigoSKU" name="codigoSKU" maxlength="50"
+                            value="{{ old('codigoSKU') }}"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                           @error('telefono') border-red-500 @enderror">
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                                @error('codigoSKU') border-red-500 @enderror">
 
-                        @error('telefono')
+                        @error('codigoSKU')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- CORREO -->
+                    <!-- CÓDIGO DE BARRAS -->
                     <div class="sm:col-span-3">
-                        <label for="correo" class="block text-sm font-medium text-gray-700">
-                            Correo electrónico
+                        <label for="codigoBarras" class="block text-sm font-medium text-gray-700">
+                            Código de barras
                         </label>
 
-                        <input type="email" id="correo" name="correo" maxlength="100" value="{{ old('correo') }}"
+                        <input type="text" id="codigoBarras" name="codigoBarras" maxlength="50"
+                            value="{{ old('codigoBarras') }}"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                           @error('correo') border-red-500 @enderror">
+                                focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                                @error('codigoBarras') border-red-500 @enderror">
 
-                        @error('correo')
+                        @error('codigoBarras')
+                            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
+                        @enderror
+                    </div>
+                    <!-- NOMBRE -->
+                    <div class="sm:col-span-3">
+                        <label for="nombre" class="block text-sm font-medium text-gray-700">
+                            Nombre <span class="text-red-500">*</span>
+                        </label>
+
+                        <input type="text" id="nombre" name="nombre" maxlength="100"
+                            value="{{ old('nombre') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                    focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                    @error('nombre') border-red-500 @enderror">
+
+                        @error('nombre')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <!-- NOTAS -->
+                    <!-- DETALLE -->
                     <div class="sm:col-span-6">
-                        <label for="notas" class="block text-sm font-medium text-gray-700">
-                            Notas
+                        <label for="detalle" class="block text-sm font-medium text-gray-700">
+                            Detalle
                         </label>
 
-                        <textarea id="notas" name="notas" maxlength="255" rows="3"
+                        <textarea id="detalle" name="detalle" rows="3"
                             class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                           focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                           @error('notas') border-red-500 @enderror">{{ old('notas') }}</textarea>
+                    focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                    @error('detalle') border-red-500 @enderror">{{ old('detalle') }}</textarea>
 
-                        @error('notas')
+                        @error('detalle')
                             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
                         @enderror
                     </div>
@@ -208,5 +256,19 @@
         </div>
 
     </form>
+
+    <script>
+        window.addEventListener('imagen-seleccionada', function(event) {
+            const imagen = event.detail;
+
+            if (!imagen || imagen.id == null || !imagen.url) {
+                console.error('La imagen recibida no contiene los datos esperados.');
+                return;
+            }
+
+            document.getElementById('imagen_id').value = imagen.id;
+            document.getElementById('imagen-preview').src = imagen.url;
+        });
+    </script>
 
 </x-app-layout>

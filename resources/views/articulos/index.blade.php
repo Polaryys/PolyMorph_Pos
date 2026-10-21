@@ -24,37 +24,28 @@
     @endif
 
     <!-- TABLA -->
-    <div class="bg-white border border-gray-200 overflow-hidden">
+    <div class="bg-white border rounded border-gray-300 overflow-hidden">
         <div class="overflow-x-auto scrollbar-thin">
-            <table class="w-full table-fixed text-left border-collapse">
-                <colgroup>
-                    <col class="w-[12%]">
-                    <col class="w-[16%]">
-                    <col class="w-[24%]">
-                    <col class="w-[12%]">
-                    <col class="w-[12%]">
-                    <col class="w-[10%]">
-                    <col class="w-[14%]">
-                </colgroup>
+            <table class="min-w-[1100px] w-full table-auto text-left border-collapse">
                 <thead
-                    class="bg-gray-50 border-b border-gray-200 text-xs font-semibold
-                               text-gray-500 uppercase tracking-wider">
+                    class="border-b border-gray-300 text-sm font-semibold
+                               text-black  tracking-wider bg-gray-200">
                     <tr>
-                        <th class="px-6 py-2.5 text-left whitespace-nowrap">SKU</th>
-                        <th class="px-6 py-2.5 text-left whitespace-nowrap">Código de Barras</th>
-                        <th class="px-6 py-2.5 text-left whitespace-nowrap">
+                        <th class="px-4 py-2.5 text-left whitespace-nowrap">SKU</th>
+                        <th class="py-2.5 text-left whitespace-nowrap">Código de Barras</th>
+                        <th class="px-2 py-2.5 text-left whitespace-nowrap">
                             Nombre
                         </th>
-                        <th class="px-6 py-2.5 text-center whitespace-nowrap">
+                        <th class=" py-2.5 text-center whitespace-nowrap">
                             Marca
                         </th>
-                        <th class="px-6 py-2.5 text-center whitespace-nowrap">
+                        <th class=" py-2.5 text-center whitespace-nowrap">
                             Precio Venta
                         </th>
-                        <th class="px-6 py-2.5 text-center whitespace-nowrap">
+                        <th class=" py-2.5 text-center whitespace-nowrap">
                             Cantidad
                         </th>
-                        <th class="px-6 py-2.5 text-center">Acciones</th>
+                        <th class="px-4 py-2.5 text-center whitespace-nowrap">Acciones</th>
                     </tr>
                 </thead>
 
@@ -63,55 +54,57 @@
                         <tr class="hover:bg-gray-50 transition-colors">
 
                             <!-- SKU -->
-                            <td class="px-6 py-3 font-medium text-gray-900">
+                            <td class="px-4 py-3 font-medium text-blue-700 whitespace-nowrap">
                                 {{ $articulo->presentaciones->first()?->codigoSKU }}
                             </td>
 
                             <!-- BARCODE -->
-                            <td class="px-6 py-3 font-medium text-gray-900">
+                            <td class=" py-3 font-medium text-gray-500 whitespace-nowrap">
                                 {{ $articulo->presentaciones->first()?->codigoBarras }}
                             </td>
 
                             <!-- NAME -->
-                            <td class="px-6 py-3 font-medium text-gray-900">
+                            <td class="px-2 py-3 font-medium text-gray-900 whitespace-nowrap">
                                 {{ $articulo->presentaciones->first()?->nombre }}
                             </td>
 
                             <!-- MARCA -->
-                            <td class="px-6 py-3 font-medium text-gray-900">
+                            <td class=" py-3 text-center font-medium text-gray-900 whitespace-nowrap">
                                 {{ $articulo->marca?->nombre }}
                             </td>
 
-                            <!-- CANTIDAD -->
-                            <td class="px-6 py-3 text-center font-medium text-gray-900">
-                                {{ $articulo->cantidad }}
+                            <!-- PRECIO VENTA -->
+                            <td class=" py-3 text-center font-medium text-gray-900 whitespace-nowrap">
+                                Q
+                                {{ number_format((float) ($articulo->presentaciones->first()?->precioUnitario ?? 0), 2) }}
                             </td>
 
-                            <!-- PRECIO VENTA -->
-                            <td class="px-6 py-3 text-center font-medium text-gray-900">
-                                Q{{ number_format((float) ($articulo->presentaciones->first()?->precioUnitario ?? 0), 2) }}
+                            <!-- CANTIDAD -->
+                            <td class=" py-3 text-center font-medium text-gray-900 whitespace-nowrap ">
+                                {{ $articulo->cantidad }}
                             </td>
 
                             <!-- ACCIONES -->
 
-                            <td class="px-3 py-3">
-                                <div class="flex items-center justify-center gap-3">
+                            <td class="px-4 py-3 whitespace-nowrap">
+                                <div class="flex items-center justify-center gap-3 ">
 
-                                    {{-- Ver --}}
+
+                                    <!-- Ver -->
                                     <a href="{{ route('articulos.show', $articulo) }}" wire:navigate
                                         title="Ver artículo" aria-label="Ver artículo"
-                                        class="text-gray-500 hover:text-indigo-600 transition">
-                                        <i data-lucide="eye" class="w-5 h-5"></i>
+                                        class="text-gray-500 hover:text-blue-600 transition">
+                                        <x-lucide-eye class="w-5 h-5" />
                                     </a>
 
-                                    {{-- Editar --}}
+                                    <!-- Editar -->
                                     <a href="{{ route('articulos.edit', $articulo) }}" wire:navigate
                                         title="Editar artículo" aria-label="Editar artículo"
-                                        class="text-gray-500 hover:text-indigo-600 transition">
-                                        <i data-lucide="pencil" class="w-5 h-5"></i>
+                                        class="text-gray-500 hover:text-green-600 transition">
+                                        <x-lucide-pencil class="w-5 h-5" />
                                     </a>
 
-                                    {{-- Eliminar --}}
+                                    <!-- Eliminar -->
                                     <form action="{{ route('articulos.destroy', $articulo) }}" method="POST"
                                         onsubmit="return confirm('¿Deseas eliminar este artículo?')">
                                         @csrf
@@ -119,9 +112,10 @@
 
                                         <button type="submit" title="Eliminar artículo" aria-label="Eliminar artículo"
                                             class="text-gray-500 hover:text-red-600 transition">
-                                            <i data-lucide="trash-2" class="w-5 h-5"></i>
+                                            <x-lucide-trash-2 class="w-5 h-5" />
                                         </button>
                                     </form>
+
 
                                 </div>
                             </td>
@@ -136,6 +130,12 @@
                     @endforelse
                 </tbody>
             </table>
+            <!-- PAGINACIÓN -->
+                @if ($articulos->hasPages())
+                    <div class="px-5 py-2 border-t border-gray-200">
+                        {{ $articulos->links() }}
+                    </div>
+                @endif
 
 
         </div>

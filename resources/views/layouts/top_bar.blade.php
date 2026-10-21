@@ -27,7 +27,7 @@
 
 @endphp
 
-<nav class="fixed top-0 left-0 right-0 md:left-56 md:right-0 z-40 bg-white">
+<nav class="fixed top-0 left-0 right-0 md:left-56 md:right-0 z-50 bg-white">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center h-12 gap-3">
 

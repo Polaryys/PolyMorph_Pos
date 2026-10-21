@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use App\Models\Categoria;
@@ -27,7 +26,8 @@ class InventarioController extends Controller
                     'codigoSKU',
                     'codigoBarras',
                     'nombre',
-                    'precioUnitario'
+                    'precioUnitario',
+                    'imagen_id'
                 )->where('base', true);
             },
         ])
@@ -98,6 +98,23 @@ class InventarioController extends Controller
                 'nullable',
                 'string',
             ],
+            'ubicacion' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'precioUnitario' => [
+                Rule::requiredIf($request->input('tipo') === 'SERVICIO'),
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+            'precioUnitarioDocena' => null,
+            'precioUnitarioCiento' => null,
+            'fecha_vencimiento' => [
+                'nullable',
+                'date',
+            ],
             'imagen_id' => [
                 'nullable',
                 'exists:imagenes,id',
@@ -121,8 +138,11 @@ class InventarioController extends Controller
                 'nombre' => $datos['nombre'],
                 'detalle' => $datos['detalle'] ?? null,
                 'factor' => 1,
+                'ubicacion' => $datos['ubicacion'] ?? null,
                 'base' => true,
+                'precioUnitario' => $datos['precioUnitario'],
                 'imagen_id' => $datos['imagen_id'] ?? null,
+                'fecha_vencimiento' => $datos['fecha_vencimiento'] ?? null,
                 'estado' => true,
             ]);
         });

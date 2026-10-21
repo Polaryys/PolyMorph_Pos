@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('nombre', 100);
             $table->text('detalle')->nullable();
             $table->integer('factor')->default(1);
+            $table->string('ubicacion', 100)->nullable();
             $table->boolean('base');
             $table->decimal('precioUnitario', 10, 2)->default(0);
             $table->decimal('precioUnitarioDocena', 10, 2)->nullable();
@@ -28,6 +29,7 @@ return new class extends Migration
                 ->nullable()
                 ->constrained('imagenes')
                 ->onDelete('set null');
+            $table->date('fecha_vencimiento')->nullable();
             $table->boolean('estado')->default(true);
             $table->timestamps();
         });

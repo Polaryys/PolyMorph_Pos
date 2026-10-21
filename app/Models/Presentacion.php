@@ -16,12 +16,14 @@ class Presentacion extends Model
         'nombre',
         'detalle',
         'factor',
+        'ubicacion',
         'base',
         'precioUnitario',
         'precioUnitarioDocena',
         'precioUnitarioCiento',
         'imagen_id',
-        'estado',
+        'fecha_vencimiento',
+        'estado'
     ];
 
     protected function casts(): array
@@ -32,6 +34,7 @@ class Presentacion extends Model
             'precioUnitario' => 'decimal:2',
             'precioUnitarioDocena' => 'decimal:2',
             'precioUnitarioCiento' => 'decimal:2',
+            'fecha_vencimiento' => 'date',
             'estado' => 'boolean',
         ];
     }

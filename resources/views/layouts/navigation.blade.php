@@ -45,7 +45,7 @@
     ];
 @endphp
 
-<div class="fixed top-12 left-0 right-0 md:left-56 z-30 bg-white border-b border-gray-200">
+<div class="fixed top-12 left-0 right-0 md:left-56 z-20 bg-white border-b border-gray-200">
 
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-12">

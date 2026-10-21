@@ -1,5 +1,8 @@
-﻿<aside :class="{ 'translate-x-0': open, '-translate-x-full': !open }"
-    class="fixed inset-y-0 left-0 w-60 z-30 bg-white border-r border-gray-200 flex flex-col transform -translate-x-full transition-transform duration-300 ease-in-out md:translate-x-0">
+﻿<aside
+    class="fixed inset-y-0 left-0 w-60 z-40 bg-white border-r border-gray-200
+           flex flex-col transform transition-transform duration-300 ease-in-out
+           -translate-x-full md:translate-x-0"
+    :class="{ 'translate-x-0': open, '-translate-x-full': !open }">
 
     <div class="flex justify-center items-center h-32 px-4 pt-16 pb-12 border-b border-gray-100">
         <img src="{{ asset('icon_sistema.png') }}" alt="Logo Sistema" class="h-24 w-auto object-contain drop-shadow-sm">
@@ -16,7 +19,15 @@
                 Punto de venta
             </x-sidebar-link>
 
-            <x-sidebar-link :href="route('articulos.index')" :active="request()->routeIs('articulos.*','presentaciones.*', 'categorias.*','marcas.*', 'compras.*','ajuste.*', 'movimientos.*')" wire:navigate>
+            <x-sidebar-link :href="route('articulos.index')" :active="request()->routeIs(
+                'articulos.*',
+                'presentaciones.*',
+                'categorias.*',
+                'marcas.*',
+                'compras.*',
+                'ajuste.*',
+                'movimientos.*',
+            )" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-box class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
@@ -81,7 +92,7 @@
                 <div class="shrink-0">
                     @if ($usuarioActual->imagen_id && $usuarioActual->imagen)
                         <img src="{{ asset('storage/imagenes/' . $usuarioActual->imagen->nombre_archivo) }}"
-                            alt="Foto de perfil" class="w-8 h-8 rounded-full object-cover border border-indigo-100">
+                            alt="Foto de perfil" class="w-9 h-9 rounded-full object-cover border border-indigo-100">
                     @else
                         <div
                             class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold text-xs">
@@ -90,10 +101,10 @@
                     @endif
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="truncate font-semibold leading-tight">
+                    <p class="truncate font-semibold leading-tight text-base">
                         {{ Auth::user()->username }}
                     </p>
-                    <p class="text-xs text-gray-400 truncate">
+                    <p class="text-sm text-gray-400 truncate">
                         {{ Auth::user()->rol }}
                     </p>
                 </div>
@@ -115,6 +126,11 @@
     </div>
 </aside>
 
-<!-- fondo oscuro en movil -->
-<div x-show="open" @click="open = false" x-transition.opacity
-    class="fixed inset-0 z-40 bg-gray-900/40 backdrop-blur-sm md:hidden"></div>
+<!-- Fondo oscuro en móvil -->
+<div
+    x-cloak
+    x-show="open"
+    @click="open = false"
+    x-transition.opacity
+    class="fixed inset-0 z-30 bg-gray-900/40 backdrop-blur-sm md:hidden">
+</div>

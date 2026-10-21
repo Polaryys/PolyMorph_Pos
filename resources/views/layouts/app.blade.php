@@ -38,6 +38,8 @@
         </div>
 
     </div>
+    @include('imagenes.partials.selector')
+
 </body>
 
 </html>
