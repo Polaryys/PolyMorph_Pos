@@ -8,6 +8,7 @@ use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\MetodoPagoController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProveedorController;
+use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\PresentacionController;
 use Illuminate\Support\Facades\Route;
 
@@ -42,7 +43,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('metodos-pago', MetodoPagoController::class)
     ->parameters(['metodos-pago' => 'metodoPago']);
 
-    Route::resource('articulos', PresentacionController::class);
+    Route::resource('articulos', InventarioController::class);
 
 
 

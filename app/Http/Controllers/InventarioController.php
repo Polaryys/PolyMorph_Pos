@@ -57,6 +57,7 @@ class InventarioController extends Controller
      */
     public function store(Request $request)
     {
+
         $datos = $request->validate([
             'tipo' => [
                 'required',
@@ -109,8 +110,8 @@ class InventarioController extends Controller
                 'numeric',
                 'min:0',
             ],
-            'precioUnitarioDocena' => null,
-            'precioUnitarioCiento' => null,
+            'precioUnitarioDocena' => ['nullable', 'numeric', 'min:0'],
+            'precioUnitarioCiento' => ['nullable', 'numeric', 'min:0'],
             'fecha_vencimiento' => [
                 'nullable',
                 'date',
@@ -140,7 +141,7 @@ class InventarioController extends Controller
                 'factor' => 1,
                 'ubicacion' => $datos['ubicacion'] ?? null,
                 'base' => true,
-                'precioUnitario' => $datos['precioUnitario'],
+                'precioUnitario' => $datos['precioUnitario'] ?? 0,
                 'imagen_id' => $datos['imagen_id'] ?? null,
                 'fecha_vencimiento' => $datos['fecha_vencimiento'] ?? null,
                 'estado' => true,
