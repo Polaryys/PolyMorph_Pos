@@ -28,7 +28,7 @@
 
             <main class="flex-1 flex min-h-0 overflow-hidden">
                 <div
-                    class="flex-1 min-w-0 bg-white h-[calc(100vh-6rem)] overflow-y-auto p-5 ml-2.5 text-gray-900 border border-gray-200/60">
+                    class="flex-1 min-w-0 bg-white h-[calc(100vh-6rem)] overflow-y-auto p-5 text-gray-900 border border-gray-200/26">
                     {{ $slot }}
                 </div>
             </main>

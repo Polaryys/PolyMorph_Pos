@@ -51,7 +51,7 @@
             </div>
 
             <div class="flex items-end gap-3 min-w-0 self-stretch">
-                <h1 class=" flex items-end text-3xl font-semibold text-gray-800 whitespace-nowrap">
+                <h1 class=" flex items-end text-3xl font-semibold text-gray-700 whitespace-nowrap">
                     {{ $tituloModulo }}
                 </h1>
             </div>

@@ -1,15 +1,18 @@
 ﻿<aside
-    class="fixed inset-y-0 left-0 w-60 z-40 bg-white border-r border-gray-200
+    class="fixed inset-y-0 left-0 w-56 z-40 bg-slate-900 border-r border-gray-200
            flex flex-col transform transition-transform duration-300 ease-in-out
            -translate-x-full md:translate-x-0"
     :class="{ 'translate-x-0': open, '-translate-x-full': !open }">
 
-    <div class="flex justify-center items-center h-32 px-4 pt-16 pb-12 border-b border-gray-100">
-        <img src="{{ asset('icon_sistema.png') }}" alt="Logo Sistema" class="h-24 w-auto object-contain drop-shadow-sm">
+    <div class="relative flex justify-center items-center h-32 px-4 py-4">
+
+        <x-icon-sistema class="h-24 w-auto shrink-0 text-indigo-500 drop-shadow-sm transition-colors" />
+
+        <div class="absolute bottom-0 left-4 right-4 h-[1px] bg-slate-800"></div>
     </div>
 
     <!-- sidebar principal -->
-    <div class="p-4 flex-1 flex flex-col justify-between overflow-y-auto">
+    <div class="p-3 flex-1 flex flex-col justify-between overflow-y-auto">
 
         <nav class="space-y-1.5">
             <x-sidebar-link href="#" wire:navigate>
@@ -76,13 +79,13 @@
                 Configuración
             </x-sidebar-link>
         </nav>
-        <div class="pt-4 border-t border-gray-100 space-y-1">
+        <div class="pt-3 border-t border-gray-800 space-y-1">
 
             <!-- user -->
             <a href="{{ route('profile.show') }}" wire:navigate @class([
-                'flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors',
-                'bg-indigo-50 text-indigo-700' => request()->routeIs('profile.*'),
-                'text-gray-600 hover:text-gray-900 hover:bg-gray-100' => !request()->routeIs(
+                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
+                'bg-indigo-600 text-white shadow-sm' => request()->routeIs('profile.*'),
+                'text-slate-300 hover:bg-slate-800/60 hover:text-white' => !request()->routeIs(
                     'profile.*'),
             ])>
                 @php
@@ -92,30 +95,30 @@
                 <div class="shrink-0">
                     @if ($usuarioActual->imagen_id && $usuarioActual->imagen)
                         <img src="{{ asset('storage/imagenes/' . $usuarioActual->imagen->nombre_archivo) }}"
-                            alt="Foto de perfil" class="w-9 h-9 rounded-full object-cover border border-indigo-100">
+                            alt="Foto de perfil" class="w-9 h-9 rounded-full object-cover border border-slate-700">
                     @else
                         <div
-                            class="w-8 h-8 rounded-full bg-indigo-100 text-indigo-700 flex items-center justify-center font-semibold text-xs">
+                            class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold text-xs shadow-sm">
                             {{ strtoupper(substr($usuarioActual->nombres, 0, 1) . substr($usuarioActual->apellidos, 0, 1)) }}
                         </div>
                     @endif
                 </div>
                 <div class="min-w-0 flex-1">
-                    <p class="truncate font-semibold leading-tight text-base">
+                    <p
+                        class="truncate font-semibold leading-tight text-base {{ request()->routeIs('profile.*') ? 'text-white' : 'text-slate-200' }}">
                         {{ Auth::user()->username }}
                     </p>
-                    <p class="text-sm text-gray-400 truncate">
+                    <p class="text-xs text-slate-400 truncate mt-0.5">
                         {{ Auth::user()->rol }}
                     </p>
                 </div>
-
             </a>
 
             <!-- cierre de sesión -->
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    class="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+                    class="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
                     <x-lucide-log-out class="w-5 h-5 shrink-0 text-red-500" />
                     <span>Cerrar sesión</span>
                 </button>
@@ -127,10 +130,6 @@
 </aside>
 
 <!-- Fondo oscuro en móvil -->
-<div
-    x-cloak
-    x-show="open"
-    @click="open = false"
-    x-transition.opacity
+<div x-cloak x-show="open" @click="open = false" x-transition.opacity
     class="fixed inset-0 z-30 bg-gray-900/40 backdrop-blur-sm md:hidden">
 </div>
