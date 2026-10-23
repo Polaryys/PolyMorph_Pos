@@ -1,5 +1,5 @@
 ﻿<aside
-    class="fixed inset-y-0 left-0 w-56 z-40 bg-slate-900 border-r border-gray-200
+    class="fixed inset-y-0 left-0 w-56 z-40 bg-zinc-900 
            flex flex-col transform transition-transform duration-300 ease-in-out
            -translate-x-full md:translate-x-0"
     :class="{ 'translate-x-0': open, '-translate-x-full': !open }">

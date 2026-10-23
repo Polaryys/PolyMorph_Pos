@@ -26,12 +26,11 @@
 
         <div class="flex-1 flex flex-col min-h-0 bg-white">
 
-            <main class="flex-1 flex min-h-0 overflow-hidden">
-                <div
-                    class="flex-1 min-w-0 bg-white h-[calc(100vh-6rem)] overflow-y-auto p-5 text-gray-900 border border-gray-200/26">
+            <div class="flex-1 min-h-0 pt-[5rem] md:ml-56 bg-white">
+                <main class="h-full min-h-0 overflow-y-auto px-5 py-2 text-gray-900">
                     {{ $slot }}
-                </div>
-            </main>
+                </main>
+            </div>
 
         </div>
     </div>
