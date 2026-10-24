@@ -2,8 +2,10 @@
     $modulos = [
         'Inicio' => ['dashboard', 'inicio'],
         'Punto de venta' => ['ventas.*', 'pos.*'],
-        'Inventario' => ['presentaciones.*','marcas.*', 'compras.*','ajuste.*', 'movimientos.*'],
-        'Registros' => ['categorias.*','clientes.*'],
+        'Inventario' => ['presentaciones.*', 'compras.*','ajuste.*', 'movimientos.*'],
+        'Categorías registradas' => ['categorias.*'],
+        'Marcas registradas' => ['marcas.*',],
+        'Clientes registradas' => ['clientes.*'],
         'Productos y Servicios' => ['articulos.*'],
         'Proveedores' => ['proveedores.*', 'proveedore.*'],
         'Reportes' => ['reportes.*'],
@@ -46,15 +48,15 @@
 
 <nav class="fixed top-14 left-0 right-0 md:left-56 z-20 bg-white">
     <div class="max-w-7xl px-6 lg:px-8">
-        <div class="flex items-center pt-1 h-12 gap-2 text-2xl">
+        <div class="flex items-center pt-2 h-12 gap-2 text-xl">
 
             @if ($tituloModulo)
                 @if ($accionKey && $accionKey !== 'index' && $indexRoute)
-                    <a href="{{ $indexRoute }}" class="text-gray-400 hover:text-indigo-600 transition-colors font-medium">
+                    <a href="{{ $indexRoute }}" class="text-gray-400 hover:text-gray-800 transition-colors font-medium">
                         {{ $tituloModulo }}
                     </a>
                 @else
-                    <span class="text-gray-700 font-medium">
+                    <span class="text-gray-800 font-medium">
                         {{ $tituloModulo }}
                     </span>
                 @endif

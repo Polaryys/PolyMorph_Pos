@@ -1,5 +1,4 @@
-
-<div class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-6">
+<div x-data="{ tipo: '{{ old('tipo', '') }}' }" class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-6">
 
     <!-- Tipo -->
     <div class="sm:col-span-6">
@@ -7,21 +6,21 @@
             Tipo <span class="text-red-500">*</span>
         </label>
 
-        <select id="tipo" name="tipo" required
-            class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('tipo') border-red-500 @enderror">
+        <select id="tipo" name="tipo" required x-model="tipo"
+            class="mt-1 block w-40 rounded-md border border-gray-300
+           p-2 text-sm shadow-sm focus:border-indigo-500
+           focus:ring-indigo-500 @error('tipo') border-red-500 @enderror">
 
             <option value="" disabled {{ old('tipo') ? '' : 'selected' }}>
                 Seleccione un tipo
             </option>
 
             <option value="PRODUCTO" {{ old('tipo') === 'PRODUCTO' ? 'selected' : '' }}>
-                Producto
+                PRODUCTO
             </option>
 
             <option value="SERVICIO" {{ old('tipo') === 'SERVICIO' ? 'selected' : '' }}>
-                Servicio
+                SERVICIO
             </option>
         </select>
 
@@ -36,11 +35,13 @@
             Nombre <span class="text-red-500">*</span>
         </label>
 
-        <input type="text" id="nombre" name="nombre"
-            maxlength="100" required value="{{ old('nombre') }}"
+        <input :disabled="!tipo" type="text" id="nombre" name="nombre" maxlength="100" required
+            value="{{ old('nombre') }}"
             class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('nombre') border-red-500 @enderror">
+           p-2 text-sm shadow-sm focus:border-indigo-500
+           focus:ring-indigo-500 disabled:bg-gray-100
+           disabled:cursor-not-allowed
+           @error('nombre') border-red-500 @enderror">
 
         @error('nombre')
             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -53,11 +54,13 @@
             Código SKU <span class="text-red-500">*</span>
         </label>
 
-        <input type="text" id="codigoSKU" name="codigoSKU"
-            maxlength="50" required value="{{ old('codigoSKU') }}"
+        <input :disabled="!tipo" type="text" id="codigoSKU" name="codigoSKU" maxlength="50" required
+            value="{{ old('codigoSKU') }}"
             class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('codigoSKU') border-red-500 @enderror">
+                    p-2 text-sm shadow-sm focus:border-indigo-500
+                    focus:ring-indigo-500 disabled:bg-gray-100
+                    disabled:cursor-not-allowed
+                    @error('codigoSKU') border-red-500 @enderror">
 
         @error('codigoSKU')
             <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
@@ -70,16 +73,17 @@
             Categoría
         </label>
 
-        <select id="categoria_id" name="categoria_id"
+        <select :disabled="!tipo" disabled:bg-gray-100 disabled:cursor-not-allowed id="categoria_id"
+            name="categoria_id"
             class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
+                   p-2 text-sm shadow-sm focus:border-indigo-500 
+                   disabled:bg-gray-100 disabled:cursor-not-allowed
                    focus:ring-indigo-500 @error('categoria_id') border-red-500 @enderror">
 
             <option value="">Seleccionar categoría</option>
 
             @foreach ($categorias as $categoria)
-                <option value="{{ $categoria->id }}"
-                    {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
+                <option value="{{ $categoria->id }}" {{ old('categoria_id') == $categoria->id ? 'selected' : '' }}>
                     {{ $categoria->nombre }}
                 </option>
             @endforeach
@@ -97,16 +101,17 @@
             Marca
         </label>
 
-        <select id="marca_id" name="marca_id"
+        <select :disabled="!tipo" disabled:bg-gray-50 disabled:cursor-not-allowed id="marca_id" name="marca_id"
             class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('marca_id') border-red-500 @enderror">
+                    p-2 text-sm shadow-sm focus:border-indigo-500
+                    disabled:bg-gray-100
+                    disabled:cursor-not-allowed
+                    focus:ring-indigo-500 @error('marca_id') border-red-500 @enderror">
 
             <option value="">Seleccionar marca</option>
 
             @foreach ($marcas as $marca)
-                <option value="{{ $marca->id }}"
-                    {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
+                <option value="{{ $marca->id }}" {{ old('marca_id') == $marca->id ? 'selected' : '' }}>
                     {{ $marca->nombre }}
                 </option>
             @endforeach

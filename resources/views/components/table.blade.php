@@ -15,7 +15,7 @@
     </div>
 
     @if ($paginator && $paginator->hasPages())
-        <div class="px-6 py-3.5 bg-slate-50 border-t border-slate-200">
+        <div class="px-6 py-3.5 border-t border-slate-200">
             {{ $paginator->links() }}
         </div>
     @endif

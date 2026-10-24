@@ -32,7 +32,7 @@ class InventarioController extends Controller
             },
         ])
             ->latest()
-            ->paginate(10);
+            ->paginate(15);
 
         return view('articulos.index', compact('articulos'));
     }

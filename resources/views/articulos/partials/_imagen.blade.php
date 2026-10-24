@@ -1,11 +1,11 @@
 
 <div class="flex justify-center md:justify-start">
-    <div class="relative h-48 w-48 shrink-0">
+    <div class="relative h-56 w-56 shrink-0">
         <img
             id="imagen-preview"
             src="{{ asset('images/default-avatar.png') }}"
             alt="Imagen del artículo"
-            class="h-48 w-48 rounded-xl border-2 border-indigo-100
+            class="h-56 w-56 rounded border-2 border-indigo-100
                    bg-gray-50 object-cover shadow-sm">
 
         <button
