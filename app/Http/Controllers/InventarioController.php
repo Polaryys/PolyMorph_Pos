@@ -158,7 +158,18 @@ class InventarioController extends Controller
      */
     public function show(Inventario $inventario)
     {
-        //
+        $inventario->load([
+            'categoria',
+            'marca',
+            'presentaciones' => function ($query) {
+                $query->where('base', true)
+                    ->with('imagen');
+            },
+        ]);
+
+        return view('articulos.show', [
+            'articulo' => $inventario,
+        ]);
     }
 
     /**
@@ -166,7 +177,19 @@ class InventarioController extends Controller
      */
     public function edit(Inventario $inventario)
     {
-        //
+        $inventario->load([
+            'presentaciones' => function ($query) {
+                $query->where('base', true);
+            },
+        ]);
+
+        $categorias = Categoria::orderBy('nombre')->get();
+        $marcas = Marca::orderBy('nombre')->get();
+
+        return view('articulos.edit', compact(
+            'categorias',
+            'marcas'
+        ));
     }
 
     /**
@@ -174,7 +197,133 @@ class InventarioController extends Controller
      */
     public function update(Request $request, Inventario $inventario)
     {
-        //
+        // Obtener la presentación base del artículo
+        $presentacion = $inventario->presentaciones()
+            ->where('base', true)
+            ->firstOrFail();
+
+        $datos = $request->validate([
+            // El tipo no se modifica desde la edición
+            'categoria_id' => [
+                'nullable',
+                'exists:categorias,id',
+            ],
+            'marca_id' => [
+                'nullable',
+                'exists:marcas,id',
+            ],
+            'umbral' => [
+                'required',
+                'integer',
+                'min:0',
+            ],
+            'estado' => [
+                'required',
+                'boolean',
+            ],
+
+            // Datos de la presentación base
+            'codigoSKU' => [
+                'required',
+                'string',
+                'max:50',
+                Rule::unique('presentaciones', 'codigoSKU')
+                    ->ignore($presentacion->id),
+            ],
+            'codigoBarras' => [
+                'nullable',
+                'string',
+                'max:50',
+                Rule::unique('presentaciones', 'codigoBarras')
+                    ->ignore($presentacion->id),
+            ],
+            'nombre' => [
+                'required',
+                'string',
+                'max:100',
+            ],
+            'detalle' => [
+                'nullable',
+                'string',
+            ],
+            'ubicacion' => [
+                'nullable',
+                'string',
+                'max:100',
+            ],
+            'precioUnitario' => [
+                Rule::requiredIf($inventario->tipo === 'SERVICIO'),
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+            'precioUnitarioDocena' => [
+                Rule::requiredIf($inventario->tipo === 'PRODUCTO'),
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+            'precioUnitarioCiento' => [
+                Rule::requiredIf($inventario->tipo === 'PRODUCTO'),
+                'nullable',
+                'numeric',
+                'min:0',
+            ],
+            'fecha_vencimiento' => [
+                'nullable',
+                'date',
+            ],
+            'imagen_id' => [
+                'nullable',
+                'exists:imagenes,id',
+            ],
+        ]);
+
+        DB::transaction(function () use ($datos, $inventario, $presentacion) {
+
+            // Update info general
+            $inventario->update([
+                'categoria_id' => $datos['categoria_id'] ?? null,
+                'marca_id' => $datos['marca_id'] ?? null,
+                'umbral' => $datos['umbral'],
+                'estado' => $datos['estado'],
+            ]);
+
+            // Info base de producto/servicio
+            $datosPresentacion = [
+                'codigoSKU' => $datos['codigoSKU'],
+                'codigoBarras' => $datos['codigoBarras'] ?? null,
+                'nombre' => $datos['nombre'],
+                'detalle' => $datos['detalle'] ?? null,
+                'ubicacion' => $datos['ubicacion'] ?? null,
+                'imagen_id' => $datos['imagen_id'] ?? null,
+                'fecha_vencimiento' => $datos['fecha_vencimiento'] ?? null,
+            ];
+
+            if ($inventario->tipo === 'SERVICIO') {
+                // Los servicios solo precio unitario
+                $datosPresentacion['precioUnitario'] = $datos['precioUnitario'];
+                // No se utilizan precios escalonados en servicios
+                $datosPresentacion['precioUnitarioDocena'] = null;
+                $datosPresentacion['precioUnitarioCiento'] = null;
+            } else {
+                // Los productos permiten editar los precios de venta
+                $datosPresentacion['precioUnitario'] = $datos['precioUnitario']
+                    ?? $presentacion->precioUnitario;
+
+                $datosPresentacion['precioUnitarioDocena'] =
+                    $datos['precioUnitarioDocena'];
+
+                $datosPresentacion['precioUnitarioCiento'] =
+                    $datos['precioUnitarioCiento'];
+            }
+
+            $presentacion->update($datosPresentacion);
+        });
+
+        return redirect()
+            ->route('articulos.show', $inventario)
+            ->with('success', 'Artículo actualizado correctamente.');
     }
 
     /**

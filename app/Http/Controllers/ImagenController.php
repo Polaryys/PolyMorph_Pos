@@ -154,7 +154,7 @@ class ImagenController extends Controller
                 'required',
                 'string',
                 'max:50',
-                'regex:/^[\pL\s]+$/u',
+                'regex:/^[\pL\s\pN]+$/u',
             ],
         ]);
 

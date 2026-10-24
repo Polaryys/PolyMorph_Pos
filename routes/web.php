@@ -26,10 +26,10 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
     Route::resource('marcas', MarcaController::class)
-    ->except(['create', 'edit','show']);
+        ->except(['create', 'edit', 'show']);
 
     Route::resource('categorias', CategoriaController::class)
-    ->except(['create', 'edit','show']);
+        ->except(['create', 'edit', 'show']);
     Route::resource('clientes', ClienteController::class);
     Route::resource('proveedores', ProveedorController::class)->parameters([
         'proveedores' => 'proveedor'
@@ -41,9 +41,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/imagenes/selector', [ImagenController::class, 'selector'])
         ->name('imagenes.selector');
     Route::resource('metodos-pago', MetodoPagoController::class)
-    ->parameters(['metodos-pago' => 'metodoPago']);
+        ->parameters(['metodos-pago' => 'metodoPago']);
 
-    Route::resource('articulos', InventarioController::class);
+    Route::resource('articulos', InventarioController::class)
+        ->parameters(['articulos' => 'inventario']);
+    ;
 
 
 

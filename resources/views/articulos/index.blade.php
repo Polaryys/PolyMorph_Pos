@@ -57,12 +57,12 @@
                 </td>
 
                 <!-- CÓDIGO DE BARRAS -->
-                <td class="font-medium text-slate-500 whitespace-nowrap">
+                <td class="text-slate-500 whitespace-nowrap">
                     {{ $articulo->presentaciones->first()?->codigoBarras }}
                 </td>
 
                 <!-- NOMBRE -->
-                <td class="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3  text-slate-900 whitespace-nowrap">
                     {{ $articulo->presentaciones->first()?->nombre }}
                 </td>
 

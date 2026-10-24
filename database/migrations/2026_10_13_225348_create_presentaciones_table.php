@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('presentaciones', function (Blueprint $table) {
             $table->id();
             $table->foreignId('inventario_id')
-                ->constrained('inventarios');
+                ->constrained('inventario');
             $table->string('codigoSKU', 50)->unique();
             $table->string('codigoBarras', 50)->nullable()->unique();
             $table->string('nombre', 100);
