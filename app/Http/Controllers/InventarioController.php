@@ -178,18 +178,19 @@ class InventarioController extends Controller
     public function edit(Inventario $inventario)
     {
         $inventario->load([
-            'presentaciones' => function ($query) {
-                $query->where('base', true);
-            },
+            'categoria',
+            'marca',
+            'presentaciones.imagen',
         ]);
 
         $categorias = Categoria::orderBy('nombre')->get();
         $marcas = Marca::orderBy('nombre')->get();
 
-        return view('articulos.edit', compact(
-            'categorias',
-            'marcas'
-        ));
+        return view('articulos.edit', [
+            'articulo' => $inventario,
+            'categorias' => $categorias,
+            'marcas' => $marcas,
+        ]);
     }
 
     /**
@@ -289,6 +290,11 @@ class InventarioController extends Controller
                 'estado' => $datos['estado'],
             ]);
 
+            // Sincronizar el estado de todas las presentaciones
+            $inventario->presentaciones()->update([
+                'estado' => $datos['estado'],
+            ]);
+
             // Info base de producto/servicio
             $datosPresentacion = [
                 'codigoSKU' => $datos['codigoSKU'],
@@ -331,6 +337,30 @@ class InventarioController extends Controller
      */
     public function destroy(Inventario $inventario)
     {
-        //
+        // Verificar si alguna presentación fue utilizada en ventas.
+        $tieneVentas = $inventario->presentaciones()
+            ->whereHas('ventaDetalles')
+            ->exists();
+
+        if ($tieneVentas) {
+            return redirect()
+                ->route('articulos.index')
+                ->with(
+                    'error',
+                    'No se puede eliminar el artículo porque alguna de sus presentaciones ha sido utilizada en ventas.'
+                );
+        }
+
+        DB::transaction(function () use ($inventario) {
+            // Eliminar las presentaciones asociadas.
+            $inventario->presentaciones()->delete();
+
+            // Eliminar el artículo.
+            $inventario->delete();
+        });
+
+        return redirect()
+            ->route('articulos.index')
+            ->with('success', 'Artículo eliminado correctamente.');
     }
 }

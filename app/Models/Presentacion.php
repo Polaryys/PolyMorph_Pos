@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Presentacion extends Model
 {
@@ -53,5 +54,15 @@ class Presentacion extends Model
     public function imagen(): BelongsTo
     {
         return $this->belongsTo(Imagen::class);
+    }
+
+    // Una presentación puede aparecer en muchos detalles de venta.
+    public function ventaDetalles(): HasMany
+    {
+        return $this->hasMany(VentaDetalle::class, 'presentacion_id');
+    }
+    public function historialPrecios(): HasMany
+    {
+        return $this->hasMany(HistorialPrecio::class, 'presentacion_id');
     }
 }

@@ -57,12 +57,12 @@
                 </td>
 
                 <!-- CÓDIGO DE BARRAS -->
-                <td class="text-slate-500 whitespace-nowrap">
+                <td class="text-slate-500 text-sm whitespace-nowrap">
                     {{ $articulo->presentaciones->first()?->codigoBarras }}
                 </td>
 
                 <!-- NOMBRE -->
-                <td class="px-4 py-3  text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3 text-slate-900 whitespace-nowrap">
                     {{ $articulo->presentaciones->first()?->nombre }}
                 </td>
 
@@ -99,7 +99,7 @@
 
                         <!-- Eliminar -->
                         <form action="{{ route('articulos.destroy', $articulo) }}" method="POST"
-                            onsubmit="return confirm('¿Deseas eliminar este artículo?')">
+                            onsubmit="return confirm('¿Deseas eliminar este artículo? Esta acción eliminará toda presentación asociada al artículo seleccionado')">
 
                             @csrf
                             @method('DELETE')
