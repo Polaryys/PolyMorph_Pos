@@ -43,7 +43,7 @@ class Inventario extends Model
     // Un registro de inventario puede tener muchas presentaciones.
     public function presentaciones(): HasMany
     {
-        return $this->hasMany(Presentacion::class);
+        return $this->hasMany(Presentacion::class, 'inventario_id');
     }
 }
 

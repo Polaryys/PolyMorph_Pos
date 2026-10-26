@@ -17,7 +17,7 @@
         'profile' => [['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*']],
         'inventario' => [
             ['label' => 'Artículos', 'route' => 'articulos.index', 'active' => 'articulos.*'],
-            ['label' => 'Presentaciones', 'route' => null, 'disabled' => true],
+            ['label' => 'Presentaciones', 'route' => 'presentaciones.index', 'active' => 'presentaciones.*'],
             ['label' => 'Categorías', 'route' => 'categorias.index', 'active' => 'categorias.*'],
             ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],
             ['label' => 'Compras', 'route' => null, 'disabled' => true],

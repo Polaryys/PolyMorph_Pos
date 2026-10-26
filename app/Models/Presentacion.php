@@ -53,7 +53,7 @@ class Presentacion extends Model
      */
     public function imagen(): BelongsTo
     {
-        return $this->belongsTo(Imagen::class);
+        return $this->belongsTo(Imagen::class, 'imagen_id');
     }
 
     // Una presentación puede aparecer en muchos detalles de venta.

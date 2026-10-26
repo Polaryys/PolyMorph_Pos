@@ -47,6 +47,7 @@ Route::middleware('auth')->group(function () {
         ->parameters(['articulos' => 'inventario']);
     ;
 
+    Route::resource('presentaciones', PresentacionController::class);
 
 
 });

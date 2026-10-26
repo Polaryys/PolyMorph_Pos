@@ -15,8 +15,11 @@ class InventarioController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+
+    public function index(Request $request)
     {
+        $buscar = trim($request->input('buscar', ''));
+
         $articulos = Inventario::with([
             'marca',
             'presentaciones' => function ($query) {
@@ -31,11 +34,29 @@ class InventarioController extends Controller
                 )->where('base', true);
             },
         ])
-            ->latest()
-            ->paginate(15);
+            ->when($buscar !== '', function ($query) use ($buscar) {
+                $query->where(function ($query) use ($buscar) {
+                    $query->whereHas('presentaciones', function ($subquery) use ($buscar) {
+                        $subquery->where('base', true)
+                            ->where(function ($subquery) use ($buscar) {
+                                $subquery->where('nombre', 'like', "%{$buscar}%")
+                                    ->orWhere('codigoSKU', 'like', "%{$buscar}%")
+                                    ->orWhere('codigoBarras', 'like', "%{$buscar}%");
+                            });
+                    })
 
-        return view('articulos.index', compact('articulos'));
+                        ->orWhereHas('marca', function ($subquery) use ($buscar) {
+                        $subquery->where('nombre', 'like', "%{$buscar}%");
+                    });
+                });
+            })
+            ->latest()
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('articulos.index', compact('articulos', 'buscar'));
     }
+
 
 
     /**
