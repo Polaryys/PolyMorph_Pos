@@ -58,10 +58,44 @@ class PresentacionController extends Controller
      * Mostrar formulario de creación.
      */
 
-    public function create()
+    public function create(Request $request)
     {
-        // Los resultados se consultan cuando el usuario busca.
-        return view('presentaciones.create');
+        $productoSeleccionado = null;
+        $inventarioId = $request->old('inventario_id');
+
+        if ($inventarioId) {
+            $presentacionBase = Presentacion::query()
+                ->where('inventario_id', $inventarioId)
+                ->where('base', true)
+                ->where('estado', true)
+                ->whereHas('inventario', function ($query) {
+                    $query->where('tipo', 'PRODUCTO')
+                        ->where('estado', true);
+                })
+                ->with([
+                    'imagen:id,nombre_archivo',
+                    'inventario:id,cantidad',
+                ])
+                ->first();
+
+            if ($presentacionBase) {
+                $productoSeleccionado = [
+                    'inventario_id' => $presentacionBase->inventario_id,
+                    'nombre' => $presentacionBase->nombre,
+                    'sku' => $presentacionBase->codigoSKU,
+                    'codigoBarras' => $presentacionBase->codigoBarras,
+                    'cantidad' => $presentacionBase->inventario?->cantidad ?? 0,
+                    'imagen' => $presentacionBase->imagen
+                        ? asset(
+                            'storage/imagenes/' .
+                            $presentacionBase->imagen->nombre_archivo
+                        )
+                        : null,
+                ];
+            }
+        }
+
+        return view('presentaciones.create', compact('productoSeleccionado'));
     }
 
     /**
@@ -235,9 +269,23 @@ class PresentacionController extends Controller
     {
         abort_if($presentacion->base, 404);
 
-        $presentacion->load(['inventario', 'imagen']);
+        $presentacion->load([
+            'inventario.categoria',
+            'inventario.marca',
+            'inventario.presentaciones' => function ($query) {
+                $query->where('base', true);
+            },
+            'imagen',
+        ]);
 
-        return view('presentaciones.show', compact('presentacion'));
+        $costoPromedioPresentacion =
+            (float) ($presentacion->inventario?->costoPromedioUnitario ?? 0)
+            * (int) ($presentacion->factor ?? 0);
+
+        return view('presentaciones.show', compact(
+            'presentacion',
+            'costoPromedioPresentacion'
+        ));
     }
 
     /**
@@ -292,6 +340,20 @@ class PresentacionController extends Controller
                 'decimal:0,2',
             ],
 
+            'precioUnitarioDocena' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                'decimal:0,2',
+            ],
+
+            'precioUnitarioCiento' => [
+                'nullable',
+                'numeric',
+                'min:0',
+                'decimal:0,2',
+            ],
+
             'imagen_id' => [
                 'nullable',
                 'integer',
@@ -315,8 +377,8 @@ class PresentacionController extends Controller
                 'factor' => $datos['factor'],
                 'ubicacion' => $datos['ubicacion'] ?? null,
                 'precioUnitario' => $datos['precioUnitario'],
-                'precioUnitarioDocena' => null,
-                'precioUnitarioCiento' => null,
+                'precioUnitarioDocena' => $datos['precioUnitarioDocena'] ?? null,
+                'precioUnitarioCiento' => $datos['precioUnitarioCiento'] ?? null,
                 'imagen_id' => $datos['imagen_id'] ?? null,
                 'fecha_vencimiento' =>
                     $datos['fecha_vencimiento'] ?? null,

@@ -25,11 +25,37 @@
 
                 <div class="border-b border-slate-200 bg-slate-50/75 px-5 py-4">
                     <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-600">
-                        Información general
+                        Detalles del {{ $articulo->tipo === 'PRODUCTO' ? 'producto' : 'servicio' }}
                     </h3>
                 </div>
 
-                <div class="grid grid-cols-1 gap-x-4 gap-y-5 p-5 sm:grid-cols-2 xl:grid-cols-4">
+                <div class="grid grid-cols-1 items-start gap-6 p-5 md:grid-cols-[220px_minmax(0,1fr)]">
+
+                    {{-- Imagen --}}
+                    <div class="flex justify-center md:justify-start">
+                        <div class="relative h-56 w-56 shrink-0">
+                            <img id="imagen-preview"
+                                src="{{ $presentacion?->imagen
+                                    ? asset('storage/imagenes/' . $presentacion->imagen->nombre_archivo)
+                                    : asset('images/default-avatar.png') }}"
+                                alt="Imagen del artículo"
+                                class="h-56 w-56 rounded border-2 border-indigo-100 bg-gray-50 object-cover shadow-sm">
+
+                            <button type="button"
+                                onclick="window.dispatchEvent(new CustomEvent('abrir-selector-imagen'))"
+                                title="Seleccionar imagen" aria-label="Seleccionar imagen"
+                                class="absolute bottom-2 right-2 rounded-full bg-indigo-600 p-2.5 text-white shadow-md transition hover:bg-indigo-700">
+                                <x-lucide-camera class="h-4 w-4" />
+                            </button>
+                        </div>
+                        <input type="hidden" id="imagen_id" name="imagen_id"
+                            value="{{ old('imagen_id', $presentacion?->imagen_id) }}">
+                        @error('imagen_id')
+                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+                        @enderror
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 xl:grid-cols-4">
 
                     {{-- Tipo: no editable --}}
                     <div>
@@ -132,6 +158,7 @@
                     </div>
 
                 </div>
+            </div>
             </div>
 
             {{-- Datos de la presentación base --}}
@@ -242,62 +269,6 @@
                         @error('detalle')
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
-                    </div>
-
-                    {{-- Imagen --}}
-                    <div class="sm:col-span-2 xl:col-span-4">
-                        <label class="block text-sm font-medium text-gray-700">
-                            Imagen del artículo
-                        </label>
-
-                        <div class="mt-2 flex flex-col gap-4 sm:flex-row sm:items-center">
-
-                            {{-- Vista previa --}}
-                            <div class="relative h-32 w-32 shrink-0">
-                                <img id="imagen-preview"
-                                    src="{{ $presentacion?->imagen
-                                        ? asset('storage/imagenes/' . $presentacion->imagen->nombre_archivo)
-                                        : asset('images/default-avatar.png') }}"
-                                    alt="Imagen del artículo"
-                                    class="h-32 w-32 rounded-lg border-2 border-indigo-100 bg-gray-50 object-cover shadow-sm">
-
-                                {{-- Abrir galería --}}
-                                <button type="button"
-                                    onclick="window.dispatchEvent(new CustomEvent('abrir-selector-imagen'))"
-                                    title="Seleccionar imagen" aria-label="Seleccionar imagen"
-                                    class="absolute bottom-0 right-0 rounded-full bg-indigo-600 p-2 text-white shadow-md transition hover:bg-indigo-700">
-
-                                    <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0118.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                            d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
-                                    </svg>
-                                </button>
-                            </div>
-
-                            {{-- Campo que guarda la imagen seleccionada --}}
-                            <div class="space-y-2">
-                                <input type="hidden" id="imagen_id" name="imagen_id"
-                                    value="{{ old('imagen_id', $presentacion?->imagen_id) }}">
-
-                                <button type="button"
-                                    onclick="window.dispatchEvent(new CustomEvent('abrir-selector-imagen'))"
-                                    class="inline-flex items-center rounded-lg border border-slate-300
-                                        bg-white px-4 py-2 text-sm font-medium text-gray-700
-                                        shadow-sm transition hover:bg-slate-50">
-                                    Seleccionar imagen
-                                </button>
-
-                                <p class="text-xs text-gray-500">
-                                    Selecciona una imagen de la biblioteca del sistema.
-                                </p>
-
-                                @error('imagen_id')
-                                    <p class="text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
                     </div>
 
                 </div>

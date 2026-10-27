@@ -51,8 +51,8 @@ Route::middleware('auth')->group(function () {
         '/presentaciones/buscar-productos',
         [PresentacionController::class, 'buscarProductos']
     )->name('presentaciones.buscar-productos');
-
-    Route::resource('presentaciones', PresentacionController::class);
+    Route::resource('presentaciones', PresentacionController::class)
+        ->parameters(['presentaciones' => 'presentacion']);
 
 
 });

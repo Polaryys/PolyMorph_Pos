@@ -72,7 +72,6 @@
             <th class="px-4 py-3 text-left whitespace-nowrap">SKU</th>
             <th class="px-2 py-3 text-left whitespace-nowrap">BARCODE</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">Presentación</th>
-            <th class="px-4 py-3 text-left whitespace-nowrap">Artículo base</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Factor</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Precio U.</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Disponibilidad</th>
@@ -108,11 +107,6 @@
                 <!-- NOMBRE DE LA PRESENTACIÓN -->
                 <td class="px-4 py-3 text-slate-900 whitespace-nowrap">
                     {{ $presentacion->nombre }}
-                </td>
-
-                <!-- ARTÍCULO BASE -->
-                <td class="px-4 py-3 text-slate-700 whitespace-nowrap">
-                    {{ $presentacion->inventario?->presentaciones->first()?->nombre ?? '—' }}
                 </td>
 
                 <!-- FACTOR -->
