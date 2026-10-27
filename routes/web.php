@@ -46,6 +46,11 @@ Route::middleware('auth')->group(function () {
     Route::resource('articulos', InventarioController::class)
         ->parameters(['articulos' => 'inventario']);
     ;
+    
+    Route::get(
+        '/presentaciones/buscar-productos',
+        [PresentacionController::class, 'buscarProductos']
+    )->name('presentaciones.buscar-productos');
 
     Route::resource('presentaciones', PresentacionController::class);
 
