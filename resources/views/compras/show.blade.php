@@ -1,0 +1,171 @@
+<x-app-layout>
+    <div class="space-y-6">
+        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <p class="text-sm font-medium text-slate-500">Detalle de compra</p>
+                <h1 class="mt-1 text-2xl font-semibold text-slate-900">
+                    {{ $compra->numero_compra }}
+                </h1>
+            </div>
+            <a href="{{ route('compras.index') }}"
+                class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
+                Volver a compras
+            </a>
+        </div>
+
+        <section class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 bg-slate-50/75 px-5 py-4">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-600">
+                    Información general
+                </h2>
+            </div>
+
+            <dl class="grid grid-cols-1 gap-x-6 gap-y-5 p-5 sm:grid-cols-2 lg:grid-cols-4">
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Número de compra</dt>
+                    <dd class="mt-1 font-semibold text-indigo-700">{{ $compra->numero_compra }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Fecha de compra</dt>
+                    <dd class="mt-1 text-sm text-slate-800">{{ $compra->fecha_compra?->format('d/m/Y') ?? '—' }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Estado</dt>
+                    <dd class="mt-1">
+                        @if ($compra->estado === 'REGISTRADA')
+                            <span class="inline-flex rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
+                                Registrada
+                            </span>
+                        @else
+                            <span class="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
+                                {{ ucfirst(strtolower($compra->estado)) }}
+                            </span>
+                        @endif
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Proveedor</dt>
+                    <dd class="mt-1 text-sm text-slate-800">{{ $compra->proveedor?->nombre ?? 'Sin proveedor' }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Número de factura</dt>
+                    <dd class="mt-1 text-sm text-slate-800">{{ $compra->numero_factura ?: '—' }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Registrada por</dt>
+                    <dd class="mt-1 text-sm text-slate-800">
+                        {{ $compra->usuario
+                            ? trim($compra->usuario->nombres . ' ' . $compra->usuario->apellidos)
+                            : '—' }}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Cantidad total</dt>
+                    <dd class="mt-1 text-sm font-semibold text-slate-800">
+                        {{ number_format((int) $compra->cantidad_total) }}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Costo total</dt>
+                    <dd class="mt-1 text-lg font-semibold text-slate-900">
+                        Q {{ number_format((float) $compra->costo_total, 2) }}
+                    </dd>
+                </div>
+                <div class="sm:col-span-2 lg:col-span-4">
+                    <dt class="text-sm font-medium text-slate-500">Observaciones</dt>
+                    <dd class="mt-1 whitespace-pre-line text-sm text-slate-800">
+                        {{ $compra->observaciones ?: 'Sin observaciones' }}
+                    </dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Fecha de registro</dt>
+                    <dd class="mt-1 text-sm text-slate-800">{{ $compra->created_at?->format('d/m/Y H:i') ?? '—' }}</dd>
+                </div>
+                <div>
+                    <dt class="text-sm font-medium text-slate-500">Última actualización</dt>
+                    <dd class="mt-1 text-sm text-slate-800">{{ $compra->updated_at?->format('d/m/Y H:i') ?? '—' }}</dd>
+                </div>
+            </dl>
+        </section>
+
+        <section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+            <div class="border-b border-slate-200 bg-slate-50/75 px-5 py-4">
+                <h2 class="text-sm font-semibold uppercase tracking-wider text-slate-600">
+                    Productos de la compra
+                </h2>
+            </div>
+
+            <div class="overflow-x-auto">
+                <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
+                    <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
+                        <tr>
+                            <th class="px-4 py-3">Producto</th>
+                            <th class="px-4 py-3 text-center whitespace-nowrap">Cantidad</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Costo unitario</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Costo promedio anterior</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Costo promedio nuevo</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Precio anterior</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Precio nuevo</th>
+                            <th class="px-4 py-3 text-right whitespace-nowrap">Subtotal</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100 text-slate-700">
+                        @forelse ($compra->detalles as $detalle)
+                            <tr class="hover:bg-indigo-50/50">
+                                <td class="px-4 py-3">
+                                    <p class="font-semibold text-slate-900">
+                                        {{ $detalle->presentacion?->nombre ?? 'Producto no disponible' }}
+                                    </p>
+                                    <p class="mt-1 text-xs text-slate-500">
+                                        SKU: {{ $detalle->presentacion?->codigoSKU ?? '—' }}
+                                        <span class="mx-1">·</span>
+                                        Marca: {{ $detalle->presentacion?->inventario?->marca?->nombre ?? 'Sin marca' }}
+                                    </p>
+                                </td>
+                                <td class="px-4 py-3 text-center">{{ number_format((int) $detalle->cantidad) }}</td>
+                                <td class="px-4 py-3 text-right whitespace-nowrap">
+                                    Q {{ number_format((float) $detalle->costo_unitario, 2) }}
+                                </td>
+                                <td class="px-4 py-3 text-right whitespace-nowrap">
+                                    Q {{ number_format((float) $detalle->costo_promedio_anterior, 2) }}
+                                </td>
+                                <td class="px-4 py-3 text-right whitespace-nowrap">
+                                    Q {{ number_format((float) $detalle->costo_promedio_nuevo, 2) }}
+                                </td>
+                                <td class="px-4 py-3 text-right whitespace-nowrap">
+                                    Q {{ number_format((float) $detalle->precio_unitario_anterior, 2) }}
+                                </td>
+                                <td class="px-4 py-3 text-right whitespace-nowrap">
+                                    {{ $detalle->precio_unitario_nuevo !== null
+                                        ? 'Q ' . number_format((float) $detalle->precio_unitario_nuevo, 2)
+                                        : '—' }}
+                                </td>
+                                <td class="px-4 py-3 text-right font-semibold whitespace-nowrap text-slate-900">
+                                    Q {{ number_format((float) $detalle->subtotal, 2) }}
+                                </td>
+                            </tr>
+                        @empty
+                            <tr>
+                                <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                                    Esta compra no tiene productos registrados.
+                                </td>
+                            </tr>
+                        @endforelse
+                    </tbody>
+                    @if ($compra->detalles->isNotEmpty())
+                        <tfoot class="bg-slate-50">
+                            <tr>
+                                <th colspan="7" class="px-4 py-3 text-right text-sm font-semibold text-slate-700">
+                                    Total de la compra
+                                </th>
+                                <th class="px-4 py-3 text-right text-sm font-bold whitespace-nowrap text-slate-900">
+                                    Q {{ number_format((float) $compra->costo_total, 2) }}
+                                </th>
+                            </tr>
+                        </tfoot>
+                    @endif
+                </table>
+            </div>
+        </section>
+    </div>
+</x-app-layout>

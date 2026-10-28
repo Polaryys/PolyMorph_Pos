@@ -153,7 +153,7 @@
                             </label>
 
                             <input type="text" id="nombre" name="nombre" x-model="nombre" maxlength="55" required
-                                autofocus
+                                x-effect="if (abierto) $nextTick(() => $el.focus())"
                                 class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm
                                    focus:border-indigo-500 focus:ring-indigo-500
                                    @error('nombre') border-red-500 @enderror">

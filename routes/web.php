@@ -10,6 +10,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\PresentacionController;
+use App\Http\Controllers\ComprasController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -46,7 +47,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('articulos', InventarioController::class)
         ->parameters(['articulos' => 'inventario']);
     ;
-    
+
     Route::get(
         '/presentaciones/buscar-productos',
         [PresentacionController::class, 'buscarProductos']
@@ -54,6 +55,21 @@ Route::middleware('auth')->group(function () {
     Route::resource('presentaciones', PresentacionController::class)
         ->parameters(['presentaciones' => 'presentacion']);
 
+
+
+    Route::get('/compras/buscar-productos', [ComprasController::class, 'buscarProductos'])
+        ->name('compras.buscar-productos');
+    Route::post('/compras/borrador', [ComprasController::class, 'guardarBorrador'])
+        ->name('compras.borrador.guardar');
+    Route::post('/compras', [ComprasController::class, 'store'])
+        ->name('compras.store');
+    Route::get('/compras', [ComprasController::class, 'index'])
+        ->name('compras.index');
+
+    Route::get('/compras/create', [ComprasController::class, 'create'])
+        ->name('compras.create');
+    Route::get('/compras/{compra}', [ComprasController::class, 'show'])
+        ->name('compras.show');
 
 });
 

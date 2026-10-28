@@ -1,8 +1,9 @@
 @php
+    $compraPendiente = count(session('compras.borrador.detalles', [])) > 0;
 
     $module = match (true) {
         request()->routeIs('pos.*') => 'pos',
-        request()->routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*') => 'inventario',
+        request()->routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*','compras.*') => 'inventario',
         request()->routeIs('clientes.*') => 'clientes',
         request()->routeIs('proveedores.*') => 'proveedores',
         request()->routeIs('profile.*') => 'profile',
@@ -20,7 +21,7 @@
             ['label' => 'Presentaciones', 'route' => 'presentaciones.index', 'active' => 'presentaciones.*'],
             ['label' => 'Categorías', 'route' => 'categorias.index', 'active' => 'categorias.*'],
             ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],
-            ['label' => 'Compras', 'route' => null, 'disabled' => true],
+            ['label' => 'Compras', 'route' => 'compras.index', 'active' => 'compras.*'],
             ['label' => 'Ajuste', 'route' => null, 'disabled' => true],
             ['label' => 'Movimientos', 'route' => null, 'disabled' => true],
         ],
@@ -70,7 +71,16 @@
                             @endphp
 
                             <x-nav-link :href="route($item['route'])" :active="request()->routeIs($activePattern)">
-                                {{ __($item['label']) }}
+                                <span class="inline-flex items-center gap-2">
+                                    {{ __($item['label']) }}
+                                    @if (($item['route'] ?? null) === 'compras.index' && $compraPendiente)
+                                        <span aria-label="Hay una compra pendiente"
+                                            title="Hay una compra pendiente"
+                                            class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold leading-none text-white">
+                                            +
+                                        </span>
+                                    @endif
+                                </span>
                             </x-nav-link>
                         @endif
                     @endforeach

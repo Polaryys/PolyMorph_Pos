@@ -30,6 +30,8 @@ return new class extends Migration {
 
             $table->decimal('precio_anterior', 10, 2);
             $table->decimal('precio_nuevo', 10, 2);
+            $table->decimal('costopromedio_anterior', 10, 2);
+            $table->decimal('costopromedio_nuevo', 10, 2);
 
             $table->timestamps();
         });

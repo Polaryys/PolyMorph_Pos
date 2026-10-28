@@ -1,4 +1,8 @@
-﻿<aside
+﻿@php
+    $compraPendiente = count(session('compras.borrador.detalles', [])) > 0;
+@endphp
+
+<aside
     class="fixed inset-y-0 left-0 w-56 z-40 bg-zinc-900 
            flex flex-col transform transition-transform duration-300 ease-in-out
            -translate-x-full md:translate-x-0"
@@ -34,7 +38,16 @@
                 <x-slot:icon>
                     <x-lucide-box class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
-                Inventario
+                <span class="flex flex-1 items-center justify-between">
+                    Inventario
+                    @if ($compraPendiente)
+                        <span aria-label="Hay una compra pendiente"
+                            title="Hay una compra pendiente"
+                            class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold leading-none text-white">
+                            +
+                        </span>
+                    @endif
+                </span>
             </x-sidebar-link>
 
             <x-sidebar-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" wire:navigate>

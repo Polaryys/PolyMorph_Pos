@@ -178,7 +178,7 @@
                         <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
                             <tr>
                                 <th class="px-4 py-3">Presentación</th>
-                                <th class="px-4 py-3">Cantidad de referencia</th>
+                                <th class="px-4 py-3">Precio aplicable a a partir de</th>
                                 <th class="px-4 py-3">Precio de venta</th>
                             </tr>
                         </thead>
@@ -188,11 +188,33 @@
                                     {{ $presentacion->nombre }}
                                 </td>
                                 <td class="px-4 py-3 text-sm text-gray-600">
-                                    {{ $presentacion->factor }} unidades
+                                    1 unidad
                                 </td>
                                 <td class="whitespace-nowrap px-4 py-3 text-sm font-semibold text-indigo-600">
                                     Q {{ number_format((float) ($presentacion->precioUnitario ?? 0), 2) }}
                                 </td>
+                            </tr>
+                            <tr>
+                                <td class="px-4 py-3 text-sm font-medium text-gray-800">
+                                    {{ $presentacion->nombre }}
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-600">
+                                    12 unidades
+                                </td>
+                                <td class="whitespace-nowrap px-4 py-3 text-sm font-semibold text-indigo-600">
+                                    Q {{ number_format((float) ($presentacion->precioUnitarioDocena ?? 0), 2) }}
+                                </td>
+                                <tr>
+                                <td class="px-4 py-3 text-sm font-medium text-gray-800">
+                                    {{ $presentacion->nombre }}
+                                </td>
+                                <td class="px-4 py-3 text-sm text-gray-600">
+                                    100 unidades
+                                </td>
+                                <td class="whitespace-nowrap px-4 py-3 text-sm font-semibold text-indigo-600">
+                                    Q {{ number_format((float) ($presentacion->precioUnitarioCiento ?? 0), 2) }}
+                                </td>
+                            </tr>
                             </tr>
                         </tbody>
                     </table>
