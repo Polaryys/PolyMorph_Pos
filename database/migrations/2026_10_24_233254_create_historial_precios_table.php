@@ -17,23 +17,19 @@ return new class extends Migration {
                 ->constrained('presentaciones')
                 ->restrictOnDelete();
 
-            $table->foreignId('usuario_id')
-                ->nullable()
-                ->constrained('users')
-                ->nullOnDelete();
+            // Precios anteriores
+            $table->decimal('precio_unitario_anterior', 10, 2)->nullable();
+            $table->decimal('precio_docena_anterior', 10, 2)->nullable();
+            $table->decimal('precio_ciento_anterior', 10, 2)->nullable();
 
-            $table->enum('tipo_precio', [
-                'UNITARIO',
-                'DOCENA',
-                'CIENTO',
-            ]);
-
-            $table->decimal('precio_anterior', 10, 2);
-            $table->decimal('precio_nuevo', 10, 2);
-            $table->decimal('costopromedio_anterior', 10, 2);
-            $table->decimal('costopromedio_nuevo', 10, 2);
+            // Precios nuevos
+            $table->decimal('precio_unitario_nuevo', 10, 2);
+            $table->decimal('precio_docena_nuevo', 10, 2)->nullable();
+            $table->decimal('precio_ciento_nuevo', 10, 2)->nullable();
 
             $table->timestamps();
+
+            $table->index('presentacion_id');
         });
     }
 

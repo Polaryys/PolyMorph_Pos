@@ -45,6 +45,10 @@ class Inventario extends Model
     {
         return $this->hasMany(Presentacion::class, 'inventario_id');
     }
+    public function movimientos(): HasMany
+    {
+        return $this->hasMany(Movimiento::class);
+    }
 }
 
 

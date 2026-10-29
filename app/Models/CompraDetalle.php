@@ -16,8 +16,9 @@ class CompraDetalle extends Model
         'costo_unitario',
         'costo_promedio_anterior',
         'costo_promedio_nuevo',
-        'precio_unitario_anterior',
         'precio_unitario_nuevo',
+        'precio_docena_nuevo',
+        'precio_ciento_nuevo',
         'subtotal',
     ];
 
@@ -28,8 +29,9 @@ class CompraDetalle extends Model
             'costo_unitario' => 'decimal:2',
             'costo_promedio_anterior' => 'decimal:2',
             'costo_promedio_nuevo' => 'decimal:2',
-            'precio_unitario_anterior' => 'decimal:2',
             'precio_unitario_nuevo' => 'decimal:2',
+            'precio_docena_nuevo' => 'decimal:2',
+            'precio_ciento_nuevo' => 'decimal:2',
             'subtotal' => 'decimal:2',
         ];
     }

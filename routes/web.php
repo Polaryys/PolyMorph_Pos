@@ -59,15 +59,23 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/compras/buscar-productos', [ComprasController::class, 'buscarProductos'])
         ->name('compras.buscar-productos');
-    Route::post('/compras/borrador', [ComprasController::class, 'guardarBorrador'])
-        ->name('compras.borrador.guardar');
     Route::post('/compras', [ComprasController::class, 'store'])
         ->name('compras.store');
+    Route::put('/compras/{compra}', [ComprasController::class, 'update'])
+        ->name('compras.update');
+    Route::delete('/compras/{compra}', [ComprasController::class, 'destroy'])
+        ->name('compras.destroy');
+    Route::post('/compras/{compra}/registrar', [ComprasController::class, 'registrarCompra'])
+        ->name('compras.registrar');
+    Route::post('/compras/{compra}/revertir', [ComprasController::class, 'revertirCompra'])
+        ->name('compras.revertir');
     Route::get('/compras', [ComprasController::class, 'index'])
         ->name('compras.index');
 
     Route::get('/compras/create', [ComprasController::class, 'create'])
         ->name('compras.create');
+    Route::get('/compras/{compra}/edit', [ComprasController::class, 'edit'])
+        ->name('compras.edit');
     Route::get('/compras/{compra}', [ComprasController::class, 'show'])
         ->name('compras.show');
 

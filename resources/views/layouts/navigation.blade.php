@@ -1,5 +1,7 @@
 @php
-    $compraPendiente = count(session('compras.borrador.detalles', [])) > 0;
+    $compraPendiente = \App\Models\Compra::query()
+        ->where('estado', 'PENDIENTE')
+        ->exists();
 
     $module = match (true) {
         request()->routeIs('pos.*') => 'pos',

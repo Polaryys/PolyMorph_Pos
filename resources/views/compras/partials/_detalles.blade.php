@@ -2,7 +2,10 @@
     <div class="flex flex-col gap-1 border-b border-slate-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
             <h2 class="text-base font-semibold text-slate-900">Productos de la compra</h2>
-            <p class="mt-1 text-sm text-slate-500">Los cambios del borrador se guardan en la sesión.</p>
+            <p class="mt-1 text-sm text-slate-500">
+                Los costos y precios capturados se aplicarán al registrar la compra. El costo promedio se calcula
+                con el inventario vigente en ese momento.
+            </p>
         </div>
         <p class="text-sm text-slate-600">
             Total: <strong class="text-slate-900" x-text="'Q ' + totalCompra().toFixed(2)"></strong>
@@ -35,7 +38,7 @@
                                 <span x-text="detalle.marca"></span>
                             </p>
                             <p class="mt-1 text-xs text-slate-500">
-                                Costo promedio actual: Q <span x-text="Number(detalle.costo_promedio_actual).toFixed(2)"></span>
+                                Costo promedio actual (referencia): Q <span x-text="Number(detalle.costo_promedio_actual).toFixed(2)"></span>
                                 <span class="mx-1">·</span>
                                 Precio actual: Q <span x-text="Number(detalle.precio_unitario_actual).toFixed(2)"></span>
                                 <span class="mx-1">·</span>
@@ -53,34 +56,29 @@
                         <td class="px-4 py-3 text-center" x-text="detalle.cantidad_actual"></td>
                         <td class="px-4 py-3">
                             <input type="number" min="1" step="1" x-model.number="detalle.cantidad"
-                                @change="guardarBorrador()"
                                 class="w-24 rounded-md border border-slate-300 p-2 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </td>
                         <td class="px-4 py-3">
                             <input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.costo_unitario"
-                                @change="guardarBorrador()"
                                 placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
                                 class="w-28 rounded-md border border-slate-300 p-2 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </td>
                         <td class="px-4 py-3">
                             <input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_unitario_nuevo"
-                                @change="guardarBorrador()"
                                 placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
                                 class="w-28 rounded-md border border-slate-300 p-2 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </td>
                         <td class="px-4 py-3">
                             <input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_docena_nuevo"
-                                @change="guardarBorrador()"
                                 placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
                                 class="w-28 rounded-md border border-slate-300 p-2 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </td>
                         <td class="px-4 py-3">
                             <input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_ciento_nuevo"
-                                @change="guardarBorrador()"
                                 placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
                                 class="w-28 rounded-md border border-slate-300 p-2 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
                         </td>

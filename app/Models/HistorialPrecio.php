@@ -11,10 +11,12 @@ class HistorialPrecio extends Model
 
     protected $fillable = [
         'presentacion_id',
-        'usuario_id',
-        'tipo_precio',
-        'precio_anterior',
-        'precio_nuevo',
+        'precio_unitario_anterior',
+        'precio_docena_anterior',
+        'precio_ciento_anterior',
+        'precio_unitario_nuevo',
+        'precio_docena_nuevo',
+        'precio_ciento_nuevo',
     ];
 
     protected function casts(): array

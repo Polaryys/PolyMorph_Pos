@@ -26,14 +26,15 @@ return new class extends Migration
 
             $table->decimal('costo_unitario', 10, 2);
 
-            $table->decimal('costo_promedio_anterior', 10, 2);
+            $table->decimal('costo_promedio_anterior', 10, 2)->nullable();
 
-            $table->decimal('costo_promedio_nuevo', 10, 2);
+            $table->decimal('costo_promedio_nuevo', 10, 2)->nullable();
 
-            $table->decimal('precio_unitario_anterior', 10, 2);
+            $table->decimal('precio_unitario_nuevo', 10, 2);
 
-            $table->decimal('precio_unitario_nuevo', 10, 2)
-                ->nullable();
+            $table->decimal('precio_docena_nuevo', 10, 2)->nullable();
+
+            $table->decimal('precio_ciento_nuevo', 10, 2)->nullable();
 
             $table->decimal('subtotal', 10, 2);
 

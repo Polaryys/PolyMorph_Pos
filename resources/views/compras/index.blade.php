@@ -1,8 +1,4 @@
 <x-app-layout>
-    @php
-        $compraPendiente = count(session('compras.borrador.detalles', [])) > 0;
-    @endphp
-
     <!-- Encabezado y buscador -->
     <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <form action="{{ route('compras.index') }}" method="GET"
@@ -31,7 +27,7 @@
         </form>
         <a href="{{ route('compras.create') }}"
             class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
-            {{ $compraPendiente ? 'Continuar ingreso' : '+ Nuevo ingreso' }}
+            + Nueva compra
         </a>
         
     </div>
@@ -48,6 +44,14 @@
                 document.getElementById('success-message')?.remove();
             }, 3000);
         </script>
+    @endif
+
+    @if ($errors->any())
+        <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
     @endif
 
     <!-- TABLA DE COMPRAS -->
@@ -85,7 +89,11 @@
                 </td>
 
                 <td class="px-4 py-3 text-center whitespace-nowrap">
-                    @if ($compra->estado === 'REGISTRADA')
+                    @if ($compra->estado === 'PENDIENTE')
+                        <span class="inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                            Pendiente
+                        </span>
+                    @elseif ($compra->estado === 'REGISTRADA')
                         <span class="inline-flex rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
                             Registrada
                         </span>
@@ -103,17 +111,40 @@
                             <x-lucide-eye class="h-5 w-5" />
                         </a>
 
-                        <button type="button" disabled title="La edición estará disponible próximamente"
-                            aria-label="Editar compra"
-                            class="cursor-not-allowed text-slate-300">
-                            <x-lucide-pencil class="h-5 w-5" />
-                        </button>
-
-                        <button type="button" disabled title="La reversión estará disponible próximamente"
-                            aria-label="Revertir compra"
-                            class="cursor-not-allowed text-slate-300">
-                            <span class="text-xs font-medium">Revertir</span>
-                        </button>
+                        @if ($compra->estado === 'PENDIENTE')
+                            <a href="{{ route('compras.edit', $compra) }}" title="Editar compra pendiente"
+                                aria-label="Editar compra pendiente" class="text-slate-500 transition hover:text-indigo-600">
+                                <x-lucide-pencil class="h-5 w-5" />
+                            </a>
+                            <form action="{{ route('compras.registrar', $compra) }}" method="POST"
+                                onsubmit="return confirm('¿Registrar la compra {{ $compra->numero_compra }}? Se actualizarán inventario y precios.');">
+                                @csrf
+                                <button type="submit" title="Registrar compra"
+                                    class="text-xs font-medium text-green-700 transition hover:text-green-900">
+                                    Registrar
+                                </button>
+                            </form>
+                            <form action="{{ route('compras.destroy', $compra) }}" method="POST"
+                                onsubmit="return confirm('¿Eliminar la compra pendiente {{ $compra->numero_compra }}?');">
+                                @csrf
+                                @method('DELETE')
+                                <button type="submit" title="Eliminar compra pendiente"
+                                    aria-label="Eliminar compra pendiente"
+                                    class="text-xs font-medium text-red-600 transition hover:text-red-800">
+                                    Eliminar
+                                </button>
+                            </form>
+                        @elseif ($compra->estado === 'REGISTRADA')
+                            <form action="{{ route('compras.revertir', $compra) }}" method="POST"
+                                onsubmit="return confirm('¿Revertir la compra {{ $compra->numero_compra }}? Esta acción no se puede deshacer.');">
+                                @csrf
+                                <button type="submit" title="Revertir compra"
+                                    aria-label="Revertir compra"
+                                    class="text-xs font-medium text-red-600 transition hover:text-red-800">
+                                    Revertir
+                                </button>
+                            </form>
+                        @endif
                     </div>
                 </td>
             </tr>
