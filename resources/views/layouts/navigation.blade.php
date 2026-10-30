@@ -1,11 +1,9 @@
 @php
-    $compraPendiente = \App\Models\Compra::query()
-        ->where('estado', 'PENDIENTE')
-        ->exists();
+    $compraPendiente = \App\Models\Compra::query()->where('estado', 'PENDIENTE')->exists();
 
     $module = match (true) {
         request()->routeIs('pos.*') => 'pos',
-        request()->routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*','compras.*') => 'inventario',
+        request()->routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*') => 'inventario',
         request()->routeIs('clientes.*') => 'clientes',
         request()->routeIs('proveedores.*') => 'proveedores',
         request()->routeIs('profile.*') => 'profile',
@@ -37,7 +35,7 @@
     ];
 @endphp
 
-<div class="fixed top-0 left-0 right-0 md:left-56 z-20 bg-zinc-800 border-b border-gray-200">
+<div class="fixed top-0 left-0 right-0 md:left-56 z-20 bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-14">
             <div class="flex w-full">
@@ -61,10 +59,11 @@
                     </button>
                 </div>
 
-                <div class="flex space-x-8 -my-px ms-2 items-end sm:ms-10 whitespace-nowrap overflow-x-auto no-scrollbar">
+                <div class="flex items-center gap-3 ms-2 sm:ms-4 whitespace-nowrap overflow-x-auto no-scrollbar">
                     @foreach ($menus[$module] ?? [] as $item)
                         @if ($item['disabled'] ?? false)
-                            <span class="inline-flex px-1 pt-1 pb-3 text-sm font-medium text-gray-400 cursor-not-allowed select-none">
+                            <span
+                                class="inline-flex px-1 pt-1 pb-3 text-sm font-medium text-gray-900 cursor-not-allowed select-none">
                                 {{ __($item['label']) }}
                             </span>
                         @else
@@ -76,8 +75,7 @@
                                 <span class="inline-flex items-center gap-2">
                                     {{ __($item['label']) }}
                                     @if (($item['route'] ?? null) === 'compras.index' && $compraPendiente)
-                                        <span aria-label="Hay una compra pendiente"
-                                            title="Hay una compra pendiente"
+                                        <span aria-label="Hay una compra pendiente" title="Hay una compra pendiente"
                                             class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold leading-none text-white">
                                             +
                                         </span>

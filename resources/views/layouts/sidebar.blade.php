@@ -1,10 +1,4 @@
-﻿@php
-    $compraPendiente = \App\Models\Compra::query()
-        ->where('estado', 'PENDIENTE')
-        ->exists();
-@endphp
-
-<aside
+﻿<aside
     class="fixed inset-y-0 left-0 w-56 z-40 bg-zinc-900 
            flex flex-col transform transition-transform duration-300 ease-in-out
            -translate-x-full md:translate-x-0"
@@ -42,13 +36,6 @@
                 </x-slot:icon>
                 <span class="flex flex-1 items-center justify-between">
                     Inventario
-                    @if ($compraPendiente)
-                        <span aria-label="Hay una compra pendiente"
-                            title="Hay una compra pendiente"
-                            class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold leading-none text-white">
-                            +
-                        </span>
-                    @endif
                 </span>
             </x-sidebar-link>
 
@@ -75,7 +62,7 @@
 
             <x-sidebar-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')" wire:navigate>
                 <x-slot:icon>
-                    <x-lucide-users class="w-5 h-5 shrink-0" />
+                    <x-lucide-user class="w-5 h-5 shrink-0" />
                 </x-slot:icon>
                 Usuarios
             </x-sidebar-link>
@@ -99,8 +86,8 @@
             <!-- user -->
             <a href="{{ route('profile.show') }}" wire:navigate @class([
                 'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
-                'bg-indigo-600 text-white shadow-sm' => request()->routeIs('profile.*'),
-                'text-slate-300 hover:bg-slate-800/60 hover:text-white' => !request()->routeIs(
+                'bg-indigo-600/80 text-white shadow-sm' => request()->routeIs('profile.*'),
+                'text-zinc-300 hover:bg-zinc-800 hover:text-white' => !request()->routeIs(
                     'profile.*'),
             ])>
                 @php
@@ -133,7 +120,11 @@
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit"
-                    class="w-full flex items-center gap-3 px-3 py-3 rounded-lg text-sm font-medium text-red-600 hover:bg-red-50 transition-colors">
+                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
+       text-sm font-medium text-red-400
+       hover:bg-red-500/10 hover:text-red-300
+       focus-visible:outline-none focus-visible:ring-2
+       focus-visible:ring-red-400 transition-colors">
                     <x-lucide-log-out class="w-5 h-5 shrink-0 text-red-500" />
                     <span>Cerrar sesión</span>
                 </button>

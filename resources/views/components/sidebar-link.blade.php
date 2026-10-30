@@ -1,9 +1,14 @@
 @props(['active' => false])
 
 @php
-$classes = $active
-    ? 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-semibold bg-indigo-600 text-white transition-colors shadow-sm'
-    : 'flex items-center gap-3 px-3 py-2.5 rounded-lg text-base font-medium text-slate-300 hover:text-slate-100 hover:bg-slate-800/60 transition-colors';
+    $classes = $active
+        ? 'group flex items-center gap-3 px-3 py-2.5 rounded-lg
+           text-base font-semibold bg-indigo-600 text-white
+           shadow-base transition-colors duration-150'
+        : 'group flex items-center gap-3 px-3 py-2.5 rounded-lg
+           text-base font-medium text-slate-300
+           hover:text-white hover:bg-slate-800
+           transition-colors duration-150';
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>
@@ -12,5 +17,8 @@ $classes = $active
             {{ $icon }}
         </div>
     @endif
-    <span>{{ $slot }}</span>
+
+    <span class="min-w-0">
+        {{ $slot }}
+    </span>
 </a>
