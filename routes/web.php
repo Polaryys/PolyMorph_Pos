@@ -46,7 +46,15 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('articulos', InventarioController::class)
         ->parameters(['articulos' => 'inventario']);
-    ;
+
+    Route::get('/inventario/ajuste', [InventarioController::class, 'mostrarAjusteInventario'])
+        ->name('inventario.ajuste');
+    Route::get('/inventario/movimientos', [InventarioController::class, 'movimientos'])
+        ->name('inventario.movimientos');
+    Route::get('/inventario/buscar-productos-ajuste', [InventarioController::class, 'buscarProductosParaAjuste'])
+        ->name('inventario.buscar-productos-ajuste');
+    Route::post('/inventario/ajuste', [InventarioController::class, 'ajustarInventario'])
+        ->name('inventario.ajustar');
 
     Route::get(
         '/presentaciones/buscar-productos',

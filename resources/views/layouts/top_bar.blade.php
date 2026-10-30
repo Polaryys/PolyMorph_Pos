@@ -8,6 +8,8 @@
         'Productos por lotes' => ['presentaciones.*'],
         'Marcas registradas' => ['marcas.*',],
         'Ingreso de mercadería' => ['compras.*'],
+        'Ajuste de Existencias' => ['inventario.ajuste'],
+        'Movimientos de inventario' => ['inventario.movimientos'],
         'Clientes registradas' => ['clientes.*'],
         
         'Proveedores' => ['proveedores.*', 'proveedor.*'],

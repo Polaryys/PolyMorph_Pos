@@ -148,7 +148,7 @@ class ComprasController extends Controller
         });
 
         return redirect()
-            ->route('compras.edit', $compra)
+            ->route('compras.index')
             ->with('success', 'La compra se guardó como pendiente.');
     }
 
@@ -203,7 +203,7 @@ class ComprasController extends Controller
         });
 
         return redirect()
-            ->route('compras.edit', $compra)
+            ->route('compras.index')
             ->with('success', 'La compra pendiente se actualizó correctamente.');
     }
 
@@ -361,7 +361,7 @@ class ComprasController extends Controller
         });
 
         return redirect()
-            ->route('compras.show', $compra)
+            ->route('compras.index')
             ->with('success', 'La compra se registró correctamente.');
     }
 

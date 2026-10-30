@@ -4,14 +4,153 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Inventario;
+use App\Models\Movimiento;
 use App\Models\Presentacion;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 
 class InventarioController extends Controller
 {
+    public function mostrarAjusteInventario()
+    {
+        return view('articulos.ajuste-inventario');
+    }
+
+    /**
+     * Buscar productos activos por su presentación base.
+     */
+    public function buscarProductosParaAjuste(Request $request): JsonResponse
+    {
+        $datos = $request->validate([
+            'buscar' => ['required', 'string', 'min:1', 'max:100'],
+        ]);
+        $buscar = trim($datos['buscar']);
+
+        if ($buscar === '') {
+            return response()->json([]);
+        }
+
+        $productos = Presentacion::query()
+            ->select(['id', 'inventario_id', 'nombre', 'codigoSKU'])
+            ->where('base', true)
+            ->where('estado', true)
+            ->whereHas('inventario', function ($query) {
+                $query->where('tipo', 'PRODUCTO')
+                    ->where('estado', true);
+            })
+            ->with([
+                'inventario:id,cantidad',
+                'imagen:id,nombre_archivo',
+            ])
+            ->where(function ($query) use ($buscar) {
+                $query->where('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('codigoSKU', 'like', "%{$buscar}%");
+            })
+            ->orderBy('nombre')
+            ->limit(10)
+            ->get()
+            ->map(fn (Presentacion $presentacion) => [
+                'inventario_id' => $presentacion->inventario_id,
+                'nombre' => $presentacion->nombre,
+                'sku' => $presentacion->codigoSKU,
+                'imagen_url' => $presentacion->imagen
+                    ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
+                    : null,
+                'cantidad' => (int) ($presentacion->inventario?->cantidad ?? 0),
+            ])
+            ->values();
+
+        return response()->json($productos);
+    }
+
+    /**
+     * Actualizar la existencia al conteo físico indicado y guardar el movimiento.
+     */
+    public function ajustarInventario(Request $request)
+    {
+        $datos = $request->validate([
+            'inventario_id' => ['required', 'integer', 'exists:inventario,id'],
+            'cantidad' => ['required', 'integer', 'min:0', 'max:4294967295'],
+            'motivo' => ['required', 'string', 'max:500'],
+        ]);
+
+        DB::transaction(function () use ($datos) {
+            $inventario = Inventario::query()
+                ->whereKey($datos['inventario_id'])
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $tienePresentacionBaseActiva = $inventario->presentaciones()
+                ->where('base', true)
+                ->where('estado', true)
+                ->lockForUpdate()
+                ->exists();
+
+            if (
+                $inventario->tipo !== 'PRODUCTO'
+                || ! $inventario->estado
+                || ! $tienePresentacionBaseActiva
+            ) {
+                throw ValidationException::withMessages([
+                    'inventario_id' => 'Selecciona un producto activo con presentación base.',
+                ]);
+            }
+
+            if ((int) $inventario->cantidad === (int) $datos['cantidad']) {
+                throw ValidationException::withMessages([
+                    'cantidad' => 'La cantidad indicada coincide con las existencias actuales.',
+                ]);
+            }
+
+            $inventario->cantidad = (int) $datos['cantidad'];
+            DB::statement('SET @usuario_id = ?, @motivo = ?', [
+                Auth::id(),
+                'Ajuste de inventario: '.$datos['motivo'],
+            ]);
+
+            try {
+                $inventario->save();
+            } finally {
+                DB::statement('SET @usuario_id = NULL, @motivo = NULL');
+            }
+        });
+
+        return redirect()
+            ->route('articulos.index')
+            ->with('success', 'El inventario se ajustó correctamente.');
+    }
+
+    public function movimientos(Request $request)
+    {
+        $buscar = trim($request->input('buscar', ''));
+
+        $movimientos = Movimiento::query()
+            ->with([
+                'usuario:id,nombres,apellidos',
+                'inventario.presentaciones' => function ($query) {
+                    $query->select('id', 'inventario_id', 'nombre', 'codigoSKU')
+                        ->where('base', true);
+                },
+            ])
+            ->when($buscar !== '', function ($query) use ($buscar) {
+                $query->whereHas('inventario.presentaciones', function ($subquery) use ($buscar) {
+                    $subquery->where('base', true)
+                        ->where('codigoSKU', 'like', "%{$buscar}%");
+                });
+            })
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate(20)
+            ->withQueryString();
+
+        return view('articulos.movimientos', compact('movimientos', 'buscar'));
+    }
+
     /**
      * Display a listing of the resource.
      */
