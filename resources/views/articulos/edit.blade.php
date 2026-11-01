@@ -5,17 +5,6 @@
 
     <div class="space-y-6">
 
-        {{-- Encabezado --}}
-        <div>
-            <h2 class="text-xl font-semibold text-gray-800">
-                Editar {{ $articulo->tipo === 'PRODUCTO' ? 'producto' : 'servicio' }}
-            </h2>
-
-            <p class="mt-1 text-sm text-gray-500">
-                Modifica la información del artículo y guarda los cambios.
-            </p>
-        </div>
-
         <form action="{{ route('articulos.update', $articulo->id) }}" method="POST">
             @csrf
             @method('PUT')
@@ -50,18 +39,16 @@
                         </div>
                         <input type="hidden" id="imagen_id" name="imagen_id"
                             value="{{ old('imagen_id', $presentacion?->imagen_id) }}">
-                        @error('imagen_id')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('imagen_id')" class="mt-2" />
                     </div>
 
                     <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 xl:grid-cols-4">
 
                     {{-- Tipo: no editable --}}
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">
+                        <x-input-label>
                             Tipo de artículo
-                        </label>
+                        </x-input-label>
 
                         <div class="mt-1.5">
                             <span
@@ -74,9 +61,9 @@
 
                     {{-- Categoría --}}
                     <div>
-                        <label for="categoria_id" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="categoria_id">
                             Categoría
-                        </label>
+                        </x-input-label>
 
                         <select id="categoria_id" name="categoria_id"
                             class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
@@ -90,16 +77,14 @@
                             @endforeach
                         </select>
 
-                        @error('categoria_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('categoria_id')" />
                     </div>
 
                     {{-- Marca --}}
                     <div>
-                        <label for="marca_id" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="marca_id">
                             Marca
-                        </label>
+                        </x-input-label>
 
                         <select id="marca_id" name="marca_id"
                             class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
@@ -113,16 +98,14 @@
                             @endforeach
                         </select>
 
-                        @error('marca_id')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('marca_id')" />
                     </div>
 
                     {{-- Estado --}}
                     <div>
-                        <label for="estado" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="estado">
                             Estado del artículo <span class="text-red-500">*</span>
-                        </label>
+                        </x-input-label>
 
                         <select id="estado" name="estado" required
                             class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
@@ -136,25 +119,20 @@
                             </option>
                         </select>
 
-                        @error('estado')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('estado')" />
                     </div>
 
                     {{-- Umbral --}}
                     <div>
-                        <label for="umbral" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="umbral">
                             Umbral de inventario <span class="text-red-500">*</span>
-                        </label>
+                        </x-input-label>
 
-                        <input type="number" id="umbral" name="umbral" min="0" step="1" required
-                            value="{{ old('umbral', $articulo->umbral ?? 0) }}"
-                            class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
-                                      focus:border-indigo-500 focus:ring-indigo-500">
+                        <x-text-input type="number" id="umbral" name="umbral" min="0" step="1" required
+                            :value="old('umbral', $articulo->umbral ?? 0)"
+                            :error="$errors->has('umbral')" class="mt-1 rounded-lg" />
 
-                        @error('umbral')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('umbral')" />
                     </div>
 
                 </div>
@@ -174,101 +152,83 @@
 
                     {{-- Nombre --}}
                     <div class="sm:col-span-2">
-                        <label for="nombre" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="nombre">
                             Nombre <span class="text-red-500">*</span>
-                        </label>
+                        </x-input-label>
 
-                        <input type="text" id="nombre" name="nombre" maxlength="100" required
-                            value="{{ old('nombre', $presentacion?->nombre) }}"
-                            class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
-                                      focus:border-indigo-500 focus:ring-indigo-500">
+                        <x-text-input type="text" id="nombre" name="nombre" maxlength="100" required
+                            :value="old('nombre', $presentacion?->nombre)"
+                            :error="$errors->has('nombre')" class="mt-1 rounded-lg" />
 
-                        @error('nombre')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('nombre')" />
                     </div>
 
                     {{-- SKU --}}
                     <div>
-                        <label for="codigoSKU" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="codigoSKU">
                             Código SKU <span class="text-red-500">*</span>
-                        </label>
+                        </x-input-label>
 
-                        <input type="text" id="codigoSKU" name="codigoSKU" maxlength="50" required
-                            value="{{ old('codigoSKU', $presentacion?->codigoSKU) }}"
-                            class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
-                                      focus:border-indigo-500 focus:ring-indigo-500">
+                        <x-text-input type="text" id="codigoSKU" name="codigoSKU" maxlength="50" required
+                            :value="old('codigoSKU', $presentacion?->codigoSKU)"
+                            :error="$errors->has('codigoSKU')" class="mt-1 rounded-lg" />
 
-                        @error('codigoSKU')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('codigoSKU')" />
                     </div>
 
                     {{-- Código de barras --}}
                     <div>
-                        <label for="codigoBarras" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="codigoBarras">
                             Código de barras
-                        </label>
+                        </x-input-label>
 
-                        <input type="text" id="codigoBarras" name="codigoBarras" maxlength="50"
-                            value="{{ old('codigoBarras', $presentacion?->codigoBarras) }}"
-                            class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
-                                      focus:border-indigo-500 focus:ring-indigo-500">
+                        <x-text-input type="text" id="codigoBarras" name="codigoBarras" maxlength="50"
+                            :value="old('codigoBarras', $presentacion?->codigoBarras)"
+                            :error="$errors->has('codigoBarras')" class="mt-1 rounded-lg" />
 
-                        @error('codigoBarras')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('codigoBarras')" />
                     </div>
 
                     {{-- Ubicación --}}
                     <div>
-                        <label for="ubicacion" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="ubicacion">
                             Ubicación física
-                        </label>
+                        </x-input-label>
 
-                        <input type="text" id="ubicacion" name="ubicacion" maxlength="100"
-                            value="{{ old('ubicacion', $presentacion?->ubicacion) }}" placeholder="Ej. Estante A-1"
-                            class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
-                                      focus:border-indigo-500 focus:ring-indigo-500">
+                        <x-text-input type="text" id="ubicacion" name="ubicacion" maxlength="100"
+                            :value="old('ubicacion', $presentacion?->ubicacion)" placeholder="Ej. Estante A-1"
+                            :error="$errors->has('ubicacion')" class="mt-1 rounded-lg" />
 
-                        @error('ubicacion')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('ubicacion')" />
                     </div>
 
                     {{-- Fecha de vencimiento --}}
                     <div>
-                        <label for="fecha_vencimiento" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="fecha_vencimiento">
                             Fecha de vencimiento
-                        </label>
+                        </x-input-label>
 
-                        <input type="date" id="fecha_vencimiento" name="fecha_vencimiento"
-                            value="{{ old(
+                        <x-text-input type="date" id="fecha_vencimiento" name="fecha_vencimiento"
+                            :value="old(
                                 'fecha_vencimiento',
                                 $presentacion?->fecha_vencimiento ? \Carbon\Carbon::parse($presentacion->fecha_vencimiento)->format('Y-m-d') : '',
-                            ) }}"
-                            class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
-                                      focus:border-indigo-500 focus:ring-indigo-500">
+                            )" :error="$errors->has('fecha_vencimiento')" class="mt-1 rounded-lg" />
 
-                        @error('fecha_vencimiento')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('fecha_vencimiento')" />
                     </div>
 
                     {{-- Detalle --}}
                     <div class="sm:col-span-2 xl:col-span-4">
-                        <label for="detalle" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="detalle">
                             Descripción o detalle
-                        </label>
+                        </x-input-label>
 
                         <textarea id="detalle" name="detalle" rows="3"
                             class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
                                          focus:border-indigo-500 focus:ring-indigo-500"
                             placeholder="Descripción adicional del artículo...">{{ old('detalle', $presentacion?->detalle) }}</textarea>
 
-                        @error('detalle')
-                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <x-input-error :messages="$errors->get('detalle')" />
                     </div>
 
                 </div>
@@ -364,15 +324,13 @@
                                         </td>
 
                                         <td class="px-4 py-3">
-                                            <input type="number" id="precioUnitario" name="precioUnitario"
+                                            <x-text-input type="number" id="precioUnitario" name="precioUnitario"
                                                 min="0" step="0.01"
-                                                value="{{ old('precioUnitario', $presentacion?->precioUnitario) }}"
-                                                class="block w-full min-w-32 rounded-lg border-gray-300 text-sm shadow-sm
-                                                          focus:border-indigo-500 focus:ring-indigo-500">
+                                                :value="old('precioUnitario', $presentacion?->precioUnitario)"
+                                                :error="$errors->has('precioUnitario')"
+                                                class="min-w-32 rounded-lg" />
 
-                                            @error('precioUnitario')
-                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
+                                            <x-input-error :messages="$errors->get('precioUnitario')" />
                                         </td>
                                     </tr>
 
@@ -387,15 +345,13 @@
                                         </td>
 
                                         <td class="px-4 py-3">
-                                            <input type="number" id="precioUnitarioDocena"
+                                            <x-text-input type="number" id="precioUnitarioDocena"
                                                 name="precioUnitarioDocena" min="0" step="0.01" required
-                                                value="{{ old('precioUnitarioDocena', $presentacion?->precioUnitarioDocena) }}"
-                                                class="block w-full min-w-32 rounded-lg border-gray-300 text-sm shadow-sm
-                                                          focus:border-indigo-500 focus:ring-indigo-500">
+                                                :value="old('precioUnitarioDocena', $presentacion?->precioUnitarioDocena)"
+                                                :error="$errors->has('precioUnitarioDocena')"
+                                                class="min-w-32 rounded-lg" />
 
-                                            @error('precioUnitarioDocena')
-                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
+                                            <x-input-error :messages="$errors->get('precioUnitarioDocena')" />
                                         </td>
                                     </tr>
 
@@ -410,15 +366,13 @@
                                         </td>
 
                                         <td class="px-4 py-3">
-                                            <input type="number" id="precioUnitarioCiento"
+                                            <x-text-input type="number" id="precioUnitarioCiento"
                                                 name="precioUnitarioCiento" min="0" step="0.01" required
-                                                value="{{ old('precioUnitarioCiento', $presentacion?->precioUnitarioCiento) }}"
-                                                class="block w-full min-w-32 rounded-lg border-gray-300 text-sm shadow-sm
-                                                          focus:border-indigo-500 focus:ring-indigo-500">
+                                                :value="old('precioUnitarioCiento', $presentacion?->precioUnitarioCiento)"
+                                                :error="$errors->has('precioUnitarioCiento')"
+                                                class="min-w-32 rounded-lg" />
 
-                                            @error('precioUnitarioCiento')
-                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                            @enderror
+                                            <x-input-error :messages="$errors->get('precioUnitarioCiento')" />
                                         </td>
                                     </tr>
 
@@ -428,20 +382,16 @@
                     @else
                         {{-- Precio de servicio --}}
                         <div class="max-w-md">
-                            <label for="precioUnitario" class="block text-sm font-medium text-gray-700">
+                            <x-input-label for="precioUnitario">
                                 Precio unitario del servicio (Q)
                                 <span class="text-red-500">*</span>
-                            </label>
+                            </x-input-label>
 
-                            <input type="number" id="precioUnitario" name="precioUnitario" min="0"
-                                step="0.01" required
-                                value="{{ old('precioUnitario', $presentacion?->precioUnitario) }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm
-                                          focus:border-indigo-500 focus:ring-indigo-500">
+                            <x-text-input type="number" id="precioUnitario" name="precioUnitario" min="0"
+                                step="0.01" required :value="old('precioUnitario', $presentacion?->precioUnitario)"
+                                :error="$errors->has('precioUnitario')" class="mt-1 rounded-lg" />
 
-                            @error('precioUnitario')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <x-input-error :messages="$errors->get('precioUnitario')" />
                         </div>
                     @endif
 
@@ -449,23 +399,15 @@
             </div>
 
             {{-- Acciones --}}
-            <div class="flex flex-col-reverse justify-end gap-3 pb-4 pt-6 sm:flex-row">
+            <div class="flex flex-col-reverse justify-end gap-3 pb-4 pt-6 pb-6 sm:flex-row">
 
-                <a href="{{ route('articulos.show', $articulo->id) }}"
-                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white
-                          px-4 py-2 text-sm font-medium text-gray-700 shadow-sm
-                          transition hover:bg-gray-50">
+                <x-secondary-link href="{{ route('articulos.index') }}">
                     Cancelar
-                </a>
+                </x-secondary-link>
 
-                <button type="submit"
-                    class="inline-flex justify-center rounded-md border border-transparent
-                               bg-indigo-600 px-4 py-2 text-sm font-medium text-white
-                               shadow-sm transition hover:bg-indigo-700
-                               focus:outline-none focus:ring-2 focus:ring-indigo-500
-                               focus:ring-offset-2">
-                    Guardar cambios
-                </button>
+                <x-primary-button>
+                    Guardar Cambios
+                </x-primary-button>
 
             </div>
 

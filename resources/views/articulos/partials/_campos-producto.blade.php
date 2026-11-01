@@ -5,71 +5,51 @@
 
     <!-- Umbral -->
     <div>
-        <label for="umbral" class="block text-sm font-medium text-gray-700">
+        <x-input-label for="umbral">
             Umbral de inventario <span class="text-red-500">*</span>
-        </label>
+        </x-input-label>
 
-        <input type="number" id="umbral" name="umbral"
-            min="0" step="1" value="{{ old('umbral', 0) }}"
-            class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('umbral') border-red-500 @enderror">
+        <x-text-input type="number" id="umbral" name="umbral" min="0" step="1"
+            :value="old('umbral', 0)" :error="$errors->has('umbral')" class="mt-1" />
 
-        @error('umbral')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('umbral')" />
     </div>
 
     <!-- Código de barras -->
     <div>
-        <label for="codigoBarras" class="block text-sm font-medium text-gray-700">
+        <x-input-label for="codigoBarras">
             Código de barras
-        </label>
+        </x-input-label>
 
-        <input type="text" id="codigoBarras" name="codigoBarras"
-            maxlength="50" value="{{ old('codigoBarras') }}"
-            class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('codigoBarras') border-red-500 @enderror">
+        <x-text-input type="text" id="codigoBarras" name="codigoBarras" maxlength="50"
+            :value="old('codigoBarras')" :error="$errors->has('codigoBarras')" class="mt-1" />
 
-        @error('codigoBarras')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('codigoBarras')" />
     </div>
 
     <!-- Ubicación -->
     <div>
-        <label for="ubicacion" class="block text-sm font-medium text-gray-700">
+        <x-input-label for="ubicacion">
             Ubicación
-        </label>
+        </x-input-label>
 
-        <input type="text" id="ubicacion" name="ubicacion"
-            maxlength="100" value="{{ old('ubicacion') }}"
-            placeholder="Ej. Estante A-1"
-            class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('ubicacion') border-red-500 @enderror">
+        <x-text-input type="text" id="ubicacion" name="ubicacion" maxlength="100"
+            :value="old('ubicacion')" placeholder="Ej. Estante A-1"
+            :error="$errors->has('ubicacion')" class="mt-1" />
 
-        @error('ubicacion')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('ubicacion')" />
     </div>
 
     <!-- Fecha de vencimiento -->
     <div>
-        <label for="fecha_vencimiento" class="block text-sm font-medium text-gray-700">
+        <x-input-label for="fecha_vencimiento">
             Fecha de vencimiento
-        </label>
+        </x-input-label>
 
-        <input type="date" id="fecha_vencimiento" name="fecha_vencimiento"
-            value="{{ old('fecha_vencimiento') }}"
-            class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500
-                   focus:ring-indigo-500 @error('fecha_vencimiento') border-red-500 @enderror">
+        <x-text-input type="date" id="fecha_vencimiento" name="fecha_vencimiento"
+            :value="old('fecha_vencimiento')" :error="$errors->has('fecha_vencimiento')" class="mt-1" />
 
-        @error('fecha_vencimiento')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('fecha_vencimiento')" />
     </div>
 
 </div>

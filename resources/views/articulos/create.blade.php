@@ -25,9 +25,9 @@
                 @include('articulos.partials._campos-servicio')
 
                 <div>
-                    <label for="detalle" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="detalle">
                         Descripción o detalle
-                    </label>
+                    </x-input-label>
 
                     <textarea id="detalle" name="detalle" rows="3" placeholder="Agrega características o información adicional..."
                         class="mt-1 block w-full rounded-md border border-gray-300
@@ -36,28 +36,19 @@
                 focus:ring-indigo-500
                 focus:ring-indigo-500 @error('detalle') border-red-500 @enderror">{{ old('detalle') }}</textarea>
 
-                    @error('detalle')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('detalle')" />
                 </div>
 
             </div>
         </div>
-        <div class="mb-4 mt-5 flex justify-end gap-3">
-            <a href="{{ route('articulos.index') }}"
-                class="rounded-md border border-gray-300 bg-white px-4 py-2
-                       text-sm font-medium text-gray-700 shadow-sm
-                       transition hover:bg-gray-50">
+        <div class="mb-6 mt-5 flex justify-end gap-3">
+            <x-secondary-link href="{{ route('articulos.index') }}">
                 Volver
-            </a>
+            </x-secondary-link>
 
-            <button type="submit"
-                class="inline-flex justify-center rounded-md border
-                       border-transparent bg-indigo-600 px-4 py-2
-                       text-sm font-medium text-white shadow-sm
-                       transition hover:bg-indigo-700">
-                Guardar artículo
-            </button>
+            <x-primary-button>
+                Crear Artículo
+            </x-primary-button>
         </div>
     </form>
 

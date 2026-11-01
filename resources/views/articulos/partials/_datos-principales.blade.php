@@ -2,9 +2,9 @@
 
     <!-- Tipo -->
     <div class="sm:col-span-6">
-        <label for="tipo" class="block text-sm font-medium text-gray-700">
+        <x-input-label for="tipo">
             Tipo <span class="text-red-500">*</span>
-        </label>
+        </x-input-label>
 
         <select id="tipo" name="tipo" required x-model="tipo"
             class="mt-1 block w-40 rounded-md border border-gray-300
@@ -24,60 +24,48 @@
             </option>
         </select>
 
-        @error('tipo')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('tipo')" />
+    </div>
+
+    <div x-cloak x-show="!tipo"
+        class="sm:col-span-6 rounded-md border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+        Selecciona un tipo de artículo para habilitar estos campos.
     </div>
 
     <!-- Nombre -->
-    <div class="sm:col-span-6">
-        <label for="nombre" class="block text-sm font-medium text-gray-700">
+    <div class="sm:col-span-6" x-bind:class="tipo ? '' : 'opacity-60'">
+        <x-input-label for="nombre">
             Nombre <span class="text-red-500">*</span>
-        </label>
+        </x-input-label>
 
-        <input :disabled="!tipo" type="text" id="nombre" name="nombre" maxlength="100" required
-            value="{{ old('nombre') }}"
-            class="mt-1 block w-full rounded-md border border-gray-300
-           p-2 text-sm shadow-sm focus:border-indigo-500
-           focus:ring-indigo-500 disabled:bg-gray-100
-           disabled:cursor-not-allowed
-           @error('nombre') border-red-500 @enderror">
+        <x-text-input x-bind:disabled="!tipo" type="text" id="nombre" name="nombre" maxlength="100" required
+            :value="old('nombre')" :error="$errors->has('nombre')" class="mt-1" />
 
-        @error('nombre')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('nombre')" />
     </div>
 
     <!-- Código SKU -->
-    <div class="sm:col-span-2">
-        <label for="codigoSKU" class="block text-sm font-medium text-gray-700">
+    <div class="sm:col-span-2" x-bind:class="tipo ? '' : 'opacity-60'">
+        <x-input-label for="codigoSKU">
             Código SKU <span class="text-red-500">*</span>
-        </label>
+        </x-input-label>
 
-        <input :disabled="!tipo" type="text" id="codigoSKU" name="codigoSKU" maxlength="50" required
-            value="{{ old('codigoSKU') }}"
-            class="mt-1 block w-full rounded-md border border-gray-300
-                    p-2 text-sm shadow-sm focus:border-indigo-500
-                    focus:ring-indigo-500 disabled:bg-gray-100
-                    disabled:cursor-not-allowed
-                    @error('codigoSKU') border-red-500 @enderror">
+        <x-text-input x-bind:disabled="!tipo" type="text" id="codigoSKU" name="codigoSKU" maxlength="50" required
+            :value="old('codigoSKU')" :error="$errors->has('codigoSKU')" class="mt-1" />
 
-        @error('codigoSKU')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('codigoSKU')" />
     </div>
 
     <!-- Categoría -->
-    <div class="sm:col-span-2">
-        <label for="categoria_id" class="block text-sm font-medium text-gray-700">
+    <div class="sm:col-span-2" x-bind:class="tipo ? '' : 'opacity-60'">
+        <x-input-label for="categoria_id">
             Categoría
-        </label>
+        </x-input-label>
 
-        <select :disabled="!tipo" disabled:bg-gray-100 disabled:cursor-not-allowed id="categoria_id"
-            name="categoria_id"
+        <select x-bind:disabled="!tipo" id="categoria_id" name="categoria_id"
             class="mt-1 block w-full rounded-md border border-gray-300
-                   p-2 text-sm shadow-sm focus:border-indigo-500 
-                   disabled:bg-gray-100 disabled:cursor-not-allowed
+                   p-2 text-sm shadow-sm focus:border-indigo-500
+                   disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-75
                    focus:ring-indigo-500 @error('categoria_id') border-red-500 @enderror">
 
             <option value="">Seleccionar categoría</option>
@@ -90,22 +78,19 @@
 
         </select>
 
-        @error('categoria_id')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('categoria_id')" />
     </div>
 
     <!-- Marca -->
-    <div class="sm:col-span-2">
-        <label for="marca_id" class="block text-sm font-medium text-gray-700">
+    <div class="sm:col-span-2" x-bind:class="tipo ? '' : 'opacity-60'">
+        <x-input-label for="marca_id">
             Marca
-        </label>
+        </x-input-label>
 
-        <select :disabled="!tipo" disabled:bg-gray-50 disabled:cursor-not-allowed id="marca_id" name="marca_id"
+        <select x-bind:disabled="!tipo" id="marca_id" name="marca_id"
             class="mt-1 block w-full rounded-md border border-gray-300
                     p-2 text-sm shadow-sm focus:border-indigo-500
-                    disabled:bg-gray-100
-                    disabled:cursor-not-allowed
+                    disabled:cursor-not-allowed disabled:bg-slate-100 disabled:opacity-75
                     focus:ring-indigo-500 @error('marca_id') border-red-500 @enderror">
 
             <option value="">Seleccionar marca</option>
@@ -118,9 +103,7 @@
 
         </select>
 
-        @error('marca_id')
-            <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-        @enderror
+        <x-input-error :messages="$errors->get('marca_id')" />
     </div>
 
 </div>

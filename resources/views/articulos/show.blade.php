@@ -304,21 +304,15 @@
         @endif
 
         {{-- Acciones --}}
-        <div class="flex justify-end gap-3 pb-4">
+        <div class="flex justify-end gap-3 pb-4 pb-6">
 
-            <a href="{{ route('articulos.index') }}"
-                class="rounded-md border border-gray-300 bg-white px-4 py-2
-                       text-sm font-medium text-gray-700 shadow-sm
-                       transition hover:bg-gray-50">
+            <x-secondary-link href="{{ route('articulos.index') }}">
                 Volver
-            </a>
+            </x-secondary-link>
 
-            <a href="{{ route('articulos.edit', $articulo->id) }}"
-                class="inline-flex justify-center rounded-md border border-transparent
-                       bg-indigo-600 px-4 py-2 text-sm font-medium text-white
-                       shadow-sm transition hover:bg-indigo-700">
+            <x-secondary-link href="{{ route('articulos.edit', $articulo->id) }}">
                 Editar artículo
-            </a>
+            </x-secondary-link>
 
         </div>
 

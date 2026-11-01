@@ -28,6 +28,4 @@
         value="{{ old('imagen_id') }}">
 </div>
 
-@error('imagen_id')
-    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-@enderror
+<x-input-error :messages="$errors->get('imagen_id')" />
