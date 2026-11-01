@@ -2,23 +2,6 @@
 
     <div class="space-y-6">
 
-        <!-- BOTONES DE ACCIÓN -->
-        <div class="flex items-center justify-start gap-3">
-
-            <a href="{{ route('usuarios.index') }}" wire:navigate
-                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium
-                       text-gray-700 transition hover:bg-gray-50">
-                Volver
-            </a>
-
-            <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
-                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium
-                       text-white shadow-sm transition hover:bg-indigo-700">
-                Editar Usuario
-            </a>
-
-        </div>
-
         <!-- FOTO DEL USUARIO -->
         <section class="space-y-4">
 
@@ -43,17 +26,17 @@
         <!-- INFORMACIÓN DEL USUARIO -->
         <section class="space-y-4">
 
-            <h2 class="border-t border-gray-200 pt-2 text-base font-semibold text-indigo-600">
+            <x-section-title class="border-t border-gray-200 pt-2">
                 Información del usuario
-            </h2>
+            </x-section-title>
 
             <div class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
 
                 <!-- NOMBRES -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Nombres') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -64,9 +47,9 @@
 
                 <!-- APELLIDOS -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Apellidos') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -77,9 +60,9 @@
 
                 <!-- USUARIO -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Usuario') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -90,9 +73,9 @@
 
                 <!-- ROL -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Rol') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -103,9 +86,9 @@
 
                 <!-- TELÉFONO -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Teléfono') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -116,9 +99,9 @@
 
                 <!-- CORREO ELECTRÓNICO -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Correo electrónico') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -129,9 +112,9 @@
 
                 <!-- ESTADO -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Estado') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -142,9 +125,9 @@
 
                 <!-- FECHA DE CREACIÓN -->
                 <div>
-                    <label class="mb-2 block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         {{ __('Fecha de creación') }}
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
@@ -156,6 +139,20 @@
             </div>
 
         </section>
+                <!-- BOTONES DE ACCIÓN -->
+        <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5 pb-6">
+
+            <x-secondary-link href="{{ route('usuarios.index') }}" wire:navigate>
+                Volver
+            </x-secondary-link>
+
+            <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
+                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium
+                       text-white shadow-sm transition hover:bg-indigo-700">
+                Editar Usuario
+            </a>
+
+        </div>
 
     </div>
 

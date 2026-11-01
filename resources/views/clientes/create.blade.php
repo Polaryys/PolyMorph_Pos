@@ -121,7 +121,7 @@
         </div>
 
         <!-- Botones de Acción -->
-        <div class="mt-6 flex justify-end gap-3 border-t border-slate-200 pt-5">
+        <div class="mt-6 flex justify-end gap-3 border-t border-slate-200 pt-5 pb-6">
             <x-secondary-link href="{{ route('clientes.index') }}">
                 Volver
             </x-secondary-link>

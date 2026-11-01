@@ -1,72 +1,60 @@
 <section class="space-y-4">
 
-    <h2 class="border-t border-gray-200 pt-2 text-base font-semibold text-indigo-600">
+    <x-section-title class="border-t border-gray-200 pt-2">
         Información del usuario
-    </h2>
+    </x-section-title>
 
     <!-- datos user -->
     <div class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
 
         <!-- NOMBRES -->
         <div>
-            <label for="nombres" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="nombres">
                 {{ __('Nombres') }}
                 <span class="text-red-500">*</span>
-            </label>
+            </x-input-label>
 
-            <input type="text" id="nombres" name="nombres" maxlength="100"
-                value="{{ old('nombres', $usuario->nombres) }}" required autocomplete="given-name"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                       @error('nombres') border-red-500 @enderror">
+            <x-text-input type="text" id="nombres" name="nombres" maxlength="100"
+                :value="old('nombres', $usuario->nombres)" required autocomplete="given-name"
+                :error="$errors->has('nombres')" class="mt-1" />
 
-            @error('nombres')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('nombres')" />
         </div>
 
         <!-- APELLIDOS -->
         <div>
-            <label for="apellidos" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="apellidos">
                 {{ __('Apellidos') }}
                 <span class="text-red-500">*</span>
-            </label>
+            </x-input-label>
 
-            <input type="text" id="apellidos" name="apellidos" maxlength="100"
-                value="{{ old('apellidos', $usuario->apellidos) }}" required autocomplete="family-name"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                       @error('apellidos') border-red-500 @enderror">
+            <x-text-input type="text" id="apellidos" name="apellidos" maxlength="100"
+                :value="old('apellidos', $usuario->apellidos)" required autocomplete="family-name"
+                :error="$errors->has('apellidos')" class="mt-1" />
 
-            @error('apellidos')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('apellidos')" />
         </div>
 
         <!-- USUARIO -->
         <div>
-            <label for="username" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="username">
                 {{ __('Usuario') }}
                 <span class="text-red-500">*</span>
-            </label>
+            </x-input-label>
 
-            <input type="text" id="username" name="username" maxlength="50"
-                value="{{ old('username', $usuario->username) }}" required autocomplete="username"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                       @error('username') border-red-500 @enderror">
+            <x-text-input type="text" id="username" name="username" maxlength="50"
+                :value="old('username', $usuario->username)" required autocomplete="username"
+                :error="$errors->has('username')" class="mt-1" />
 
-            @error('username')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('username')" />
         </div>
 
         <!-- ROL -->
         <div>
-            <label for="rol" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="rol">
                 {{ __('Rol') }}
                 <span class="text-red-500">*</span>
-            </label>
+            </x-input-label>
 
             <select id="rol" name="rol" required
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
@@ -86,43 +74,33 @@
 
             </select>
 
-            @error('rol')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('rol')" />
         </div>
 
         <!-- TELÉFONO -->
         <div>
-            <label for="telefono" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="telefono">
                 {{ __('Teléfono') }}
-            </label>
+            </x-input-label>
 
-            <input type="text" id="telefono" name="telefono" maxlength="20"
-                value="{{ old('telefono', $usuario->telefono) }}" autocomplete="tel"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                       @error('telefono') border-red-500 @enderror">
+            <x-text-input type="text" id="telefono" name="telefono" maxlength="20"
+                :value="old('telefono', $usuario->telefono)" autocomplete="tel"
+                :error="$errors->has('telefono')" class="mt-1" />
 
-            @error('telefono')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('telefono')" />
         </div>
 
         <!-- email -->
         <div>
-            <label for="email" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="email">
                 {{ __('Correo electrónico') }}
-            </label>
+            </x-input-label>
 
-            <input type="email" id="email" name="email" maxlength="255"
-                value="{{ old('email', $usuario->email) }}" autocomplete="email"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                       @error('email') border-red-500 @enderror">
+            <x-text-input type="email" id="email" name="email" maxlength="255"
+                :value="old('email', $usuario->email)" autocomplete="email"
+                :error="$errors->has('email')" class="mt-1" />
 
-            @error('email')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('email')" />
         </div>
 
     </div>

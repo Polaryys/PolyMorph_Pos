@@ -6,7 +6,6 @@
             <p class="text-sm font-medium text-green-600">
                 {{ session('success') }}
             </p>
-            
         @endif
 
     </div>
@@ -18,21 +17,7 @@
         @csrf
         @method('PUT')
 
-        <div class="flex items-center justify-left gap-3">
 
-            <a href="{{ route('usuarios.index') }}" wire:navigate
-                class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium
-                       text-gray-700 hover:bg-gray-50 transition">
-                Volver
-            </a>
-
-            <button type="submit"
-                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white
-                       text-sm font-medium rounded-md shadow-sm transition">
-                Guardar Cambios
-            </button>
-
-        </div>
 
         <div class="space-y-6">
 
@@ -67,15 +52,24 @@
                 <input type="hidden" id="imagen_id" name="imagen_id"
                     value="{{ old('imagen_id', $usuario->imagen_id) }}">
 
-                @error('imagen_id')
-                    <p class="text-xs text-red-500">{{ $message }}</p>
-                @enderror
+                <x-input-error :messages="$errors->get('imagen_id')" />
 
             </div>
 
             @include('usuarios.partials.edit-user-info')
 
             @include('usuarios.partials.edit-user-credentials')
+
+        </div>
+        <div class="mt-5 flex items-center justify-end gap-3 pb-6">
+
+            <x-secondary-link href="{{ route('usuarios.index') }}" wire:navigate>
+                Volver
+            </x-secondary-link>
+
+            <x-primary-button>
+                Guardar Cambios
+            </x-primary-button>
 
         </div>
 

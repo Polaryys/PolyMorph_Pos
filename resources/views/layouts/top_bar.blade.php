@@ -10,7 +10,7 @@
         'Ingreso de mercadería' => ['compras.*'],
         'Ajuste de Existencias' => ['inventario.ajuste'],
         'Movimientos de inventario' => ['inventario.movimientos'],
-        'Clientes registradas' => ['clientes.*'],
+        'Clientes registrados' => ['clientes.*'],
 
         'Proveedores' => ['proveedores.*', 'proveedor.*'],
         'Reportes' => ['reportes.*'],
@@ -53,8 +53,8 @@
 @endphp
 
 <nav class="bg-white">
-    <div class="max-w-7xl px-6 mb-2 lg:px-8">
-        <div class="flex items-center pt-2 h-12 gap-2 text-lg">
+    <div class="max-w-7xl px-6 mb-3 mt-3 lg:px-8">
+        <div class="flex items-center h-12 gap-2 text-xl">
 
             @if ($tituloModulo)
                 @if ($accionKey && $accionKey !== 'index' && $indexRoute)
@@ -70,7 +70,7 @@
 
             @if ($accion && $accionKey !== 'index')
                 <span class="text-gray-400">/</span>
-                <span class="text-indigo-700 font-semibold">
+                <span class="text-indigo-600 font-semibold">
                     {{ $accion }}
                 </span>
             @endif

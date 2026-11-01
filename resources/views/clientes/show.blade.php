@@ -93,7 +93,7 @@
 
     </div>
     <!-- BOTONES -->
-    <div class="mb-5 mt-1 flex justify-start gap-3">
+    <div class="mb-6 mt-4 flex justify-end gap-3">
 
         <x-secondary-link href="{{ route('clientes.index') }}">
             Volver

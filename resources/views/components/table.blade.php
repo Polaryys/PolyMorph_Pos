@@ -1,16 +1,21 @@
 @props(['headers', 'paginator' => null])
 
-<div class="bg-white border border-slate-300 rounded-lg shadow-sm overflow-hidden">
+<div class="bg-white border border-slate-300 rounded shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-slate-200 text-left border-collapse">
-            <thead class="bg-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+
+            <thead class="bg-slate-700 text-white text-xs uppercase tracking-wider font-semibold">
                 <tr>
                     {{ $headers }}
                 </tr>
             </thead>
-            <tbody class="divide-y divide-slate-100 text-sm text-slate-600">
+
+            <tbody class="divide-y divide-slate-200 text-sm text-slate-600
+                [&>tr:nth-child(odd)]:bg-white
+                [&>tr:nth-child(even)]:bg-slate-100/80">
                 {{ $slot }}
             </tbody>
+
         </table>
     </div>
 

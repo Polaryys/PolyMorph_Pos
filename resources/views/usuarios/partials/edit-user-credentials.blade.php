@@ -1,6 +1,6 @@
 <section class="space-y-4" x-data="{ mostrarCredenciales: false }">
 
-    <h2 class="flex items-center gap-2 border-t border-gray-200 pt-2 text-base font-semibold text-indigo-600">
+    <x-section-title class="border-t border-gray-200 pt-2">
 
         Credenciales y acceso del usuario
 
@@ -14,49 +14,41 @@
             </svg>
         </button>
 
-    </h2>
+    </x-section-title>
 
     <div x-show="mostrarCredenciales" x-cloak class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
 
         <!-- CONTRASEÑA -->
         <div>
-            <label for="password" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="password">
                 {{ __('Nueva contraseña') }}
-            </label>
+            </x-input-label>
 
-            <input type="password" id="password" name="password" autocomplete="new-password"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                       @error('password') border-red-500 @enderror">
+            <x-text-input type="password" id="password" name="password" autocomplete="new-password"
+                :error="$errors->has('password')" class="mt-1" />
 
             <p class="mt-1 text-xs text-gray-400">
                 Deja este campo vacío para conservar la contraseña actual.
             </p>
 
-            @error('password')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('password')" />
         </div>
 
         <!-- CONFIRMAR CONTRASEÑA -->
         <div>
-            <label for="password_confirmation" class="block text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="password_confirmation">
                 {{ __('Confirmar contraseña') }}
-            </label>
+            </x-input-label>
 
-            <input type="password" id="password_confirmation" name="password_confirmation" autocomplete="new-password"
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                       @error('password_confirmation') border-red-500 @enderror">
+            <x-text-input type="password" id="password_confirmation" name="password_confirmation"
+                autocomplete="new-password" :error="$errors->has('password_confirmation')" class="mt-1" />
 
-            @error('password_confirmation')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('password_confirmation')" />
         </div>
 
         <!-- ESTADO -->
         <div>
-            <label for="estado" class="flex items-center gap-2 text-sm font-medium text-gray-700 mb-2">
+            <x-input-label for="estado" class="flex items-center gap-2">
                 {{ __('Estado') }}
                 <span class="text-red-500">*</span>
 
@@ -64,7 +56,7 @@
                     class="inline-flex h-4 w-4 items-center justify-center text-xs text-gray-800 cursor-help">
                     ?
                 </span>
-            </label>
+            </x-input-label>
 
             <select id="estado" name="estado" required
                 class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
@@ -81,9 +73,7 @@
 
             </select>
 
-            @error('estado')
-                <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-            @enderror
+            <x-input-error :messages="$errors->get('estado')" />
         </div>
 
     </div>

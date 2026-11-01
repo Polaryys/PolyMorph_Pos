@@ -117,7 +117,7 @@
             </div>
 
         </div>
-        <div class="mb-3 mt-3 flex justify-end space-x-3">
+        <div class="mb-6 mt-3 flex justify-end space-x-3">
 
             <x-secondary-link href="{{ route('clientes.index') }}">
                 Volver

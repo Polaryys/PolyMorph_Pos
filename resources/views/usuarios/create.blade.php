@@ -17,17 +17,13 @@
 
         <div class="flex items-center justify-left gap-3 ">
 
-            <a href="{{ route('usuarios.index') }}" wire:navigate
-                class="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium
-                           text-gray-700 hover:bg-gray-50 transition">
+            <x-secondary-link href="{{ route('usuarios.index') }}" wire:navigate>
                 Volver
-            </a>
+            </x-secondary-link>
 
-            <button type="submit"
-                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white
-                           text-sm font-medium rounded-md shadow-sm transition">
+            <x-primary-button>
                 Crear Usuario
-            </button>
+            </x-primary-button>
 
         </div>
 
@@ -64,75 +60,65 @@
                     {{ __('Agregar Foto') }}
                 </label>
 
-                @error('foto')
-                    <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                @enderror
+                <x-input-error :messages="$errors->get('foto')" />
 
             </div>
 
             <!-- datos user-->
+            <x-section-title>
+                Información del usuario
+            </x-section-title>
+
             <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
 
                 <!-- NOMBRES -->
                 <div class="sm:col-span-3">
-                    <label for="nombres" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="nombres">
                         {{ __('Nombres') }}
                         <span class="text-red-500">*</span>
-                    </label>
+                    </x-input-label>
 
-                    <input type="text" id="nombres" name="nombres" maxlength="100" value="{{ old('nombres') }}"
-                        required autocomplete="given-name"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                               @error('nombres') border-red-500 @enderror">
+                    <x-text-input type="text" id="nombres" name="nombres" maxlength="100"
+                        :value="old('nombres')" required autocomplete="given-name"
+                        :error="$errors->has('nombres')" class="mt-1" />
 
-                    @error('nombres')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('nombres')" />
                 </div>
 
                 <!-- APELLIDOS -->
                 <div class="sm:col-span-3">
-                    <label for="apellidos" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="apellidos">
                         {{ __('Apellidos') }}
                         <span class="text-red-500">*</span>
-                    </label>
+                    </x-input-label>
 
-                    <input type="text" id="apellidos" name="apellidos" maxlength="100"
-                        value="{{ old('apellidos') }}" required autocomplete="family-name"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                               @error('apellidos') border-red-500 @enderror">
+                    <x-text-input type="text" id="apellidos" name="apellidos" maxlength="100"
+                        :value="old('apellidos')" required autocomplete="family-name"
+                        :error="$errors->has('apellidos')" class="mt-1" />
 
-                    @error('apellidos')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('apellidos')" />
                 </div>
 
                 <!-- USUARIO -->
                 <div class="sm:col-span-3">
-                    <label for="username" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="username">
                         {{ __('Usuario') }}
                         <span class="text-red-500">*</span>
-                    </label>
+                    </x-input-label>
 
-                    <input type="text" id="username" name="username" maxlength="50" value="{{ old('username') }}"
-                        required autocomplete="username"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                               @error('username') border-red-500 @enderror">
+                    <x-text-input type="text" id="username" name="username" maxlength="50"
+                        :value="old('username')" required autocomplete="username"
+                        :error="$errors->has('username')" class="mt-1" />
 
-                    @error('username')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('username')" />
                 </div>
 
                 <!-- ROL -->
                 <div class="sm:col-span-3">
-                    <label for="rol" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="rol">
                         {{ __('Rol') }}
                         <span class="text-red-500">*</span>
-                    </label>
+                    </x-input-label>
 
                     <select id="rol" name="rol" required
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
@@ -151,78 +137,59 @@
 
                     </select>
 
-                    @error('rol')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('rol')" />
                 </div>
 
                 <!-- TELÉFONO -->
                 <div class="sm:col-span-3">
-                    <label for="telefono" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="telefono">
                         {{ __('Teléfono') }}
-                    </label>
+                    </x-input-label>
 
-                    <input type="text" id="telefono" name="telefono" maxlength="20" value="{{ old('telefono') }}"
-                        autocomplete="tel"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                               @error('telefono') border-red-500 @enderror">
+                    <x-text-input type="text" id="telefono" name="telefono" maxlength="20"
+                        :value="old('telefono')" autocomplete="tel"
+                        :error="$errors->has('telefono')" class="mt-1" />
 
-                    @error('telefono')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('telefono')" />
                 </div>
 
                 <!-- email -->
                 <div class="sm:col-span-3">
-                    <label for="email" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="email">
                         {{ __('Correo electrónico') }}
-                    </label>
+                    </x-input-label>
 
-                    <input type="email" id="email" name="email" maxlength="255"
-                        value="{{ old('email') }}" autocomplete="email"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-               @error('email') border-red-500 @enderror">
+                    <x-text-input type="email" id="email" name="email" maxlength="255"
+                        :value="old('email')" autocomplete="email"
+                        :error="$errors->has('email')" class="mt-1" />
 
-                    @error('email')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('email')" />
                 </div>
 
                 <!-- password -->
                 <div class="sm:col-span-3">
-                    <label for="password" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="password">
                         {{ __('Contraseña') }}
                         <span class="text-red-500">*</span>
-                    </label>
+                    </x-input-label>
 
-                    <input type="password" id="password" name="password" required autocomplete="new-password"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                               @error('password') border-red-500 @enderror">
+                    <x-text-input type="password" id="password" name="password" required autocomplete="new-password"
+                        :error="$errors->has('password')" class="mt-1" />
 
-                    @error('password')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('password')" />
                 </div>
 
                 <!-- cofirmacion de password -->
                 <div class="sm:col-span-3">
-                    <label for="password_confirmation" class="block text-sm font-medium text-gray-700">
+                    <x-input-label for="password_confirmation">
                         {{ __('Confirmar contraseña') }}
                         <span class="text-red-500">*</span>
-                    </label>
+                    </x-input-label>
 
-                    <input type="password" id="password_confirmation" name="password_confirmation" required
-                        autocomplete="new-password"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                               @error('password_confirmation') border-red-500 @enderror">
+                    <x-text-input type="password" id="password_confirmation" name="password_confirmation" required
+                        autocomplete="new-password" :error="$errors->has('password_confirmation')" class="mt-1" />
 
-                    @error('password_confirmation')
-                        <p class="mt-1 text-xs text-red-500">{{ $message }}</p>
-                    @enderror
+                    <x-input-error :messages="$errors->get('password_confirmation')" />
                 </div>
 
             </div>
