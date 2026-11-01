@@ -1,19 +1,15 @@
 <x-app-layout>
 
     <!-- BOTONES -->
-    <div class="mb-3 mt-1 flex justify-start space-x-3">
-
-        <a href="{{ route('proveedores.index') }}"
-            class="rounded-md border border-gray-300 bg-white py-2 px-4
-               text-sm font-medium text-gray-700 shadow-sm
-               hover:bg-gray-50 transition">
+    <div class="mb-5 mt-1 flex justify-start gap-3">
+        <x-secondary-link href="{{ route('proveedores.index') }}">
             Volver
-        </a>
+        </x-secondary-link>
 
         <a href="{{ route('proveedores.edit', $proveedor) }}"
             class="inline-flex justify-center rounded-md border border-transparent
-               bg-indigo-600 py-2 px-4 text-sm font-medium text-white
-               shadow-sm hover:bg-indigo-700 transition">
+                bg-indigo-600 py-2 px-4 text-sm font-medium text-white
+                shadow-sm hover:bg-indigo-700 active:bg-indigo-800 transition">
             Editar Proveedor
         </a>
 
@@ -32,9 +28,9 @@
 
                 <!-- NIT -->
                 <div class="sm:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         NIT
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-200
@@ -45,9 +41,9 @@
 
                 <!-- NOMBRE -->
                 <div class="sm:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         Nombre
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-200
@@ -58,9 +54,9 @@
 
                 <!-- TELÉFONO -->
                 <div class="sm:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         Teléfono
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-200
@@ -71,9 +67,9 @@
 
                 <!-- CORREO -->
                 <div class="sm:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         Correo electrónico
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-200
@@ -97,9 +93,9 @@
 
                 <!-- NOMBRE DEL CONTACTO -->
                 <div class="sm:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         Nombre del contacto
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-200
@@ -110,9 +106,9 @@
 
                 <!-- TELÉFONO DEL CONTACTO -->
                 <div class="sm:col-span-3">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         Teléfono del contacto
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-200
@@ -123,9 +119,9 @@
 
                 <!-- DIRECCIÓN -->
                 <div class="sm:col-span-6">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         Dirección
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full rounded-md border border-gray-200
@@ -136,9 +132,9 @@
 
                 <!-- NOTAS -->
                 <div class="sm:col-span-6">
-                    <label class="block text-sm font-medium text-gray-700">
+                    <x-input-label>
                         Notas
-                    </label>
+                    </x-input-label>
 
                     <div
                         class="mt-1 block w-full min-h-[76px] rounded-md border border-gray-200
