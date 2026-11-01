@@ -3,7 +3,7 @@
 <div class="bg-white border border-slate-300 rounded-lg shadow-sm overflow-hidden">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-slate-200 text-left border-collapse">
-            <thead class="bg-slate-200/75 text-slate-600 text-xs uppercase tracking-wider font-semibold">
+            <thead class="bg-slate-200 text-slate-600 text-xs uppercase tracking-wider font-semibold">
                 <tr>
                     {{ $headers }}
                 </tr>

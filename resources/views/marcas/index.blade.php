@@ -37,87 +37,74 @@
         @endif
 
         <!-- TABLA -->
-        <div class="bg-white border border-gray-200 overflow-hidden">
-            <div class="overflow-x-auto scrollbar-thin">
-                <table class="w-full text-left border-collapse">
-                    <thead
-                        class="bg-gray-50 border-b border-gray-200 text-xs font-semibold
-                                  text-gray-500 uppercase tracking-wider">
-                        <tr>
-                            <th class="px-6 py-2.5 w-24 text-center">No.</th>
-                            <th class="px-6 py-2.5">Nombre</th>
-                            <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">CREADO</th>
-                            <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">ACTUALIZADO</th>
-                            <th class="px-6 py-2.5 text-center w-64">Acciones</th>
-                        </tr>
-                    </thead>
+        <x-table :paginator="$marcas">
 
-                    <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
-                        @forelse ($marcas as $marca)
-                            <tr class="hover:bg-gray-50 transition-colors">
+            <x-slot:headers>
+                <th class="px-6 py-2.5 w-24 text-center">No.</th>
+                <th class="px-6 py-2.5">Nombre</th>
+                <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
+                <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Actualizado</th>
+                <th class="px-6 py-2.5 text-center w-64">Acciones</th>
+            </x-slot:headers>
 
-                                <td class="px-6 py-3 w-24 text-center font-mono text-gray-500">
-                                    {{ ($marcas->currentPage() - 1) * $marcas->perPage() + $loop->iteration }}
-                                </td>
+            @forelse ($marcas as $marca)
+                <tr class="hover:bg-slate-50 transition-colors">
 
-                                <td class="px-6 py-3 font-medium text-gray-900">
-                                    {{ $marca->nombre }}
-                                </td>
+                    <td class="px-6 py-3 w-24 text-center font-mono text-slate-500">
+                        {{ ($marcas->currentPage() - 1) * $marcas->perPage() + $loop->iteration }}
+                    </td>
 
-                                <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-gray-400 italic">
-                                    {{ $marca->created_at->format('d/m/Y H:i') }}
-                                </td>
+                    <td class="px-6 py-3 font-medium text-slate-900">
+                        {{ $marca->nombre }}
+                    </td>
 
-                                <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-gray-400 italic">
-                                    {{ $marca->updated_at->format('d/m/Y H:i') }}
-                                </td>
+                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                        {{ $marca->created_at->format('d/m/Y H:i') }}
+                    </td>
 
-                                <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
+                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                        {{ $marca->updated_at->format('d/m/Y H:i') }}
+                    </td>
 
-                                    <!-- EDITAR -->
-                                    <button type="button"
-                                        @click="
-                                            modo = 'editar';
-                                            nombre = {{ Js::from($marca->nombre) }};
-                                            action = {{ Js::from(route('marcas.update', $marca)) }};
-                                            editar = true;
-                                            abierto = true
-                                        "
-                                        class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                        Editar
-                                    </button>
+                    <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
 
-                                    <!-- ELIMINAR -->
-                                    <form action="{{ route('marcas.destroy', $marca) }}" method="POST"
-                                        class="inline-block" onsubmit="return confirm('¿Deseas eliminar esta marca?')">
-                                        @csrf
-                                        @method('DELETE')
+                        <!-- EDITAR -->
+                        <button type="button"
+                            @click="
+                        modo = 'editar';
+                        nombre = {{ Js::from($marca->nombre) }};
+                        action = {{ Js::from(route('marcas.update', $marca)) }};
+                        editar = true;
+                        abierto = true
+                    "
+                            class="text-indigo-600 hover:text-indigo-900 font-medium">
+                            Editar
+                        </button>
 
-                                        <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                        <!-- ELIMINAR -->
+                        <form action="{{ route('marcas.destroy', $marca) }}" method="POST" class="inline-block"
+                            onsubmit="return confirm('¿Deseas eliminar esta marca?')">
 
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-400">
-                                    No se encontraron marcas registradas.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            @csrf
+                            @method('DELETE')
 
-                <!-- PAGINACIÓN -->
-                @if ($marcas->hasPages())
-                    <div class="px-5 py-2 border-t border-gray-200">
-                        {{ $marcas->links() }}
-                    </div>
-                @endif
-            </div>
-        </div>
+                            <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
+                                Eliminar
+                            </button>
+                        </form>
+
+                    </td>
+                </tr>
+
+            @empty
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-slate-400">
+                        No se encontraron marcas registradas.
+                    </td>
+                </tr>
+            @endforelse
+
+        </x-table>
 
         <!-- MODAL CREAR / EDITAR -->
         <template x-teleport="body">
@@ -156,7 +143,9 @@
                                 x-effect="if (abierto) $nextTick(() => $el.focus())"
                                 class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm
                                    focus:border-indigo-500 focus:ring-indigo-500
-                                   @error('nombre') border-red-500 @enderror">
+                                   @error('nombre')
+border-red-500
+@enderror">
 
                             @error('nombre')
                                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>

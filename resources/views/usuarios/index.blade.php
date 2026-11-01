@@ -25,107 +25,93 @@
 
 
     <!-- tabla de usuarios -->
-    <div class="bg-white border border-gray-300 overflow-hidden">
-        <div class="overflow-x-auto scrollbar-thin">
-            <table class="w-full text-left border-collapse">
-                <thead
-                    class="bg-gray-50 border-b border-gray-200 text-xs font-semibold text-gray-500 uppercase tracking-wider">
-                    <tr>
-                        <th class="px-6 py-2.5 w-24 text-center">No.</th>
-                        <th class="px-6 py-2.5">Usuario</th>
-                        <th class="px-6 py-2.5">Nombres</th>
-                        <th class="px-6 py-2.5">Apellidos</th>
-                        <th class="px-6 py-2.5 text-center">Rol</th>
-                        <th class="px-6 py-2.5 text-center">Estado</th>
-                        <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">CREADO</th>
-                        <th class="px-6 py-2.5 text-center w-64">Acciones</th>
-                    </tr>
-                </thead>
+    <x-table :paginator="$usuarios">
 
-                <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
-                    @forelse ($usuarios as $usuario)
-                        <tr class="hover:bg-gray-50 transition-colors">
+        <x-slot:headers>
+            <th class="px-6 py-2.5 w-24 text-center">No.</th>
+            <th class="px-6 py-2.5">Usuario</th>
+            <th class="px-6 py-2.5">Nombres</th>
+            <th class="px-6 py-2.5">Apellidos</th>
+            <th class="px-6 py-2.5 text-center">Rol</th>
+            <th class="px-6 py-2.5 text-center">Estado</th>
+            <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
+            <th class="px-6 py-2.5 text-center w-64">Acciones</th>
+        </x-slot:headers>
 
-                            <td class="px-6 py-3 w-24 text-center font-mono text-gray-500">
-                                {{ ($usuarios->currentPage() - 1) * $usuarios->perPage() + $loop->iteration }}
-                            </td>
+        @forelse ($usuarios as $usuario)
+            <tr class="hover:bg-slate-50 transition-colors">
 
-                            <td class="px-6 py-3 font-medium text-gray-900">
-                                {{ $usuario->username }}
-                            </td>
+                <td class="px-6 py-3 w-24 text-center font-mono text-slate-500">
+                    {{ ($usuarios->currentPage() - 1) * $usuarios->perPage() + $loop->iteration }}
+                </td>
 
-                            <td class="px-6 py-3 font-medium text-gray-900">
-                                {{ $usuario->nombres }}
-                            </td>
+                <td class="px-6 py-3 font-medium text-slate-900">
+                    {{ $usuario->username }}
+                </td>
 
-                            <td class="px-6 py-3 font-medium text-gray-900">
-                                {{ $usuario->apellidos }}
-                            </td>
+                <td class="px-6 py-3 font-medium text-slate-900">
+                    {{ $usuario->nombres }}
+                </td>
 
-                            <td class="px-6 py-3 text-center">
-                                {{ $usuario->rol }}
-                            </td>
+                <td class="px-6 py-3 font-medium text-slate-900">
+                    {{ $usuario->apellidos }}
+                </td>
 
-                            <td class="px-6 py-3 text-center">
-                                @if ($usuario->estado)
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                                        Activo
-                                    </span>
-                                @else
-                                    <span
-                                        class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                                        Inactivo
-                                    </span>
-                                @endif
-                            </td>
+                <td class="px-6 py-3 text-center">
+                    {{ $usuario->rol }}
+                </td>
 
-                            <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-gray-400 italic">
-                                {{ $usuario->created_at->format('d/m/Y H:i') }}
-                            </td>
+                <td class="px-6 py-3 text-center">
+                    @if ($usuario->estado)
+                        <span
+                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
+                            Activo
+                        </span>
+                    @else
+                        <span
+                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
+                            Inactivo
+                        </span>
+                    @endif
+                </td>
 
-                            <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
+                <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                    {{ $usuario->created_at->format('d/m/Y H:i') }}
+                </td>
 
-                                <a href="{{ route('usuarios.show', $usuario) }}" wire:navigate
-                                    class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                    Ver
-                                </a>
+                <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
 
-                                <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
-                                    class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                    Editar
-                                </a>
+                    <a href="{{ route('usuarios.show', $usuario) }}" wire:navigate
+                        class="text-indigo-600 hover:text-indigo-900 font-medium">
+                        Ver
+                    </a>
 
-                                <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST"
-                                    class="inline-block" onsubmit="return confirm('¿Deseas eliminar este usuario?')">
-                                    @csrf
-                                    @method('DELETE')
+                    <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
+                        class="text-indigo-600 hover:text-indigo-900 font-medium">
+                        Editar
+                    </a>
 
-                                    <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
-                                        Eliminar
-                                    </button>
-                                </form>
+                    <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" class="inline-block"
+                        onsubmit="return confirm('¿Deseas eliminar este usuario?')">
+                        @csrf
+                        @method('DELETE')
 
-                            </td>
-                        </tr>
+                        <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
+                            Eliminar
+                        </button>
+                    </form>
 
-                    @empty
-                        <tr>
-                            <td colspan="8" class="px-6 py-8 text-center text-gray-400">
-                                No hay usuarios registrados.
-                            </td>
-                        </tr>
-                    @endforelse
-                </tbody>
-            </table>
+                </td>
+            </tr>
 
-            <!-- paginacion de resultados -->
-            @if ($usuarios->hasPages())
-                <div class="px-5 py-2 border-t border-gray-200">
-                    {{ $usuarios->links() }}
-                </div>
-            @endif
-        </div>
-    </div>
+        @empty
+            <tr>
+                <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                    No hay usuarios registrados.
+                </td>
+            </tr>
+        @endforelse
+
+    </x-table>
 
 </x-app-layout>

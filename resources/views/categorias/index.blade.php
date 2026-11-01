@@ -38,99 +38,80 @@
             </script>
         @endif
 
-        <!-- TABLA -->
-        <div class="bg-white border border-gray-200 overflow-hidden">
-            <div class="overflow-x-auto scrollbar-thin">
-                <table class="w-full text-left border-collapse">
-                    <thead
-                        class="bg-gray-50 border-b border-gray-200 text-xs font-semibold
-                               text-gray-500 uppercase tracking-wider">
-                        <tr>
-                            <th class="px-6 py-2.5 w-24 text-center">No.</th>
-                            <th class="px-6 py-2.5">Nombre</th>
-                            <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">
-                                CREADO
-                            </th>
-                            <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">
-                                ACTUALIZADO
-                            </th>
-                            <th class="px-6 py-2.5 text-center w-64">Acciones</th>
-                        </tr>
-                    </thead>
+        <!-- Tabla de categorías -->
+        <x-table :paginator="$categorias">
 
-                    <tbody class="divide-y divide-gray-200 text-sm text-gray-700">
-                        @forelse ($categorias as $categoria)
-                            <tr class="hover:bg-gray-50 transition-colors">
+            <x-slot:headers>
+                <th class="px-6 py-2.5 w-24 text-center">No.</th>
+                <th class="px-6 py-2.5">Nombre</th>
+                <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
+                <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Actualizado</th>
+                <th class="px-6 py-2.5 text-center w-64">Acciones</th>
+            </x-slot:headers>
 
-                                <!-- NÚMERO -->
-                                <td class="px-6 py-3 w-24 text-center font-mono text-gray-500">
-                                    {{ ($categorias->currentPage() - 1) * $categorias->perPage() + $loop->iteration }}
-                                </td>
+            @forelse ($categorias as $categoria)
+                <tr class="hover:bg-slate-50 transition-colors">
 
-                                <!-- NOMBRE -->
-                                <td class="px-6 py-3 font-medium text-gray-900">
-                                    {{ $categoria->nombre }}
-                                </td>
+                    <!-- NÚMERO -->
+                    <td class="px-6 py-3 w-24 text-center font-mono text-slate-500">
+                        {{ ($categorias->currentPage() - 1) * $categorias->perPage() + $loop->iteration }}
+                    </td>
 
-                                <!-- FECHA DE CREACIÓN -->
-                                <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-gray-400 italic">
-                                    {{ $categoria->created_at->format('d/m/Y H:i') }}
-                                </td>
+                    <!-- NOMBRE -->
+                    <td class="px-6 py-3 font-medium text-slate-900">
+                        {{ $categoria->nombre }}
+                    </td>
 
-                                <!-- FECHA DE ACTUALIZACIÓN -->
-                                <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-gray-400 italic">
-                                    {{ $categoria->updated_at->format('d/m/Y H:i') }}
-                                </td>
+                    <!-- FECHA DE CREACIÓN -->
+                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                        {{ $categoria->created_at->format('d/m/Y H:i') }}
+                    </td>
 
-                                <!-- ACCIONES -->
-                                <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
+                    <!-- FECHA DE ACTUALIZACIÓN -->
+                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                        {{ $categoria->updated_at->format('d/m/Y H:i') }}
+                    </td>
 
-                                    <!-- EDITAR -->
-                                    <button type="button"
-                                        @click="
-                                            modo = 'editar';
-                                            nombre = {{ Js::from($categoria->nombre) }};
-                                            action = {{ Js::from(route('categorias.update', $categoria)) }};
-                                            editar = true;
-                                            abierto = true
-                                        "
-                                        class="text-indigo-600 hover:text-indigo-900 font-medium">
-                                        Editar
-                                    </button>
+                    <!-- ACCIONES -->
+                    <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
 
-                                    <!-- ELIMINAR -->
-                                    <form action="{{ route('categorias.destroy', $categoria) }}" method="POST"
-                                        class="inline-block"
-                                        onsubmit="return confirm('¿Deseas eliminar esta categoría?')">
+                        <!-- EDITAR -->
+                        <button type="button"
+                            @click="
+                        modo = 'editar';
+                        nombre = {{ Js::from($categoria->nombre) }};
+                        action = {{ Js::from(route('categorias.update', $categoria)) }};
+                        editar = true;
+                        abierto = true
+                    "
+                            class="text-indigo-600 hover:text-indigo-900 font-medium">
+                            Editar
+                        </button>
 
-                                        @csrf
-                                        @method('DELETE')
+                        <!-- ELIMINAR -->
+                        <form action="{{ route('categorias.destroy', $categoria) }}" method="POST" class="inline-block"
+                            onsubmit="return confirm('¿Deseas eliminar esta categoría?')">
 
-                                        <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
-                                            Eliminar
-                                        </button>
-                                    </form>
+                            @csrf
+                            @method('DELETE')
 
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-8 text-center text-gray-400">
-                                    No se encontraron categorías registradas.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                            <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
+                                Eliminar
+                            </button>
+                        </form>
 
-                <!-- PAGINACIÓN -->
-                @if ($categorias->hasPages())
-                    <div class="px-5 py-2 border-t border-gray-200">
-                        {{ $categorias->links() }}
-                    </div>
-                @endif
-            </div>
-        </div>
+                    </td>
+                </tr>
+
+            @empty
+                <tr>
+                    <td colspan="5" class="px-6 py-8 text-center text-slate-400">
+                        No se encontraron categorías registradas.
+                    </td>
+                </tr>
+            @endforelse
+
+        </x-table>
 
         <!-- modal de edicion y creacion -->
         <template x-teleport="body">
@@ -170,7 +151,9 @@
                                 x-effect="if (abierto) $nextTick(() => $el.focus())"
                                 class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm
                                    focus:border-indigo-500 focus:ring-indigo-500
-                                   @error('nombre') border-red-500 @enderror">
+                                   @error('nombre')
+border-red-500
+@enderror">
 
                             @error('nombre')
                                 <p class="mt-1 text-xs text-red-600">
