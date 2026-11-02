@@ -1,41 +1,20 @@
 <x-app-layout>
     <!-- Encabezado y buscador -->
-    <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <form action="{{ route('compras.index') }}" method="GET"
-            class="flex flex-col gap-2 sm:flex-row sm:items-center">
-            <input
-                type="search"
-                name="buscar"
-                value="{{ $buscar }}"
-                placeholder="Buscar por número, proveedor o estado"
-                class="w-full rounded-sm border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:w-96"
-            >
+    <div class="mb-5">
 
-            <div class="flex gap-2">
-                <button type="submit"
-                    class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700">
-                    Buscar
-                </button>
+        <x-search-bar :action="route('compras.index')" :buscar="$buscar" placeholder="Buscar por número, proveedor o estado">
 
-                @if ($buscar !== '')
-                    <a href="{{ route('compras.index') }}"
-                        class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50">
-                        Limpiar
-                    </a>
-                @endif
-            </div>
-        </form>
-        <a href="{{ route('compras.create') }}"
-            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
-            + Nueva compra
-        </a>
-        
+            <x-primary-link href="{{ route('compras.create') }}" wire:navigate class="sm:ml-auto">
+                + Nueva compra
+            </x-primary-link>
+
+        </x-search-bar>
+
     </div>
 
     <!-- MENSAJES -->
     @if (session('success'))
-        <div id="success-message"
-            class="mb-4 rounded-lg border border-green-200 bg-green-100 p-4 text-sm text-green-700">
+        <div id="success-message" class="mb-4 rounded-lg border border-green-200 bg-green-100 p-4 text-sm text-green-700">
             {{ session('success') }}
         </div>
 
@@ -90,15 +69,18 @@
 
                 <td class="px-4 py-3 text-center whitespace-nowrap">
                     @if ($compra->estado === 'PENDIENTE')
-                        <span class="inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                        <span
+                            class="inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
                             Pendiente
                         </span>
                     @elseif ($compra->estado === 'REGISTRADA')
-                        <span class="inline-flex rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
+                        <span
+                            class="inline-flex rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
                             Registrada
                         </span>
                     @else
-                        <span class="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
+                        <span
+                            class="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
                             Reversada
                         </span>
                     @endif
@@ -106,14 +88,15 @@
 
                 <td class="px-4 py-3 whitespace-nowrap">
                     <div class="flex items-center justify-center gap-3">
-                        <a href="{{ route('compras.show', $compra) }}" title="Ver compra"
-                            aria-label="Ver compra" class="text-slate-500 transition hover:text-indigo-600">
+                        <a href="{{ route('compras.show', $compra) }}" title="Ver compra" aria-label="Ver compra"
+                            class="text-slate-500 transition hover:text-indigo-600">
                             <x-lucide-eye class="h-5 w-5" />
                         </a>
 
                         @if ($compra->estado === 'PENDIENTE')
                             <a href="{{ route('compras.edit', $compra) }}" title="Editar compra pendiente"
-                                aria-label="Editar compra pendiente" class="text-slate-500 transition hover:text-indigo-600">
+                                aria-label="Editar compra pendiente"
+                                class="text-slate-500 transition hover:text-indigo-600">
                                 <x-lucide-pencil class="h-5 w-5" />
                             </a>
                             <form action="{{ route('compras.registrar', $compra) }}" method="POST"
@@ -138,8 +121,7 @@
                             <form action="{{ route('compras.revertir', $compra) }}" method="POST"
                                 onsubmit="return confirm('¿Revertir la compra {{ $compra->numero_compra }}? Esta acción no se puede deshacer.');">
                                 @csrf
-                                <button type="submit" title="Revertir compra"
-                                    aria-label="Revertir compra"
+                                <button type="submit" title="Revertir compra" aria-label="Revertir compra"
                                     class="text-xs font-medium text-red-600 transition hover:text-red-800">
                                     Revertir
                                 </button>

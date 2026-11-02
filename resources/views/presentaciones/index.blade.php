@@ -1,59 +1,22 @@
 <x-app-layout>
 
     <!-- Encabezado y acciones -->
-    <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-5">
 
-        <!-- Buscador y botón de creación -->
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <x-search-bar :action="route('presentaciones.index')" :buscar="$buscar"
+            placeholder="Buscar presentaciones por nombre, código o artículo">
 
-            <!-- Buscador -->
-            <form action="{{ route('presentaciones.index') }}" method="GET"
-                class="flex flex-col gap-2 sm:flex-row sm:items-center">
-
-                <input
-                    type="search"
-                    name="buscar"
-                    value="{{ $buscar }}"
-                    placeholder="Buscar presentaciones por nombre, código o artículo"
-                    class="w-full rounded-sm border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm outline-none
-                    transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:w-96"
-                >
-
-                <div class="flex gap-2">
-                    <button
-                        type="submit"
-                        class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                    >
-                        Buscar
-                    </button>
-
-                    @if ($buscar !== '')
-                        <a
-                            href="{{ route('presentaciones.index') }}"
-                            class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                        >
-                            Limpiar
-                        </a>
-                    @endif
-                </div>
-            </form>
-
-            <!-- Agregar presentación -->
-            <a
-                href="{{ route('presentaciones.create') }}"
-                wire:navigate
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-            >
+            <x-primary-link href="{{ route('presentaciones.create') }}" wire:navigate>
                 + Agregar presentación
-            </a>
+            </x-primary-link>
 
-        </div>
+        </x-search-bar>
+
     </div>
 
     <!-- MENSAJES -->
     @if (session('success'))
-        <div id="success-message"
-            class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
+        <div id="success-message" class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
             {{ session('success') }}
         </div>
 
@@ -123,7 +86,7 @@
                 <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
                     {{ intdiv(
                         max(0, (int) ($presentacion->inventario?->cantidad ?? 0)),
-                        max(1, (int) ($presentacion->factor ?? 1))
+                        max(1, (int) ($presentacion->factor ?? 1)),
                     ) }}
                 </td>
 
@@ -132,14 +95,16 @@
                     <div class="flex items-center justify-center gap-3">
 
                         <!-- Ver -->
-                        <a href="{{ route('presentaciones.show', $presentacion) }}" wire:navigate title="Ver presentación"
-                            aria-label="Ver presentación" class="text-slate-500 hover:text-indigo-600 transition">
+                        <a href="{{ route('presentaciones.show', $presentacion) }}" wire:navigate
+                            title="Ver presentación" aria-label="Ver presentación"
+                            class="text-slate-500 hover:text-indigo-600 transition">
                             <x-lucide-eye class="w-5 h-5" />
                         </a>
 
                         <!-- Editar -->
-                        <a href="{{ route('presentaciones.edit', $presentacion) }}" wire:navigate title="Editar presentación"
-                            aria-label="Editar presentación" class="text-slate-500 hover:text-green-600 transition">
+                        <a href="{{ route('presentaciones.edit', $presentacion) }}" wire:navigate
+                            title="Editar presentación" aria-label="Editar presentación"
+                            class="text-slate-500 hover:text-green-600 transition">
                             <x-lucide-pencil class="w-5 h-5" />
                         </a>
 

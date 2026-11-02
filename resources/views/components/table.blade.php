@@ -1,6 +1,6 @@
 @props(['headers', 'paginator' => null])
 
-<div class="bg-white border border-slate-300 rounded shadow-sm overflow-hidden">
+<div class="bg-white border border-slate-300 rounded shadow-sm overflow-hidden mt-3">
     <div class="overflow-x-auto">
         <table class="min-w-full divide-y divide-slate-200 text-left border-collapse">
 

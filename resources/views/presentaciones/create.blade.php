@@ -1,68 +1,20 @@
 <x-app-layout>
-    <div x-data="{
-        buscar: @js($productoSeleccionado['nombre'] ?? ''),
-        inventarioId: @js($productoSeleccionado['inventario_id'] ?? ''),
-        seleccionado: @js($productoSeleccionado),
-        resultados: [],
-        cargando: false,
-        errorBusqueda: false,
 
-        async buscarProductos() {
-            const termino = this.buscar.trim();
+    <div x-data="{ productoSeleccionado: false }" @producto-seleccionado.window="productoSeleccionado = true"
+        @producto-deseleccionado.window="productoSeleccionado = false">
 
-            if (!termino) {
-                this.resultados = [];
-                this.cargando = false;
-                return;
-            }
-
-            this.cargando = true;
-            this.errorBusqueda = false;
-
-            try {
-                const respuesta = await fetch(
-                    '{{ route('presentaciones.buscar-productos') }}?buscar=' +
-                    encodeURIComponent(termino), {
-                        headers: {
-                            'Accept': 'application/json'
-                        }
-                    }
-                );
-
-                if (!respuesta.ok) {
-                    throw new Error('No se pudo realizar la búsqueda.');
-                }
-
-                this.resultados = await respuesta.json();
-            } catch (error) {
-                this.resultados = [];
-                this.errorBusqueda = true;
-            } finally {
-                this.cargando = false;
-            }
-        },
-
-        seleccionar(producto) {
-            this.seleccionado = producto;
-            this.inventarioId = producto.inventario_id;
-            this.buscar = producto.nombre;
-            this.resultados = [];
-        },
-
-        cambiarProducto() {
-            this.seleccionado = null;
-            this.inventarioId = '';
-            this.buscar = '';
-            this.resultados = [];
-        }
-    }" class="relative space-y-6 ">
         <form action="{{ route('presentaciones.store') }}" method="POST">
             @csrf
 
-            @include('presentaciones.partials._buscador-producto')
+            <x-product-search :action="route('presentaciones.buscar-productos')" :producto-seleccionado="$productoSeleccionado ?? null" name="inventario_id" label="Producto base"
+                placeholder="Buscar por nombre, SKU o código de barras..." />
 
-            @include('presentaciones.partials._formulario')
+            <div x-cloak x-show="productoSeleccionado" x-transition>
+                @include('presentaciones.partials._formulario')
+            </div>
+
         </form>
+
     </div>
 
     <script>
@@ -78,4 +30,5 @@
             document.getElementById('imagen-preview').src = imagen.url;
         });
     </script>
+
 </x-app-layout>

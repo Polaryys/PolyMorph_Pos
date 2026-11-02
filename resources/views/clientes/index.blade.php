@@ -1,11 +1,8 @@
 <x-app-layout>
     <!-- Encabezado y Acción -->
-    <div class="flex items-center justify-between mb-3">
-        <a href="{{ route('clientes.create') }}" wire:navigate
-            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
-            + Agregar Cliente
-        </a>
-    </div>
+    <x-primary-link href="{{ route('clientes.create') }}" wire:navigate>
+        + Agregar Cliente
+    </x-primary-link>
 
     <!-- mensajes -->
     @if (session('success'))

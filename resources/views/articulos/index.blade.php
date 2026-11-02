@@ -1,66 +1,22 @@
 <x-app-layout>
 
     <!-- Encabezado y acciones -->
-    <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+    <div class="mb-5">
 
-        <!-- Buscador y botón de creación -->
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+        <x-search-bar :action="route('articulos.index')" :buscar="$buscar" placeholder="Buscar artículos por nombre, código o marca">
 
-            <!-- Buscador -->
-            <form action="{{ route('articulos.index') }}" method="GET"
-                class="flex flex-col gap-2 sm:flex-row sm:items-center">
+            <x-primary-link href="{{ route('articulos.create') }}" wire:navigate>
+                + Agregar Artículos
+            </x-primary-link>
 
-                <input
-                    type="search"
-                    name="buscar"
-                    value="{{ $buscar }}"
-                    placeholder="Buscar artículos por nombre, código o marca"
-                    class="w-full rounded-sm border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-700 shadow-sm outline-none 
-                    transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 sm:w-96"
-                >
+        </x-search-bar>
 
-                <div class="flex gap-2">
-                    <button
-                        type="submit"
-                        class="inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700"
-                    >
-                        Buscar
-                    </button>
-
-                    @if ($buscar !== '')
-                        <a
-                            href="{{ route('articulos.index') }}"
-                            class="inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm font-medium text-slate-700 transition hover:bg-slate-50"
-                        >
-                            Limpiar
-                        </a>
-                    @endif
-                </div>
-            </form>
-
-            <!-- Agregar artículo -->
-            <a
-                href="{{ route('articulos.create') }}"
-                wire:navigate
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-indigo-700"
-            >
-                + Agregar artículo
-            </a>
-            <a
-                href="{{ route('inventario.ajuste') }}"
-                class="inline-flex items-center justify-center whitespace-nowrap rounded-xl border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
-            >
-                Ajustar inventario
-            </a>
-
-        </div>
     </div>
 
 
     <!-- MENSAJES -->
     @if (session('success'))
-        <div id="success-message"
-            class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
+        <div id="success-message" class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
             {{ session('success') }}
         </div>
 

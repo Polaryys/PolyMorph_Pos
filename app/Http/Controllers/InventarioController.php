@@ -36,7 +36,7 @@ class InventarioController extends Controller
         }
 
         $productos = Presentacion::query()
-            ->select(['id', 'inventario_id', 'nombre', 'codigoSKU'])
+            ->select(['id', 'inventario_id', 'nombre', 'codigoSKU', 'imagen_id'])
             ->where('base', true)
             ->where('estado', true)
             ->whereHas('inventario', function ($query) {
@@ -58,7 +58,7 @@ class InventarioController extends Controller
                 'inventario_id' => $presentacion->inventario_id,
                 'nombre' => $presentacion->nombre,
                 'sku' => $presentacion->codigoSKU,
-                'imagen_url' => $presentacion->imagen
+                'imagen' => $presentacion->imagen
                     ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
                     : null,
                 'cantidad' => (int) ($presentacion->inventario?->cantidad ?? 0),
