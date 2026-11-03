@@ -63,8 +63,21 @@
             }
 
             document.getElementById('imagen_id').value = imagen.id;
-            document.getElementById('imagen-preview').src = imagen.url;
+            const vistaPrevia = document.getElementById('imagen-preview');
+            vistaPrevia.src = imagen.url;
+            vistaPrevia.alt = imagen.nombre || 'Imagen del artículo';
+            vistaPrevia.classList.remove('hidden');
+            document.getElementById('imagen-placeholder').classList.add('hidden');
+            document.getElementById('imagen-quitar').classList.replace('hidden', 'flex');
         });
+
+        function quitarImagenArticulo() {
+            document.getElementById('imagen_id').value = '';
+            document.getElementById('imagen-preview').src = '';
+            document.getElementById('imagen-preview').classList.add('hidden');
+            document.getElementById('imagen-placeholder').classList.replace('hidden', 'flex');
+            document.getElementById('imagen-quitar').classList.replace('flex', 'hidden');
+        }
     </script>
 
     <!-- campos según tipo -->

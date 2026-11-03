@@ -52,7 +52,7 @@
                     @else
                         <div
                             class="w-16 h-16 mx-auto flex items-center justify-center bg-slate-100 rounded text-slate-400">
-                            <x-lucide-image class="w-5 h-5" />
+                            <x-lucide-image class="w-7 h-7" />
                         </div>
                     @endif
                 </td>

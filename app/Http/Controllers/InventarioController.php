@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use App\Models\Marca;
 use App\Models\Inventario;
+use App\Models\Imagen;
 use App\Models\Movimiento;
 use App\Models\Presentacion;
 use Illuminate\Http\JsonResponse;
@@ -29,6 +30,7 @@ class InventarioController extends Controller
         $datos = $request->validate([
             'buscar' => ['required', 'string', 'min:1', 'max:100'],
         ]);
+
         $buscar = trim($datos['buscar']);
 
         if ($buscar === '') {
@@ -36,30 +38,29 @@ class InventarioController extends Controller
         }
 
         $productos = Presentacion::query()
-            ->select(['id', 'inventario_id', 'nombre', 'codigoSKU', 'imagen_id'])
-            ->where('base', true)
-            ->where('estado', true)
-            ->whereHas('inventario', function ($query) {
-                $query->where('tipo', 'PRODUCTO')
-                    ->where('estado', true);
-            })
+            ->buscarProductosActivos($buscar)
+            ->select([
+                'id',
+                'inventario_id',
+                'nombre',
+                'codigoSKU',
+                'imagen_id',
+            ])
             ->with([
-                'inventario:id,cantidad',
+                'inventario:id,marca_id,cantidad',
+                'inventario.marca:id,nombre',
                 'imagen:id,nombre_archivo',
             ])
-            ->where(function ($query) use ($buscar) {
-                $query->where('nombre', 'like', "%{$buscar}%")
-                    ->orWhere('codigoSKU', 'like', "%{$buscar}%");
-            })
             ->orderBy('nombre')
             ->limit(10)
             ->get()
-            ->map(fn (Presentacion $presentacion) => [
+            ->map(fn($presentacion) => [
                 'inventario_id' => $presentacion->inventario_id,
                 'nombre' => $presentacion->nombre,
                 'sku' => $presentacion->codigoSKU,
+                'marcaNombre' => $presentacion->inventario?->marca?->nombre ?? 'Sin marca',
                 'imagen' => $presentacion->imagen
-                    ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
+                    ? asset('storage/imagenes/' . $presentacion->imagen->nombre_archivo)
                     : null,
                 'cantidad' => (int) ($presentacion->inventario?->cantidad ?? 0),
             ])
@@ -93,8 +94,8 @@ class InventarioController extends Controller
 
             if (
                 $inventario->tipo !== 'PRODUCTO'
-                || ! $inventario->estado
-                || ! $tienePresentacionBaseActiva
+                || !$inventario->estado
+                || !$tienePresentacionBaseActiva
             ) {
                 throw ValidationException::withMessages([
                     'inventario_id' => 'Selecciona un producto activo con presentación base.',
@@ -110,7 +111,7 @@ class InventarioController extends Controller
             $inventario->cantidad = (int) $datos['cantidad'];
             DB::statement('SET @usuario_id = ?, @motivo = ?', [
                 Auth::id(),
-                'Ajuste de inventario: '.$datos['motivo'],
+                'Ajuste de inventario: ' . $datos['motivo'],
             ]);
 
             try {
@@ -185,8 +186,8 @@ class InventarioController extends Controller
                     })
 
                         ->orWhereHas('marca', function ($subquery) use ($buscar) {
-                        $subquery->where('nombre', 'like', "%{$buscar}%");
-                    });
+                            $subquery->where('nombre', 'like', "%{$buscar}%");
+                        });
                 });
             })
             ->latest()
@@ -205,10 +206,14 @@ class InventarioController extends Controller
     {
         $categorias = Categoria::orderBy('nombre')->get();
         $marcas = Marca::orderBy('nombre')->get();
+        $imagenSeleccionada = old('imagen_id')
+            ? Imagen::find(old('imagen_id'))
+            : null;
 
         return view('articulos.create', compact(
             'categorias',
-            'marcas'
+            'marcas',
+            'imagenSeleccionada'
         ));
     }
 
@@ -343,8 +348,15 @@ class InventarioController extends Controller
             'presentaciones.imagen',
         ]);
 
+        $presentacion = $inventario->presentaciones->firstWhere('base', true)
+            ?? $inventario->presentaciones->first();
         $categorias = Categoria::orderBy('nombre')->get();
         $marcas = Marca::orderBy('nombre')->get();
+        $imagenId = old('imagen_id', $presentacion?->imagen_id);
+        $imagenSeleccionada = (string) $imagenId === (string) $presentacion?->imagen_id
+            ? $presentacion?->imagen
+            : ($imagenId ? Imagen::find($imagenId) : null);
+        $presentacion?->setRelation('imagen', $imagenSeleccionada);
 
         return view('articulos.edit', [
             'articulo' => $inventario,

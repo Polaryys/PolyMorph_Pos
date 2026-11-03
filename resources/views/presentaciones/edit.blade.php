@@ -1,36 +1,30 @@
 <x-app-layout>
-    <div class="space-y-6">
-        <div>
-            <h2 class="text-xl font-semibold text-gray-800">
-                Editar presentación
-            </h2>
-            <p class="mt-1 text-sm text-gray-500">
-                Modifica los datos de esta presentación y guarda los cambios.
-            </p>
-        </div>
+    @php
+        $nombrePresentacion = trim(
+            $presentacion->nombre . ($presentacion->inventario?->marca?->nombre ? ' - ' . $presentacion->inventario->marca->nombre : ''),
+        );
+    @endphp
 
-        <form action="{{ route('presentaciones.update', $presentacion) }}" method="POST">
-            @csrf
-            @method('PUT')
+    <form action="{{ route('presentaciones.update', $presentacion) }}" method="POST" class="space-y-8">
+        @csrf
+        @method('PUT')
 
-            {{-- Datos de la presentación --}}
-            <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-200 bg-slate-50/75 px-5 py-4">
-                    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-600">
-                        Detalles de la presentación
-                    </h3>
-                </div>
-
-                <div class="grid grid-cols-1 items-start gap-6 p-5 md:grid-cols-[220px_minmax(0,1fr)]">
-                    {{-- Imagen --}}
+        <section>
+            <div class="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
+                <div class="grid grid-cols-1 items-start gap-6 p-5 sm:p-6 md:grid-cols-[200px_minmax(0,1fr)]">
                     <div class="flex justify-center md:justify-start">
-                        <div class="relative h-56 w-56 shrink-0">
+                        <div class="relative h-48 w-48 shrink-0">
                             <img id="imagen-preview"
                                 src="{{ $presentacion->imagen
                                     ? asset('storage/imagenes/' . $presentacion->imagen->nombre_archivo)
-                                    : asset('images/default-avatar.png') }}"
-                                alt="Imagen de {{ $presentacion->nombre }}"
-                                class="h-56 w-56 rounded border-2 border-indigo-100 bg-gray-50 object-cover shadow-sm">
+                                    : '' }}"
+                                alt="{{ $nombrePresentacion }}"
+                                class="{{ $presentacion->imagen ? '' : 'hidden' }} h-48 w-48 rounded-xl border border-slate-200 bg-slate-50 object-cover shadow-sm">
+
+                            <div id="imagen-placeholder"
+                                class="{{ $presentacion->imagen ? 'hidden' : 'flex' }} h-48 w-48 items-center justify-center rounded-xl border border-slate-200 bg-slate-100 text-slate-400 shadow-sm">
+                                <x-lucide-image class="h-16 w-16" />
+                            </div>
 
                             <button type="button"
                                 onclick="window.dispatchEvent(new CustomEvent('abrir-selector-imagen'))"
@@ -38,212 +32,168 @@
                                 class="absolute bottom-2 right-2 rounded-full bg-indigo-600 p-2.5 text-white shadow-md transition hover:bg-indigo-700">
                                 <x-lucide-camera class="h-4 w-4" />
                             </button>
+
+                            <button type="button" id="imagen-quitar" onclick="quitarImagenPresentacion()"
+                                title="Quitar imagen" aria-label="Quitar imagen"
+                                class="{{ $presentacion->imagen ? 'flex' : 'hidden' }} absolute left-2 top-2 items-center justify-center rounded-full bg-transparent p-1.5 text-red-600 transition hover:text-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2">
+                                <x-lucide-x class="h-5 w-5" />
+                            </button>
                         </div>
-                        <input type="hidden" id="imagen_id" name="imagen_id"
-                            value="{{ old('imagen_id', $presentacion->imagen_id) }}">
-                        @error('imagen_id')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
+                        <input type="hidden" id="imagen_id" name="imagen_id" value="{{ $presentacion->imagen?->id }}">
+                        <x-input-error :messages="$errors->get('imagen_id')" class="mt-2" />
                     </div>
 
-                    <div class="grid grid-cols-1 gap-x-4 gap-y-5 sm:grid-cols-2 xl:grid-cols-4">
-                        <div class="sm:col-span-2">
-                            <label for="nombre" class="block text-sm font-medium text-gray-700">
-                                Nombre <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="nombre" name="nombre" maxlength="100" required
-                                value="{{ old('nombre', $presentacion->nombre) }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('nombre')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                    <div class="min-w-0 space-y-2">
+                        <div class="flex flex-col justify-between gap-4 border-b border-slate-100 pb-2 lg:flex-row lg:items-start">
+                            <div class="grid min-w-0 flex-1 grid-cols-1 gap-3 sm:grid-cols-2">
+                                <div>
+                                    <x-input-label for="nombre">
+                                        Nombre <span class="text-red-500">*</span>
+                                    </x-input-label>
+                                    <x-text-input type="text" id="nombre" name="nombre" maxlength="100" required
+                                        :value="old('nombre', $presentacion->nombre)"
+                                        :error="$errors->has('nombre')" class="mt-1 rounded-lg" />
+                                    <x-input-error :messages="$errors->get('nombre')" />
+                                </div>
+
+                                <x-detail-field label="Marca">
+                                    {{ $presentacion->inventario?->marca?->nombre ?? '—' }}
+                                </x-detail-field>
+                            </div>
+
+                            <div class="grid shrink-0 grid-cols-2 gap-3 text-sm lg:min-w-[280px]">
+                                <x-detail-field label="Creado en" class="bg-slate-50">
+                                    <span class="tabular-nums">{{ $presentacion->created_at?->format('d/m/Y H:i') ?? '—' }}</span>
+                                </x-detail-field>
+                                <x-detail-field label="Última edición" class="bg-slate-50">
+                                    <span class="tabular-nums">{{ $presentacion->updated_at?->format('d/m/Y H:i') ?? '—' }}</span>
+                                </x-detail-field>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-1 gap-x-3 gap-y-2 sm:grid-cols-2 xl:grid-cols-3">
+                            <div>
+                                <x-input-label for="estado">
+                                    Estado <span class="text-red-500">*</span>
+                                </x-input-label>
+                                <select id="estado" name="estado" required
+                                    class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <option value="1" @selected((string) old('estado', (int) $presentacion->estado) === '1')>Activa</option>
+                                    <option value="0" @selected((string) old('estado', (int) $presentacion->estado) === '0')>Inactiva</option>
+                                </select>
+                                <x-input-error :messages="$errors->get('estado')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="codigoSKU">
+                                    SKU <span class="text-red-500">*</span>
+                                </x-input-label>
+                                <x-text-input type="text" id="codigoSKU" name="codigoSKU" maxlength="50" required
+                                    :value="old('codigoSKU', $presentacion->codigoSKU)"
+                                    :error="$errors->has('codigoSKU')" class="mt-1 rounded-lg" />
+                                <x-input-error :messages="$errors->get('codigoSKU')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="codigoBarras">Código de barras</x-input-label>
+                                <x-text-input type="text" id="codigoBarras" name="codigoBarras" maxlength="50"
+                                    :value="old('codigoBarras', $presentacion->codigoBarras)"
+                                    :error="$errors->has('codigoBarras')" class="mt-1 rounded-lg" />
+                                <x-input-error :messages="$errors->get('codigoBarras')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="factor">
+                                    Factor de conversión <span class="text-red-500">*</span>
+                                </x-input-label>
+                                <x-text-input type="number" id="factor" name="factor" min="1" step="1" required
+                                    :value="old('factor', $presentacion->factor)"
+                                    :error="$errors->has('factor')" class="mt-1 rounded-lg" />
+                                <x-input-error :messages="$errors->get('factor')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="fecha_vencimiento">Vencimiento</x-input-label>
+                                <x-text-input type="date" id="fecha_vencimiento" name="fecha_vencimiento"
+                                    :value="old('fecha_vencimiento', $presentacion->fecha_vencimiento?->format('Y-m-d'))"
+                                    :error="$errors->has('fecha_vencimiento')" class="mt-1 rounded-lg" />
+                                <x-input-error :messages="$errors->get('fecha_vencimiento')" />
+                            </div>
+
+                            <div>
+                                <x-input-label for="ubicacion">Ubicación física</x-input-label>
+                                <x-text-input type="text" id="ubicacion" name="ubicacion" maxlength="100"
+                                    :value="old('ubicacion', $presentacion->ubicacion)"
+                                    placeholder="Ej. Estante A-1" :error="$errors->has('ubicacion')" class="mt-1 rounded-lg" />
+                                <x-input-error :messages="$errors->get('ubicacion')" />
+                            </div>
                         </div>
 
                         <div>
-                            <label for="codigoSKU" class="block text-sm font-medium text-gray-700">
-                                Código SKU <span class="text-red-500">*</span>
-                            </label>
-                            <input type="text" id="codigoSKU" name="codigoSKU" maxlength="50" required
-                                value="{{ old('codigoSKU', $presentacion->codigoSKU) }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('codigoSKU')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="codigoBarras" class="block text-sm font-medium text-gray-700">
-                                Código de barras
-                            </label>
-                            <input type="text" id="codigoBarras" name="codigoBarras" maxlength="50"
-                                value="{{ old('codigoBarras', $presentacion->codigoBarras) }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('codigoBarras')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="factor" class="block text-sm font-medium text-gray-700">
-                                Factor de conversión <span class="text-red-500">*</span>
-                            </label>
-                            <input type="number" id="factor" name="factor" min="1" step="1" required
-                                value="{{ old('factor', $presentacion->factor) }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('factor')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="ubicacion" class="block text-sm font-medium text-gray-700">
-                                Ubicación física
-                            </label>
-                            <input type="text" id="ubicacion" name="ubicacion" maxlength="100"
-                                value="{{ old('ubicacion', $presentacion->ubicacion) }}"
-                                placeholder="Ej. Estante A-1"
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('ubicacion')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="fecha_vencimiento" class="block text-sm font-medium text-gray-700">
-                                Fecha de vencimiento
-                            </label>
-                            <input type="date" id="fecha_vencimiento" name="fecha_vencimiento"
-                                value="{{ old('fecha_vencimiento', $presentacion->fecha_vencimiento?->format('Y-m-d')) }}"
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                            @error('fecha_vencimiento')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div>
-                            <label for="estado" class="block text-sm font-medium text-gray-700">
-                                Estado <span class="text-red-500">*</span>
-                            </label>
-                            <select id="estado" name="estado" required
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                <option value="1" @selected((string) old('estado', (int) $presentacion->estado) === '1')>
-                                    Activa
-                                </option>
-                                <option value="0" @selected((string) old('estado', (int) $presentacion->estado) === '0')>
-                                    Inactiva
-                                </option>
-                            </select>
-                            @error('estado')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-
-                        <div class="sm:col-span-2 xl:col-span-4">
-                            <label for="detalle" class="block text-sm font-medium text-gray-700">
-                                Descripción o detalle
-                            </label>
-                            <textarea id="detalle" name="detalle" rows="3"
-                                placeholder="Descripción adicional de la presentación..."
-                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('detalle', $presentacion->detalle) }}</textarea>
-                            @error('detalle')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
+                            <x-input-label for="detalle">Detalles</x-input-label>
+                            <textarea id="detalle" name="detalle" rows="2"
+                                class="mt-1 block w-full rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                placeholder="Descripción adicional de la presentación...">{{ old('detalle', $presentacion->detalle) }}</textarea>
+                            <x-input-error :messages="$errors->get('detalle')" />
                         </div>
                     </div>
                 </div>
             </div>
+        </section>
 
-            {{-- Precios de venta --}}
-            <div class="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-                <div class="border-b border-slate-200 bg-slate-50/75 px-5 py-4">
-                    <h3 class="text-sm font-semibold uppercase tracking-wider text-slate-600">
-                        Precios de venta
-                    </h3>
-                    <p class="mt-1 text-sm text-gray-500">
-                        El precio unitario es obligatorio. Los precios por docena y ciento son opcionales.
-                    </p>
-                </div>
+        <section>
+            <x-section-title>Precios de venta</x-section-title>
+            <p class="mt-1 text-sm text-slate-500">
+                El precio unitario es obligatorio. Los precios por docena y ciento son opcionales.
+            </p>
+            <x-table>
+                <x-slot:headers>
+                    <th class="px-4 py-3">Escala de precio</th>
+                    <th class="px-4 py-3">Cantidad de referencia</th>
+                    <th class="px-4 py-3">Precio de venta (Q)</th>
+                </x-slot:headers>
+                <tr>
+                    <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Unitario</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-slate-600">{{ $presentacion->factor }} unidades</td>
+                    <td class="px-4 py-3">
+                        <x-text-input type="number" id="precioUnitario" name="precioUnitario" min="0" step="0.01"
+                            required :value="old('precioUnitario', $presentacion->precioUnitario)"
+                            :error="$errors->has('precioUnitario')" class="min-w-32 rounded-lg" />
+                        <x-input-error :messages="$errors->get('precioUnitario')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Docena</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-slate-600">12 unidades de esta presentación</td>
+                    <td class="px-4 py-3">
+                        <x-text-input type="number" id="precioUnitarioDocena" name="precioUnitarioDocena" min="0"
+                            step="0.01" :value="old('precioUnitarioDocena', $presentacion->precioUnitarioDocena)"
+                            :error="$errors->has('precioUnitarioDocena')" class="min-w-32 rounded-lg" />
+                        <x-input-error :messages="$errors->get('precioUnitarioDocena')" />
+                    </td>
+                </tr>
+                <tr>
+                    <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Ciento</td>
+                    <td class="whitespace-nowrap px-4 py-3 text-slate-600">100 unidades de esta presentación</td>
+                    <td class="px-4 py-3">
+                        <x-text-input type="number" id="precioUnitarioCiento" name="precioUnitarioCiento" min="0"
+                            step="0.01" :value="old('precioUnitarioCiento', $presentacion->precioUnitarioCiento)"
+                            :error="$errors->has('precioUnitarioCiento')" class="min-w-32 rounded-lg" />
+                        <x-input-error :messages="$errors->get('precioUnitarioCiento')" />
+                    </td>
+                </tr>
+            </x-table>
+        </section>
 
-                <div class="p-5">
-                    <div class="overflow-x-auto rounded-xl border border-slate-200">
-                        <table class="min-w-full divide-y divide-slate-200 text-left">
-                            <thead class="bg-slate-50 text-xs font-semibold uppercase tracking-wider text-slate-500">
-                                <tr>
-                                    <th class="px-4 py-3">Escala de precio</th>
-                                    <th class="px-4 py-3">Cantidad de referencia</th>
-                                    <th class="px-4 py-3">Precio de venta (Q)</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-200 bg-white">
-                                <tr>
-                                    <td class="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-800">
-                                        Unitario
-                                    </td>
-                                    <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                                        {{ $presentacion->factor }} unidades
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <input type="number" id="precioUnitario" name="precioUnitario"
-                                            min="0" step="0.01" required
-                                            value="{{ old('precioUnitario', $presentacion->precioUnitario) }}"
-                                            class="block w-full min-w-32 rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @error('precioUnitario')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-800">
-                                        Docena
-                                    </td>
-                                    <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                                        12 unidades de esta presentación
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <input type="number" id="precioUnitarioDocena"
-                                            name="precioUnitarioDocena" min="0" step="0.01"
-                                            value="{{ old('precioUnitarioDocena', $presentacion->precioUnitarioDocena) }}"
-                                            class="block w-full min-w-32 rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @error('precioUnitarioDocena')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="whitespace-nowrap px-4 py-3 text-sm font-medium text-gray-800">
-                                        Ciento
-                                    </td>
-                                    <td class="whitespace-nowrap px-4 py-3 text-sm text-gray-600">
-                                        100 unidades de esta presentación
-                                    </td>
-                                    <td class="px-4 py-3">
-                                        <input type="number" id="precioUnitarioCiento"
-                                            name="precioUnitarioCiento" min="0" step="0.01"
-                                            value="{{ old('precioUnitarioCiento', $presentacion->precioUnitarioCiento) }}"
-                                            class="block w-full min-w-32 rounded-lg border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                        @error('precioUnitarioCiento')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div class="flex flex-col-reverse justify-end gap-3 pb-4 pt-6 sm:flex-row">
-                <a href="{{ route('presentaciones.show', $presentacion) }}"
-                    class="inline-flex justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm transition hover:bg-gray-50">
-                    Cancelar
-                </a>
-                <button type="submit"
-                    class="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
-                    Guardar cambios
-                </button>
-            </div>
-        </form>
-    </div>
+        <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 pt-5 sm:flex-row">
+            <x-secondary-link href="{{ route('presentaciones.show', $presentacion) }}">
+                Cancelar
+            </x-secondary-link>
+            <x-primary-button>
+                Guardar cambios
+            </x-primary-button>
+        </div>
+    </form>
 
     <script>
         window.addEventListener('imagen-seleccionada', function(event) {
@@ -259,6 +209,17 @@
             inputImagen.value = imagen.id;
             vistaPrevia.src = imagen.url;
             vistaPrevia.alt = imagen.nombre || 'Imagen de la presentación';
+            vistaPrevia.classList.remove('hidden');
+            document.getElementById('imagen-placeholder').classList.add('hidden');
+            document.getElementById('imagen-quitar').classList.replace('hidden', 'flex');
         });
+
+        function quitarImagenPresentacion() {
+            document.getElementById('imagen_id').value = '';
+            document.getElementById('imagen-preview').src = '';
+            document.getElementById('imagen-preview').classList.add('hidden');
+            document.getElementById('imagen-placeholder').classList.replace('hidden', 'flex');
+            document.getElementById('imagen-quitar').classList.replace('flex', 'hidden');
+        }
     </script>
 </x-app-layout>

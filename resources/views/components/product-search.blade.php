@@ -90,8 +90,7 @@
     {{-- Campo de búsqueda --}}
     <div class="flex items-center gap-2">
         <x-lucide-search class="w-5 h-5 shrink-0 text-slate-400" />
-        <x-text-input type="search" x-model="buscar"
-            @input="versionBusqueda++; inventarioId = ''; seleccionado = null"
+        <x-text-input type="search" x-model="buscar" @input="versionBusqueda++; inventarioId = ''; seleccionado = null"
             @input.debounce.300ms="buscarProductos()" x-bind:disabled="seleccionado !== null"
             placeholder="{{ $placeholder }}" class="w-96" />
 
@@ -113,7 +112,8 @@
                 {{-- Imagen --}}
                 <div class="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-slate-100">
                     <template x-if="producto.imagen || producto.imagen_url">
-                        <img :src="producto.imagen || producto.imagen_url" :alt="producto.nombre" class="h-full w-full object-cover">
+                        <img :src="producto.imagen || producto.imagen_url" :alt="producto.nombre"
+                            class="h-full w-full object-cover">
                     </template>
 
                     <template x-if="!producto.imagen">
@@ -125,7 +125,9 @@
 
                 {{-- Información --}}
                 <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-semibold text-slate-800" x-text="producto.nombre"></p>
+                    <p class="truncate text-sm font-semibold text-slate-800"
+                        x-text="`${producto.nombre} - ${producto.marcaNombre}`">
+                    </p>
 
                     <p class="text-xs text-slate-500">
                         SKU: <span x-text="producto.sku"></span>
@@ -153,7 +155,7 @@
 
     {{-- Producto seleccionado --}}
     <div x-show="seleccionado !== null" x-cloak
-        class="flex items-center justify-between gap-3 rounded-lg border border-indigo-200 bg-indigo-50 p-3">
+        class="flex items-center justify-between gap-3 rounded-lg border border-indigo-200 bg-indigo-50 p-2">
 
         <div class="flex min-w-0 items-center gap-3">
 
@@ -161,7 +163,8 @@
             <div class="h-14 w-14 shrink-0 overflow-hidden rounded-lg border border-indigo-100 bg-white">
 
                 <template x-if="seleccionado?.imagen || seleccionado?.imagen_url">
-                    <img :src="seleccionado.imagen || seleccionado.imagen_url" :alt="seleccionado.nombre" class="h-full w-full object-cover">
+                    <img :src="seleccionado.imagen || seleccionado.imagen_url" :alt="seleccionado.nombre"
+                        class="h-full w-full object-cover">
                 </template>
 
                 <template x-if="!seleccionado?.imagen && !seleccionado?.imagen_url">
@@ -178,7 +181,8 @@
                     Producto seleccionado
                 </p>
 
-                <p class="truncate text-sm font-semibold text-slate-800" x-text="seleccionado?.nombre">
+                <p class="truncate text-sm font-semibold text-slate-800"
+                    x-text="`${seleccionado?.nombre} - ${seleccionado?.marcaNombre}`">
                 </p>
 
                 <p class="text-xs text-slate-500">

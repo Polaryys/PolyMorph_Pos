@@ -90,9 +90,11 @@
         </p>
 
         <div>
-            <label for="motivo" class="mb-1 block text-sm font-medium text-slate-700">Motivo del ajuste</label>
+            <x-input-label for="umbral">
+                Motivo del ajuste <span class="text-red-500">*</span>
+            </x-input-label>
             <textarea id="motivo" name="motivo" rows="3" maxlength="500" required
-                class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('motivo') }}</textarea>
+                class="w-full rounded-lg border border-slate-300 px-3 py-2 mt-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">{{ old('motivo') }}</textarea>
         </div>
 
         <div class="flex flex-wrap justify-end gap-3">

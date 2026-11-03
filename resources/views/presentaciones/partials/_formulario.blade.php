@@ -3,6 +3,10 @@
     <fieldset :disabled="!productoSeleccionado" class="min-w-0 border-0 p-0">
         <div class="grid grid-cols-1 items-start gap-6 md:grid-cols-[220px_minmax(0,1fr)]">
             <div>
+                @php
+                    $imagenSeleccionada = null;
+                    $mostrarBotonQuitarImagen = false;
+                @endphp
                 @include('articulos.partials._imagen')
             </div>
 

@@ -114,6 +114,7 @@ class PresentacionController extends Controller
         }
 
         $presentaciones = Presentacion::query()
+            ->buscarProductosActivos($buscar)
             ->select([
                 'id',
                 'inventario_id',
@@ -122,45 +123,28 @@ class PresentacionController extends Controller
                 'codigoBarras',
                 'imagen_id',
             ])
-            ->where('base', true)
-            ->where('estado', true)
-            ->whereHas('inventario', function ($query) {
-                $query->where('tipo', 'PRODUCTO')
-                    ->where('estado', true);
-            })
             ->with([
                 'imagen:id,nombre_archivo',
-                'inventario:id,cantidad',
+                'inventario:id,marca_id,cantidad',
+                'inventario.marca:id,nombre',
             ])
-            ->where(function ($query) use ($buscar) {
-                $query->where('nombre', 'like', "%{$buscar}%")
-                    ->orWhere('codigoSKU', 'like', "%{$buscar}%")
-                    ->orWhere('codigoBarras', 'like', "%{$buscar}%");
-            })
             ->orderBy('nombre')
             ->limit(10)
-            ->get();
+            ->get()
+            ->map(fn($presentacion) => [
+                'inventario_id' => $presentacion->inventario_id,
+                'nombre' => $presentacion->nombre,
+                'sku' => $presentacion->codigoSKU,
+                'codigoBarras' => $presentacion->codigoBarras,
+                'marcaNombre' => $presentacion->inventario?->marca?->nombre,
+                'cantidad' => $presentacion->inventario?->cantidad ?? 0,
+                'imagen' => $presentacion->imagen
+                    ? asset('storage/imagenes/' . $presentacion->imagen->nombre_archivo)
+                    : null,
+            ])
+            ->values();
 
-        return response()->json(
-            $presentaciones->map(function ($presentacion) {
-                return [
-                    'inventario_id' => $presentacion->inventario_id,
-                    'nombre' => $presentacion->nombre,
-                    'sku' => $presentacion->codigoSKU,
-                    'codigoBarras' => $presentacion->codigoBarras,
-
-                    // Existencias del inventario
-                    'cantidad' => $presentacion->inventario?->cantidad ?? 0,
-
-                    'imagen' => $presentacion->imagen
-                        ? asset(
-                            'storage/imagenes/' .
-                            $presentacion->imagen->nombre_archivo
-                        )
-                        : null,
-                ];
-            })->values()
-        );
+        return response()->json($presentaciones);
     }
 
     /**
@@ -295,8 +279,13 @@ class PresentacionController extends Controller
     {
         abort_if($presentacion->base, 404);
 
-        $presentacion->load(['inventario', 'imagen']);
+        $presentacion->load(['inventario.marca', 'imagen']);
         $imagenes = Imagen::orderBy('id', 'desc')->get();
+        $imagenId = old('imagen_id', $presentacion->imagen_id);
+        $presentacion->setRelation(
+            'imagen',
+            $imagenId ? Imagen::find($imagenId) : null
+        );
 
         return view('presentaciones.edit', compact(
             'presentacion',

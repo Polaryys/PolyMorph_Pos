@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -46,6 +47,22 @@ class Presentacion extends Model
     public function inventario(): BelongsTo
     {
         return $this->belongsTo(Inventario::class);
+    }
+
+    public function scopeBuscarProductosActivos(Builder $query, string $buscar): Builder
+    {
+        return $query
+            ->where('base', true)
+            ->where('estado', true)
+            ->whereHas('inventario', function (Builder $query) {
+                $query->where('tipo', 'PRODUCTO')
+                    ->where('estado', true);
+            })
+            ->where(function (Builder $query) use ($buscar) {
+                $query->where('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('codigoSKU', 'like', "%{$buscar}%")
+                    ->orWhere('codigoBarras', 'like', "%{$buscar}%");
+            });
     }
 
     /**

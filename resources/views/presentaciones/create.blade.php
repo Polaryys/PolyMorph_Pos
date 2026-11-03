@@ -26,8 +26,14 @@
                 return;
             }
 
-            document.getElementById('imagen_id').value = imagen.id;
-            document.getElementById('imagen-preview').src = imagen.url;
+            const inputImagen = document.getElementById('imagen_id');
+            const vistaPrevia = document.getElementById('imagen-preview');
+
+            inputImagen.value = imagen.id;
+            vistaPrevia.src = imagen.url;
+            vistaPrevia.alt = imagen.nombre || 'Imagen de la presentación';
+            vistaPrevia.classList.remove('hidden');
+            document.getElementById('imagen-placeholder').classList.add('hidden');
         });
     </script>
 

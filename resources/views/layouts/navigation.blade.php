@@ -74,12 +74,6 @@
                             <x-nav-link :href="route($item['route'])" :active="request()->routeIs($activePattern)">
                                 <span class="inline-flex items-center gap-2">
                                     {{ __($item['label']) }}
-                                    @if (($item['route'] ?? null) === 'compras.index' && $compraPendiente)
-                                        <span aria-label="Hay una compra pendiente" title="Hay una compra pendiente"
-                                            class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-red-600 text-xs font-bold leading-none text-white">
-                                            +
-                                        </span>
-                                    @endif
                                 </span>
                             </x-nav-link>
                         @endif
