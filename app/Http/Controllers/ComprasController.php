@@ -70,6 +70,7 @@ class ComprasController extends Controller
                 'precioUnitario',
                 'precioUnitarioDocena',
                 'precioUnitarioCiento',
+                'imagen_id',
             ])
             ->where('base', true)
             ->where('factor', 1)
@@ -81,6 +82,7 @@ class ComprasController extends Controller
             ->with([
                 'inventario:id,marca_id,cantidad,costoPromedioUnitario,tipo,estado',
                 'inventario.marca:id,nombre',
+                'imagen:id,nombre_archivo',
             ])
             ->where(function ($query) use ($buscar) {
                 $query->where('nombre', 'like', "%{$buscar}%")
@@ -99,6 +101,9 @@ class ComprasController extends Controller
                 'nombre' => $presentacion->nombre,
                 'sku' => $presentacion->codigoSKU,
                 'marca' => $presentacion->inventario?->marca?->nombre ?? 'Sin marca',
+                'imagen' => $presentacion->imagen
+                    ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
+                    : null,
                 'cantidad_actual' => (int) ($presentacion->inventario?->cantidad ?? 0),
                 'costo_promedio_actual' => (float) ($presentacion->inventario?->costoPromedioUnitario ?? 0),
                 'precio_unitario_actual' => (float) $presentacion->precioUnitario,
@@ -119,6 +124,7 @@ class ComprasController extends Controller
     {
         $datos = $this->validarDatosCompra($request);
         $this->validarPresentacionesCompra($datos['detalles']);
+        $registrar = $request->input('accion') === 'registrar';
 
         $compra = DB::transaction(function () use ($datos) {
             $compra = Compra::create([
@@ -146,6 +152,16 @@ class ComprasController extends Controller
 
             return $compra;
         });
+
+        if ($registrar) {
+            try {
+                return $this->registrarCompra($compra);
+            } catch (ValidationException $exception) {
+                return redirect()
+                    ->route('compras.show', $compra)
+                    ->withErrors($exception->errors());
+            }
+        }
 
         return redirect()
             ->route('compras.index')

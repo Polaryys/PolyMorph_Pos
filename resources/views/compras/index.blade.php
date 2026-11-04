@@ -48,7 +48,9 @@
         @forelse ($compras as $compra)
             <tr class="transition-colors hover:bg-indigo-50/50">
                 <td class="px-4 py-3 whitespace-nowrap font-semibold text-indigo-700">
+                    <a href="{{ route('compras.show', $compra) }}" class="transition hover:text-indigo-900">
                     {{ $compra->numero_compra }}
+                    </a>
                 </td>
 
                 <td class="px-4 py-3 text-center whitespace-nowrap text-slate-700">
@@ -92,41 +94,6 @@
                             class="text-slate-500 transition hover:text-indigo-600">
                             <x-lucide-eye class="h-5 w-5" />
                         </a>
-
-                        @if ($compra->estado === 'PENDIENTE')
-                            <a href="{{ route('compras.edit', $compra) }}" title="Editar compra pendiente"
-                                aria-label="Editar compra pendiente"
-                                class="text-slate-500 transition hover:text-indigo-600">
-                                <x-lucide-pencil class="h-5 w-5" />
-                            </a>
-                            <form action="{{ route('compras.registrar', $compra) }}" method="POST"
-                                onsubmit="return confirm('¿Registrar la compra {{ $compra->numero_compra }}? Se actualizarán inventario y precios.');">
-                                @csrf
-                                <button type="submit" title="Registrar compra"
-                                    class="text-xs font-medium text-green-700 transition hover:text-green-900">
-                                    Registrar
-                                </button>
-                            </form>
-                            <form action="{{ route('compras.destroy', $compra) }}" method="POST"
-                                onsubmit="return confirm('¿Eliminar la compra pendiente {{ $compra->numero_compra }}?');">
-                                @csrf
-                                @method('DELETE')
-                                <button type="submit" title="Eliminar compra pendiente"
-                                    aria-label="Eliminar compra pendiente"
-                                    class="text-xs font-medium text-red-600 transition hover:text-red-800">
-                                    Eliminar
-                                </button>
-                            </form>
-                        @elseif ($compra->estado === 'REGISTRADA')
-                            <form action="{{ route('compras.revertir', $compra) }}" method="POST"
-                                onsubmit="return confirm('¿Revertir la compra {{ $compra->numero_compra }}? Esta acción no se puede deshacer.');">
-                                @csrf
-                                <button type="submit" title="Revertir compra" aria-label="Revertir compra"
-                                    class="text-xs font-medium text-red-600 transition hover:text-red-800">
-                                    Revertir
-                                </button>
-                            </form>
-                        @endif
                     </div>
                 </td>
             </tr>
