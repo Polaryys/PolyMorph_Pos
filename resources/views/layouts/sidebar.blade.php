@@ -1,23 +1,31 @@
 ﻿<aside
-    class="fixed inset-y-0 left-0 w-56 z-40 bg-zinc-900 
-           flex flex-col transform transition-transform duration-300 ease-in-out
+    class="fixed inset-y-0 left-0 z-40 flex w-56 flex-col
+           border-r border-slate-200 bg-white
+           transform transition-transform duration-300 ease-in-out
            -translate-x-full md:translate-x-0"
     :class="{ 'translate-x-0': open, '-translate-x-full': !open }">
 
-    <div class="relative flex justify-center items-center h-32 px-4 py-4">
+    {{-- Encabezado --}}
+    <div
+        class="flex h-32 shrink-0 flex-col items-center justify-center
+                gap-1 border-b border-slate-200 px-4">
 
-        <x-icon-sistema class="h-24 w-auto shrink-0 text-indigo-500 drop-shadow-sm transition-colors" />
+        <x-icon-sistema class="h-20 w-auto shrink-0 text-indigo-500 drop-shadow-sm" />
 
-        <div class="absolute bottom-0 left-4 right-4 h-[1px] bg-slate-800"></div>
+        <p class="text-sm font-bold tracking-wide text-slate-700">
+            MultiServicios Eben-Ezer
+        </p>
+
     </div>
 
-    <!-- sidebar principal -->
-    <div class="p-3 flex-1 flex flex-col justify-between overflow-y-auto">
+    {{-- Navegación --}}
+    <div class="flex min-h-0 flex-1 flex-col p-3">
 
-        <nav class="space-y-1.5">
+        <nav class="flex-1 space-y-1.5 overflow-y-auto">
+
             <x-sidebar-link href="#" wire:navigate>
                 <x-slot:icon>
-                    <x-lucide-shopping-cart class="w-5 h-5 shrink-0" />
+                    <x-lucide-shopping-cart class="h-5 w-5" />
                 </x-slot:icon>
                 Punto de venta
             </x-sidebar-link>
@@ -31,111 +39,144 @@
                 'ajuste.*',
                 'movimientos.*',
             )" wire:navigate>
+
                 <x-slot:icon>
-                    <x-lucide-box class="w-5 h-5 shrink-0" />
+                    <x-lucide-box class="h-5 w-5" />
                 </x-slot:icon>
-                <span class="flex flex-1 items-center justify-between">
-                    Inventario
-                </span>
+
+                Inventario
             </x-sidebar-link>
 
             <x-sidebar-link :href="route('clientes.index')" :active="request()->routeIs('clientes.*')" wire:navigate>
+
                 <x-slot:icon>
-                    <x-lucide-users class="w-5 h-5 shrink-0" />
+                    <x-lucide-users class="h-5 w-5" />
                 </x-slot:icon>
+
                 Clientes
             </x-sidebar-link>
 
             <x-sidebar-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.*')" wire:navigate>
+
                 <x-slot:icon>
-                    <x-lucide-truck class="w-5 h-5 shrink-0" />
+                    <x-lucide-truck class="h-5 w-5" />
                 </x-slot:icon>
+
                 Proveedores
             </x-sidebar-link>
 
             <x-sidebar-link href="#" wire:navigate>
                 <x-slot:icon>
-                    <x-lucide-file-text class="w-5 h-5 shrink-0" />
+                    <x-lucide-file-text class="h-5 w-5" />
                 </x-slot:icon>
                 Reportes
             </x-sidebar-link>
 
             <x-sidebar-link :href="route('usuarios.index')" :active="request()->routeIs('usuarios.*')" wire:navigate>
+
                 <x-slot:icon>
-                    <x-lucide-user class="w-5 h-5 shrink-0" />
+                    <x-lucide-user class="h-5 w-5" />
                 </x-slot:icon>
+
                 Usuarios
             </x-sidebar-link>
 
             <x-sidebar-link :href="route('imagenes.index')" :active="request()->routeIs('imagenes.*')" wire:navigate>
+
                 <x-slot:icon>
-                    <x-lucide-image class="w-5 h-5 shrink-0" />
+                    <x-lucide-image class="h-5 w-5" />
                 </x-slot:icon>
+
                 Medios
             </x-sidebar-link>
 
             <x-sidebar-link :href="route('metodos-pago.index')" :active="request()->routeIs('metodos-pago.*')" wire:navigate>
+
                 <x-slot:icon>
-                    <x-lucide-settings class="w-5 h-5 shrink-0" />
+                    <x-lucide-settings class="h-5 w-5" />
                 </x-slot:icon>
+
                 Configuración
             </x-sidebar-link>
-        </nav>
-        <div class="pt-3 border-t border-gray-800 space-y-1">
 
-            <!-- user -->
+        </nav>
+
+        {{-- Zona inferior --}}
+        <div class="shrink-0 space-y-1 border-t border-slate-200 pt-3">
+
+            @php
+                $usuarioActual = Auth::user();
+                $perfilActivo = request()->routeIs('profile.*');
+            @endphp
+
+            {{-- Perfil --}}
             <a href="{{ route('profile.show') }}" wire:navigate @class([
-                'flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all',
-                'bg-indigo-600/80 text-white shadow-sm' => request()->routeIs('profile.*'),
-                'text-zinc-300 hover:bg-zinc-800 hover:text-white' => !request()->routeIs(
-                    'profile.*'),
+                'flex items-center gap-3 rounded-xl p-2.5 transition-colors',
+                'bg-indigo-50 text-indigo-700' => $perfilActivo,
+                'text-slate-600 hover:bg-slate-100 hover:text-slate-800' => !$perfilActivo,
             ])>
-                @php
-                    $usuarioActual = Auth::user();
-                @endphp
 
                 <div class="shrink-0">
+
                     @if ($usuarioActual->imagen_id && $usuarioActual->imagen)
                         <img src="{{ asset('storage/imagenes/' . $usuarioActual->imagen->nombre_archivo) }}"
-                            alt="Foto de perfil" class="w-9 h-9 rounded-full object-cover border border-slate-700">
+                            alt="Foto de perfil" class="h-9 w-9 rounded-full border border-slate-200 object-cover">
                     @else
                         <div
-                            class="w-9 h-9 rounded-full bg-indigo-600 text-white flex items-center justify-center font-semibold text-xs shadow-sm">
+                            class="flex h-9 w-9 items-center justify-center
+                                    rounded-full bg-indigo-600 text-xs font-semibold
+                                    text-white shadow-sm">
+
                             {{ strtoupper(substr($usuarioActual->nombres, 0, 1) . substr($usuarioActual->apellidos, 0, 1)) }}
+
                         </div>
                     @endif
+
                 </div>
+
                 <div class="min-w-0 flex-1">
-                    <p
-                        class="truncate font-semibold leading-tight text-base {{ request()->routeIs('profile.*') ? 'text-white' : 'text-slate-200' }}">
-                        {{ Auth::user()->username }}
+
+                    <p class="truncate text-sm font-semibold leading-tight">
+                        {{ $usuarioActual->username }}
                     </p>
-                    <p class="text-xs text-slate-400 truncate mt-0.5">
-                        {{ Auth::user()->rol }}
+
+                    <p class="mt-0.5 truncate text-xs text-slate-500">
+                        {{ $usuarioActual->rol }}
                     </p>
+
                 </div>
+
+                <x-lucide-chevron-right class="h-4 w-4 shrink-0 text-slate-400" />
+
             </a>
 
-            <!-- cierre de sesión -->
+            {{-- Cerrar sesión --}}
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
+
                 <button type="submit"
-                    class="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl
-       text-sm font-medium text-red-400
-       hover:bg-red-500/10 hover:text-red-300
-       focus-visible:outline-none focus-visible:ring-2
-       focus-visible:ring-red-400 transition-colors">
-                    <x-lucide-log-out class="w-5 h-5 shrink-0 text-red-500" />
+                    class="flex w-full items-center gap-3 rounded-lg
+                           px-3 py-2.5 text-sm font-medium
+                           text-red-600 transition-colors
+                           hover:bg-red-50 hover:text-red-700
+                           focus-visible:outline-none
+                           focus-visible:ring-2 focus-visible:ring-red-400">
+
+                    <x-lucide-log-out class="h-5 w-5 shrink-0" />
+
                     <span>Cerrar sesión</span>
+
                 </button>
             </form>
 
         </div>
 
     </div>
+
 </aside>
 
-<!-- Fondo oscuro en móvil -->
+{{-- Fondo oscuro en móvil --}}
 <div x-cloak x-show="open" @click="open = false" x-transition.opacity
-    class="fixed inset-0 z-30 bg-gray-900/40 backdrop-blur-sm md:hidden">
+    class="fixed inset-0 z-30 bg-slate-900/40
+           backdrop-blur-sm md:hidden">
 </div>

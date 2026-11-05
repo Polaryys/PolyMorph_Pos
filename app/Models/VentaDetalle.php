@@ -35,6 +35,7 @@ class VentaDetalle extends Model
             'precio_aplicado' => 'decimal:2',
             'descuento' => 'decimal:2',
             'subtotal_costo' => 'decimal:2',
+            'subtotal' => 'decimal:2',
         ];
     }
 

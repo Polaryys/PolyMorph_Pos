@@ -31,7 +31,7 @@ return new class extends Migration
             $table->decimal('cambio', 10, 2)
                 ->nullable();
 
-            $table->string('referencia', 20)
+            $table->string('referencia', 100)
                 ->nullable();
 
             $table->dateTime('fecha_pago');

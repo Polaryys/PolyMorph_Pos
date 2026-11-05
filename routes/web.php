@@ -11,6 +11,7 @@ use App\Http\Controllers\ProveedorController;
 use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\PresentacionController;
 use App\Http\Controllers\ComprasController;
+use App\Http\Controllers\VentasController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -63,7 +64,14 @@ Route::middleware('auth')->group(function () {
     Route::resource('presentaciones', PresentacionController::class)
         ->parameters(['presentaciones' => 'presentacion']);
 
-
+    Route::get('/ventas', [VentasController::class, 'index'])
+        ->name('ventas.index');
+    Route::post('/ventas', [VentasController::class, 'store'])
+        ->name('ventas.store');
+    Route::post('/ventas/{venta}/anular', [VentasController::class, 'anular'])
+        ->name('ventas.anular');
+    Route::get('/ventas/{venta}', [VentasController::class, 'show'])
+        ->name('ventas.show');
 
     Route::get('/compras/buscar-productos', [ComprasController::class, 'buscarProductos'])
         ->name('compras.buscar-productos');

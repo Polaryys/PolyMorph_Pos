@@ -81,38 +81,6 @@
                     </x-detail-field>
                 </div>
 
-                @if ($compra->estado === 'PENDIENTE')
-                    <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:px-6">
-                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
-                        <x-secondary-link href="{{ route('compras.edit', $compra) }}">
-                            Editar pendiente
-                        </x-secondary-link>
-                        <form action="{{ route('compras.destroy', $compra) }}" method="POST"
-                            onsubmit="return confirm('¿Eliminar esta compra pendiente?');">
-                            @csrf
-                            @method('DELETE')
-                            <x-danger-button type="submit">Eliminar pendiente</x-danger-button>
-                        </form>
-                        <form action="{{ route('compras.registrar', $compra) }}" method="POST"
-                            onsubmit="return confirm('¿Registrar esta compra? Se actualizarán inventario y precios.');">
-                            @csrf
-                            <x-primary-button>Registrar compra</x-primary-button>
-                        </form>
-                    </div>
-                @elseif ($compra->estado === 'REGISTRADA')
-                    <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:px-6">
-                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
-                        <form action="{{ route('compras.revertir', $compra) }}" method="POST"
-                            onsubmit="return confirm('¿Revertir esta compra? Esta acción no se puede deshacer.');">
-                            @csrf
-                            <x-danger-button type="submit">Revertir compra</x-danger-button>
-                        </form>
-                    </div>
-                @else
-                    <div class="flex justify-end border-t border-slate-200 px-5 py-4 sm:px-6">
-                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
-                    </div>
-                @endif
             </div>
         </section>
 
@@ -197,6 +165,39 @@
                     </tr>
                 @endif
             </x-table>
+            
+                @if ($compra->estado === 'PENDIENTE')
+                    <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:px-6">
+                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
+                        <x-secondary-link href="{{ route('compras.edit', $compra) }}">
+                            Editar pendiente
+                        </x-secondary-link>
+                        <form action="{{ route('compras.destroy', $compra) }}" method="POST"
+                            onsubmit="return confirm('¿Eliminar esta compra pendiente?');">
+                            @csrf
+                            @method('DELETE')
+                            <x-danger-button type="submit">Eliminar pendiente</x-danger-button>
+                        </form>
+                        <form action="{{ route('compras.registrar', $compra) }}" method="POST"
+                            onsubmit="return confirm('¿Registrar esta compra? Se actualizarán inventario y precios.');">
+                            @csrf
+                            <x-primary-button>Registrar compra</x-primary-button>
+                        </form>
+                    </div>
+                @elseif ($compra->estado === 'REGISTRADA')
+                    <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:px-6">
+                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
+                        <form action="{{ route('compras.revertir', $compra) }}" method="POST"
+                            onsubmit="return confirm('¿Revertir esta compra? Esta acción no se puede deshacer.');">
+                            @csrf
+                            <x-danger-button type="submit">Revertir compra</x-danger-button>
+                        </form>
+                    </div>
+                @else
+                    <div class="flex justify-end border-t border-slate-200 px-5 py-4 sm:px-6">
+                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
+                    </div>
+                @endif
         </section>
     </div>
 </x-app-layout>

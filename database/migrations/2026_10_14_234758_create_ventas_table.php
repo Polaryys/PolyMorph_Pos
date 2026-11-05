@@ -12,23 +12,35 @@ return new class extends Migration {
     {
         Schema::create('ventas', function (Blueprint $table) {
             $table->id();
-            $table->string('numero_venta', 20)->unique;
+            $table->string('numero_venta', 20)->unique();
             $table->foreignId('vendedor_id')
                 ->constrained('users')
                 ->restrictOnDelete();
             $table->foreignId('cliente_id')
-                ->nullable()->constrained('clientes')
-                ->nullOnDelete();
-            $table->enum('tipo_transacción', ['ENTRADA', 'SALIDA', 'CAMBIO',]);
-            $table->enum('estado_venta', ['Completada', 'Reembolsada', 'Cambiada','Anulada']);
-            $table->enum('estado_pago', ['Parcial', 'Completo', 'Pendiente']);
+                ->nullable()
+                ->constrained('clientes')
+                ->restrictOnDelete();
+            $table->enum('tipo_operacion', [
+                'VENTA',
+                'DEVOLUCION',
+                'CAMBIO',
+            ])->default('VENTA');
+            $table->enum('estado_venta', [
+                'REGISTRADA',
+                'ANULADA',
+            ])->default('REGISTRADA');
+            $table->enum('estado_pago', [
+                'PENDIENTE',
+                'PARCIAL',
+                'PAGADO',
+            ])->default('PENDIENTE');
             $table->foreignId('venta_referencia_id')
                 ->nullable()
                 ->constrained('ventas')
                 ->restrictOnDelete();
-            $table->decimal('total_descuentos', 10, 2);
-            $table->decimal('costo_total', 10, 2);
-            $table->decimal('total', 10, 2);
+            $table->decimal('total_descuentos', 10, 2)->default(0);
+            $table->decimal('costo_total', 10, 2)->default(0);
+            $table->decimal('total', 10, 2)->default(0);
             $table->timestamps();
         });
     }

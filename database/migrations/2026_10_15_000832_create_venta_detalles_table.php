@@ -1,12 +1,10 @@
-
 <?php
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -24,11 +22,11 @@ return new class extends Migration
                 ->restrictOnDelete();
 
             $table->enum('tipo_item', [
-                'Producto',
-                'Servicio',
+                'PRODUCTO',
+                'SERVICIO',
             ]);
 
-            $table->decimal('cantidad', 10, 2);
+            $table->decimal('cantidad', 10);
             $table->unsignedInteger('factor');
             $table->decimal('cantidad_base', 10, 2);
 
