@@ -6,7 +6,6 @@ namespace App\Http\Controllers;
 use App\Models\MetodoPago;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
@@ -48,6 +47,7 @@ class MetodoPagoController extends Controller
                 'string',
                 'max:255',
             ],
+            'estado' => ['required', 'boolean'],
         ]);
 
         MetodoPago::create($validated);
@@ -91,6 +91,7 @@ class MetodoPagoController extends Controller
                 'string',
                 'max:255',
             ],
+            'estado' => ['required', 'boolean'],
         ]);
 
         $metodoPago->update($validated);
@@ -105,6 +106,12 @@ class MetodoPagoController extends Controller
      */
     public function destroy(MetodoPago $metodoPago)
     {
+        if ($metodoPago->pagosVenta()->exists() || $metodoPago->reembolsos()->exists()) {
+            return redirect()
+                ->route('metodos-pago.index')
+                ->with('error', 'Este método ya tiene movimientos asociados. Desactívalo en lugar de eliminarlo.');
+        }
+
         $metodoPago->delete();
         return redirect()
             ->route('metodos-pago.index')

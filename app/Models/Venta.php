@@ -18,6 +18,7 @@ class Venta extends Model
         'estado_venta',
         'estado_pago',
         'venta_referencia_id',
+        'motivo_operacion',
         'total_descuentos',
         'costo_total',
         'total',
@@ -66,5 +67,10 @@ class Venta extends Model
     public function detallesPago(): HasMany
     {
         return $this->hasMany(VentaDetallePago::class, 'venta_id');
+    }
+
+    public function reembolsos(): HasMany
+    {
+        return $this->hasMany(VentaReembolso::class, 'venta_id');
     }
 }

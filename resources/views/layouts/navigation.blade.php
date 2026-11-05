@@ -2,7 +2,7 @@
     $compraPendiente = \App\Models\Compra::query()->where('estado', 'PENDIENTE')->exists();
 
     $module = match (true) {
-        request()->routeIs('pos.*') => 'pos',
+        request()->routeIs('pos.*', 'ventas.*') => 'pos',
         request()->routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*') => 'inventario',
         request()->routeIs('clientes.*') => 'clientes',
         request()->routeIs('proveedores.*') => 'proveedores',
@@ -14,6 +14,10 @@
     };
 
     $menus = [
+        'pos' => [
+            ['label' => 'Punto de venta', 'route' => 'ventas.create', 'active' => 'ventas.create'],
+            ['label' => 'Ventas registradas', 'route' => 'ventas.index', 'active' => 'ventas.index'],
+        ],
         'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
         'profile' => [['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*']],
         'inventario' => [

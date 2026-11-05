@@ -64,6 +64,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('presentaciones', PresentacionController::class)
         ->parameters(['presentaciones' => 'presentacion']);
 
+    Route::get('/ventas/create', [VentasController::class, 'create'])
+        ->name('ventas.create');
     Route::get('/ventas', [VentasController::class, 'index'])
         ->name('ventas.index');
     Route::post('/ventas', [VentasController::class, 'store'])

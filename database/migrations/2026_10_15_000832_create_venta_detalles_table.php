@@ -21,6 +21,19 @@ return new class extends Migration {
                 ->constrained('presentaciones')
                 ->restrictOnDelete();
 
+            $table->enum('tipo_movimiento', [
+                'VENTA',
+                'DEVOLUCION',
+                'ENTREGA_CAMBIO',
+            ])->default('VENTA');
+
+            $table->foreignId('detalle_referencia_id')
+                ->nullable()
+                ->constrained('venta_detalles')
+                ->restrictOnDelete();
+
+            $table->boolean('reingresa_inventario')->nullable();
+
             $table->enum('tipo_item', [
                 'PRODUCTO',
                 'SERVICIO',

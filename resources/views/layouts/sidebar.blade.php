@@ -23,7 +23,7 @@
 
         <nav class="flex-1 space-y-1.5 overflow-y-auto">
 
-            <x-sidebar-link href="#" wire:navigate>
+            <x-sidebar-link :href="route('ventas.create')" :active="request()->routeIs('ventas.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-shopping-cart class="h-5 w-5" />
                 </x-slot:icon>

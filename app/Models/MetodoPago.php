@@ -12,6 +12,23 @@ class MetodoPago extends Model
     protected $fillable = [
         'nombre',
         'descripcion',
+        'estado',
     ];
 
+    protected function casts(): array
+    {
+        return [
+            'estado' => 'boolean',
+        ];
+    }
+
+    public function pagosVenta(): HasMany
+    {
+        return $this->hasMany(VentaDetallePago::class, 'metodo_pago_id');
+    }
+
+    public function reembolsos(): HasMany
+    {
+        return $this->hasMany(VentaReembolso::class, 'metodo_pago_id');
+    }
 }

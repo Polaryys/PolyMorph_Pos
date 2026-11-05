@@ -49,6 +49,20 @@
                     @enderror
                 </div>
 
+                <div>
+                    <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">
+                        Estado
+                    </label>
+                    <select name="estado" id="estado" required
+                        class="w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="1" @selected((string) old('estado', (int) $metodoPago->estado) === '1')>Activo</option>
+                        <option value="0" @selected((string) old('estado', (int) $metodoPago->estado) === '0')>Inactivo</option>
+                    </select>
+                    @error('estado')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <div class="flex items-center justify-end gap-3 pt-4">
                     <a
                         href="{{ route('metodos-pago.index') }}"

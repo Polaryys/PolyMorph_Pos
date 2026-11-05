@@ -38,6 +38,7 @@ return new class extends Migration {
                 ->nullable()
                 ->constrained('ventas')
                 ->restrictOnDelete();
+            $table->text('motivo_operacion')->nullable();
             $table->decimal('total_descuentos', 10, 2)->default(0);
             $table->decimal('costo_total', 10, 2)->default(0);
             $table->decimal('total', 10, 2)->default(0);

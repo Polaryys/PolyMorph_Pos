@@ -30,6 +30,7 @@
                         <th class="px-6 py-2.5 w-24 text-center">No.</th>
                         <th class="px-6 py-2.5">Nombre</th>
                         <th class="px-6 py-2.5">Descripción</th>
+                        <th class="px-6 py-2.5 text-center">Estado</th>
                         <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">CREADO</th>
                         <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">ACTUALIZADO</th>
                         <th class="px-6 py-2.5 text-center w-64">Acciones</th>
@@ -50,6 +51,16 @@
                             <td class="px-6 py-3 text-gray-500 max-w-sm">
                                 <span class="block truncate" title="{{ $metodoPago->descripcion }}">
                                     {{ $metodoPago->descripcion ?: 'Sin descripción' }}
+                                </span>
+                            </td>
+
+                            <td class="px-6 py-3 text-center">
+                                <span @class([
+                                    'inline-flex rounded-full px-2.5 py-1 text-xs font-medium',
+                                    'bg-green-100 text-green-700' => $metodoPago->estado,
+                                    'bg-slate-100 text-slate-600' => !$metodoPago->estado,
+                                ])>
+                                    {{ $metodoPago->estado ? 'Activo' : 'Inactivo' }}
                                 </span>
                             </td>
 
@@ -84,7 +95,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-gray-400">
+                            <td colspan="7" class="px-6 py-8 text-center text-gray-400">
                                 No se encontraron métodos de pago registrados.
                             </td>
                         </tr>

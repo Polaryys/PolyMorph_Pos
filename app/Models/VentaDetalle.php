@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class VentaDetalle extends Model
 {
@@ -12,6 +13,9 @@ class VentaDetalle extends Model
     protected $fillable = [
         'venta_id',
         'presentacion_id',
+        'tipo_movimiento',
+        'detalle_referencia_id',
+        'reingresa_inventario',
         'tipo_item',
         'cantidad',
         'factor',
@@ -30,6 +34,7 @@ class VentaDetalle extends Model
             'cantidad' => 'decimal:2',
             'factor' => 'integer',
             'cantidad_base' => 'decimal:2',
+            'reingresa_inventario' => 'boolean',
             'costo_unitario' => 'decimal:2',
             'precio_unitario' => 'decimal:2',
             'precio_aplicado' => 'decimal:2',
@@ -49,5 +54,15 @@ class VentaDetalle extends Model
     public function presentacion(): BelongsTo
     {
         return $this->belongsTo(Presentacion::class, 'presentacion_id');
+    }
+
+    public function detalleReferencia(): BelongsTo
+    {
+        return $this->belongsTo(self::class, 'detalle_referencia_id');
+    }
+
+    public function operacionesRelacionadas(): HasMany
+    {
+        return $this->hasMany(self::class, 'detalle_referencia_id');
     }
 }
