@@ -66,6 +66,10 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/ventas/create', [VentasController::class, 'create'])
         ->name('ventas.create');
+    Route::get('/ventas/buscar-productos', [VentasController::class, 'buscarProductos'])
+        ->name('ventas.buscar-productos');
+    Route::get('/ventas/metodos-pago', [VentasController::class, 'metodosPago'])
+        ->name('ventas.metodos-pago');
     Route::get('/ventas', [VentasController::class, 'index'])
         ->name('ventas.index');
     Route::post('/ventas', [VentasController::class, 'store'])

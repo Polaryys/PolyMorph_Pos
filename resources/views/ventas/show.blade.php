@@ -108,8 +108,10 @@
                                 {{ $detalle->tipo_item }}
                                 <span class="mx-1">·</span>
                                 SKU: {{ $detalle->presentacion?->codigoSKU ?? '—' }}
-                                <span class="mx-1">·</span>
-                                Marca: {{ $detalle->presentacion?->inventario?->marca?->nombre ?? 'Sin marca' }}
+                                @if ($marca = $detalle->presentacion?->inventario?->marca?->nombre)
+                                    <span class="mx-1">·</span>
+                                    Marca: {{ $marca }}
+                                @endif
                             </p>
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('descripcion', 255)->nullable();
             $table->boolean('estado')->default(true);
             $table->timestamps();
+            
         });
     }
 

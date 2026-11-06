@@ -7,6 +7,7 @@ use App\Models\MetodoPago;
 use App\Models\Presentacion;
 use App\Models\Venta;
 use App\Models\VentaDetalle;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -19,30 +20,17 @@ class VentasController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        $buscar = trim($request->input('buscar', ''));
-
         $ventas = Venta::query()
             ->with([
-                'vendedor:id,nombres',
+                'vendedor:id,username',
                 'cliente:id,nombres,apellidos',
             ])
-            ->when($buscar !== '', function ($query) use ($buscar) {
-                $query->where(function ($q) use ($buscar) {
-                    $q->where('numero_venta', 'like', "%{$buscar}%")
-                        ->orWhereHas('vendedor', function ($vendedor) use ($buscar) {
-                            $vendedor->where('username', 'like', "%{$buscar}%")
-                                ->orWhere('nombres', 'like', "%{$buscar}%")
-                                ->orWhere('apellidos', 'like', "%{$buscar}%");
-                        });
-                });
-            })
             ->latest()
-            ->paginate(15)
-            ->withQueryString();
+            ->paginate(15);
 
-        return view('ventas.index', compact('ventas', 'buscar'));
+        return view('ventas.index', compact('ventas'));
     }
 
     /**
@@ -50,12 +38,88 @@ class VentasController extends Controller
      */
     public function create()
     {
-        $metodosPago = MetodoPago::query()
-            ->where('estado', true)
-            ->orderBy('nombre')
-            ->get();
+        return view('ventas.create');
+    }
 
-        return view('ventas.create', compact('metodosPago'));
+    /**
+     * Buscar presentaciones activas de productos y servicios para una venta.
+     */
+    public function buscarProductos(Request $request): JsonResponse
+    {
+        $datos = $request->validate([
+            'buscar' => ['required', 'string', 'min:1', 'max:100'],
+        ]);
+        $buscar = trim($datos['buscar']);
+
+        if ($buscar === '') {
+            return response()->json([]);
+        }
+
+        $presentaciones = Presentacion::query()
+            ->select([
+                'id',
+                'inventario_id',
+                'nombre',
+                'codigoSKU',
+                'factor',
+                'precioUnitario',
+                'precioUnitarioDocena',
+                'precioUnitarioCiento',
+                'imagen_id',
+            ])
+            ->where('estado', true)
+            ->whereHas('inventario', function ($query) {
+                $query->where('estado', true);
+            })
+            ->with([
+                'inventario:id,marca_id,cantidad,costoPromedioUnitario,tipo,estado',
+                'inventario.marca:id,nombre',
+                'imagen:id,nombre_archivo',
+            ])
+            ->where(function ($query) use ($buscar) {
+                $query->where('nombre', 'like', "%{$buscar}%")
+                    ->orWhere('codigoSKU', 'like', "%{$buscar}%");
+            })
+            ->orderByRaw(
+                'CASE WHEN codigoSKU = ? THEN 0 WHEN codigoSKU LIKE ? THEN 1 WHEN nombre LIKE ? THEN 2 ELSE 3 END',
+                [$buscar, "{$buscar}%", "{$buscar}%"]
+            )
+            ->orderBy('nombre')
+            ->limit(10)
+            ->get()
+            ->map(fn (Presentacion $presentacion) => [
+                'presentacion_id' => $presentacion->id,
+                'nombre' => $presentacion->nombre,
+                'sku' => $presentacion->codigoSKU,
+                'marca' => $presentacion->inventario?->marca?->nombre,
+                'tipo_item' => $presentacion->inventario?->tipo,
+                'factor' => (int) $presentacion->factor,
+                'imagen' => $presentacion->imagen
+                    ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
+                    : null,
+                'cantidad_actual' => $presentacion->inventario?->cantidad,
+                'costo_promedio_actual' => (float) ($presentacion->inventario?->costoPromedioUnitario ?? 0),
+                'precio_unitario_actual' => (float) $presentacion->precioUnitario,
+                'precio_docena_actual' => $presentacion->precioUnitarioDocena === null
+                    ? null
+                    : (float) $presentacion->precioUnitarioDocena,
+                'precio_ciento_actual' => $presentacion->precioUnitarioCiento === null
+                    ? null
+                    : (float) $presentacion->precioUnitarioCiento,
+            ])
+            ->values();
+
+        return response()->json($presentaciones);
+    }
+
+    public function metodosPago(): JsonResponse
+    {
+        return response()->json(
+            MetodoPago::query()
+                ->where('estado', true)
+                ->orderBy('nombre')
+                ->get(['id', 'nombre'])
+        );
     }
 
     /**
@@ -65,6 +129,7 @@ class VentasController extends Controller
     {
         $datos = $request->validate([
             'tipo_operacion' => ['sometimes', 'required', 'string', 'in:VENTA,DEVOLUCION,CAMBIO'],
+            'venta_credito' => ['sometimes', 'boolean'],
             'cliente_id' => ['nullable', 'integer', 'exists:clientes,id'],
             'venta_referencia_id' => ['required_if:tipo_operacion,DEVOLUCION,CAMBIO', 'nullable', 'integer', 'exists:ventas,id'],
             'motivo_operacion' => ['required_if:tipo_operacion,DEVOLUCION,CAMBIO', 'nullable', 'string', 'max:1000'],
@@ -344,8 +409,10 @@ class VentasController extends Controller
                         ]);
                     }
 
-                    $descuento = (float) ($detalle['descuento'] ?? 0);
-                    $subtotalBruto = round($cantidad * $precioAplicado, 2);
+                    $descuento = array_key_exists('descuento', $detalle)
+                        ? (float) $detalle['descuento']
+                        : round(max(0, $precioUnitario - $precioAplicado) * $cantidad, 2);
+                    $subtotalBruto = round($cantidad * $precioUnitario, 2);
 
                     if ($descuento > $subtotalBruto) {
                         throw ValidationException::withMessages([
@@ -418,6 +485,16 @@ class VentasController extends Controller
                 ]);
             }
 
+            if (
+                $tipoOperacion === 'VENTA'
+                && empty($datos['venta_credito'])
+                && $montoPagado < max($total, 0)
+            ) {
+                throw ValidationException::withMessages([
+                    'pagos' => 'El pago debe cubrir el total o marcar la venta al crédito.',
+                ]);
+            }
+
             if ($tipoOperacion !== 'VENTA' && $total < 0 && empty($datos['reembolso'])) {
                 throw ValidationException::withMessages([
                     'reembolso' => 'Debes indicar el método para registrar el reembolso al cliente.',
@@ -459,7 +536,7 @@ class VentasController extends Controller
             $venta->update([
                 'numero_venta' => $prefijoNumero.str_pad(
                     (string) $venta->id,
-                    16,
+                    7,
                     '0',
                     STR_PAD_LEFT
                 ),

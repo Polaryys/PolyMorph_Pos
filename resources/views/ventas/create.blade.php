@@ -2,16 +2,17 @@
     <div x-data="{
         buscar: '',
         resultados: [],
-        seleccionado: null,
-        cantidad: 1,
-        tipoPrecio: 'unitario',
-        descuento: '0.00',
         detalles: [],
-        pagos: [],
         cargando: false,
         errorBusqueda: false,
         errorFormulario: '',
         versionBusqueda: 0,
+        modalPagoAbierto: false,
+        cargandoMetodosPago: false,
+        metodosPago: [],
+        ventaCredito: false,
+        errorPago: '',
+        omitirActivacionEnfoqueInicial: false,
 
         async buscarProductos() {
             const version = ++this.versionBusqueda;
@@ -27,7 +28,7 @@
             this.errorBusqueda = false;
 
             try {
-                const url = new URL(@js(route('compras.buscar-productos')), window.location.origin);
+                const url = new URL('{{ route('ventas.buscar-productos') }}', window.location.origin);
                 url.searchParams.set('buscar', termino);
                 const respuesta = await fetch(url, { headers: { Accept: 'application/json' } });
 
@@ -47,22 +48,28 @@
 
         seleccionar(producto) {
             this.versionBusqueda++;
-            this.seleccionado = producto;
-            this.buscar = producto.nombre;
-            this.resultados = [];
-            this.cargando = false;
-            this.cantidad = 1;
-            this.tipoPrecio = 'unitario';
-            this.descuento = '0.00';
-            this.errorFormulario = '';
-        },
-
-        cambiarProducto() {
-            this.versionBusqueda++;
-            this.seleccionado = null;
             this.buscar = '';
             this.resultados = [];
             this.cargando = false;
+            if (this.detalles.some(detalle => detalle.presentacion_id === producto.presentacion_id)) {
+                this.errorFormulario = 'Este producto ya está agregado. Puedes cambiar su cantidad en la tabla.';
+                return;
+            }
+
+            const detalle = {
+                ...producto,
+                cantidad: 1,
+                tipo_precio: 'unitario',
+            };
+            detalle.descuento = this.descuentoAutomatico(detalle).toFixed(2);
+
+            if (!this.detalleValido(detalle)) {
+                this.errorFormulario = 'Este producto no tiene existencias suficientes para agregarlo.';
+                return;
+            }
+
+            this.detalles.push(detalle);
+            this.errorFormulario = '';
         },
 
         decimalValido(valor, requerido = true) {
@@ -72,106 +79,236 @@
 
         precioActual(producto, tipoPrecio, cantidad) {
             if (!producto) return 0;
-            if (tipoPrecio === 'docena' && Number(cantidad) >= 12 && producto.precio_docena_actual !== null) {
+            const cantidadBase = Number(cantidad) * Number(producto.factor || 1);
+            if (tipoPrecio === 'docena' && cantidadBase >= 12 && producto.precio_docena_actual !== null) {
                 return Number(producto.precio_docena_actual);
             }
-            if (tipoPrecio === 'ciento' && Number(cantidad) >= 100 && producto.precio_ciento_actual !== null) {
+            if (tipoPrecio === 'ciento' && cantidadBase >= 100 && producto.precio_ciento_actual !== null) {
                 return Number(producto.precio_ciento_actual);
             }
             return Number(producto.precio_unitario_actual);
         },
 
+        cantidadDisponible(producto) {
+            if (producto.tipo_item !== 'PRODUCTO') return Infinity;
+            return Math.floor(Number(producto.cantidad_actual || 0) / Number(producto.factor || 1));
+        },
+
         subtotalDetalle(detalle) {
-            return Math.max(0, Number(detalle.cantidad) * this.precioActual(detalle, detalle.tipo_precio, detalle.cantidad) - Number(detalle.descuento || 0));
+            return Math.max(
+                0,
+                Number(detalle.cantidad) * Number(detalle.precio_unitario_actual)
+                    - (Number(detalle.descuento) || 0)
+            );
+        },
+
+        totalImporte() {
+            return this.detalles.reduce(
+                (total, detalle) => total
+                    + Number(detalle.cantidad) * Number(detalle.precio_unitario_actual),
+                0
+            );
+        },
+
+        totalDescuento() {
+            return this.detalles.reduce((total, detalle) => total + (Number(detalle.descuento) || 0), 0);
+        },
+
+        descuentoAutomatico(detalle) {
+            const ahorroUnitario = Number(detalle.precio_unitario_actual)
+                - this.precioActual(detalle, detalle.tipo_precio, detalle.cantidad);
+            return Math.max(0, Math.round((Number(detalle.cantidad) * ahorroUnitario + Number.EPSILON) * 100) / 100);
+        },
+
+        actualizarDescuentoAutomatico(detalle) {
+            const cantidad = Number(detalle.cantidad);
+
+            if (
+                (detalle.tipo_precio === 'docena' && cantidad * Number(detalle.factor || 1) < 12)
+                || (detalle.tipo_precio === 'ciento' && cantidad * Number(detalle.factor || 1) < 100)
+            ) {
+                detalle.tipo_precio = 'unitario';
+            }
+
+            detalle.descuento = this.descuentoAutomatico(detalle).toFixed(2);
+        },
+
+        ajustarCantidad(detalle, cambio) {
+            const cantidadActual = Number(detalle.cantidad) || 1;
+            const cantidadMaxima = detalle.tipo_item === 'PRODUCTO'
+                ? this.cantidadDisponible(detalle)
+                : Infinity;
+            detalle.cantidad = Math.min(cantidadMaxima, Math.max(1, cantidadActual + cambio));
+            this.actualizarDescuentoAutomatico(detalle);
         },
 
         totalVenta() {
             return this.detalles.reduce((total, detalle) => total + this.subtotalDetalle(detalle), 0);
         },
 
-        totalPagado() {
-            return this.pagos.reduce((total, pago) => total + (Number(pago.monto) || 0), 0);
-        },
-
-        saldoPendiente() {
-            return Math.max(0, this.totalVenta() - this.totalPagado());
-        },
-
         detalleValido(detalle) {
             const cantidad = Number(detalle.cantidad);
             const precio = this.precioActual(detalle, detalle.tipo_precio, cantidad);
-            const bruto = cantidad * precio;
+            const descuento = Number(detalle.descuento);
             const precioPorVolumenValido = detalle.tipo_precio === 'unitario'
-                || (detalle.tipo_precio === 'docena' && cantidad >= 12 && detalle.precio_docena_actual !== null)
-                || (detalle.tipo_precio === 'ciento' && cantidad >= 100 && detalle.precio_ciento_actual !== null);
+                || (detalle.tipo_precio === 'docena'
+                    && cantidad * Number(detalle.factor || 1) >= 12
+                    && detalle.precio_docena_actual !== null)
+                || (detalle.tipo_precio === 'ciento'
+                    && cantidad * Number(detalle.factor || 1) >= 100
+                    && detalle.precio_ciento_actual !== null);
 
             return Number.isInteger(cantidad)
                 && cantidad > 0
-                && cantidad <= Number(detalle.cantidad_actual)
+                && cantidad <= this.cantidadDisponible(detalle)
+                && (detalle.tipo_item !== 'PRODUCTO'
+                    || Number.isInteger(cantidad * Number(detalle.factor || 1)))
                 && precioPorVolumenValido
+                && precio >= 0
                 && this.decimalValido(detalle.descuento)
-                && Number(detalle.descuento || 0) <= bruto;
-        },
-
-        pagosValidos() {
-            return this.pagos.every(pago =>
-                pago.metodo_pago_id !== ''
-                && this.decimalValido(pago.monto)
-                && Number(pago.monto) > 0
-                && (pago.monto_recibido === '' || (
-                    this.decimalValido(pago.monto_recibido)
-                    && Number(pago.monto_recibido) >= Number(pago.monto)
-                ))
-            ) && this.totalPagado() <= this.totalVenta();
-        },
-
-        agregarDetalle() {
-            if (!this.seleccionado) return;
-            if (this.detalles.some(detalle => detalle.presentacion_id === this.seleccionado.presentacion_id)) {
-                this.errorFormulario = 'Este producto ya está agregado. Puedes cambiar su cantidad en la tabla.';
-                return;
-            }
-
-            const detalle = {
-                ...this.seleccionado,
-                cantidad: Number(this.cantidad),
-                tipo_precio: this.tipoPrecio,
-                descuento: this.descuento,
-            };
-
-            if (!this.detalleValido(detalle)) {
-                this.errorFormulario = 'Revisa la cantidad, el precio y el descuento del artículo.';
-                return;
-            }
-
-            this.detalles.push(detalle);
-            this.cambiarProducto();
-            this.errorFormulario = '';
+                && descuento >= 0
+                && descuento <= cantidad * Number(detalle.precio_unitario_actual);
         },
 
         quitarDetalle(indice) {
             this.detalles.splice(indice, 1);
         },
 
-        agregarPago() {
-            this.pagos.push({ metodo_pago_id: '', monto: '', monto_recibido: '', referencia: '' });
+        limpiarCarrito() {
+            if (this.detalles.length && !confirm('¿Limpiar todos los productos del carrito?')) return;
+            this.detalles = [];
+            this.errorFormulario = '';
+        },
+
+        async abrirModalPago() {
+            if (!this.formularioValido()) {
+                this.errorFormulario = 'Agrega al menos un artículo disponible antes de registrar la venta.';
+                return;
+            }
+
+            this.modalPagoAbierto = true;
+            this.cargandoMetodosPago = true;
+            this.errorPago = '';
+            this.ventaCredito = false;
+
+            try {
+                const respuesta = await fetch('{{ route('ventas.metodos-pago') }}', {
+                    headers: { Accept: 'application/json' },
+                });
+                if (!respuesta.ok) throw new Error('No se pudieron cargar los métodos de pago.');
+
+                const metodos = await respuesta.json();
+                this.metodosPago = metodos.map(metodo => ({
+                    ...metodo,
+                    efectivo: metodo.nombre.trim().toLowerCase() === 'efectivo',
+                    activo: false,
+                    monto: '',
+                    monto_recibido: '',
+                    referencia: '',
+                }));
+            } catch (error) {
+                this.errorPago = error.message;
+            } finally {
+                this.cargandoMetodosPago = false;
+                this.$nextTick(() => {
+                    this.omitirActivacionEnfoqueInicial = true;
+                    requestAnimationFrame(() => {
+                        this.$el.querySelector('[data-cash-received]')?.focus({ preventScroll: true });
+                        this.omitirActivacionEnfoqueInicial = false;
+                    });
+                });
+            }
+        },
+
+        activarMetodo(metodo) {
+            if (this.omitirActivacionEnfoqueInicial) return;
+            metodo.activo = true;
+            if (!metodo.efectivo && !Number(metodo.monto)) {
+                const montoDisponible = this.montoDisponiblePara(metodo);
+                metodo.monto = montoDisponible > 0 ? montoDisponible.toFixed(2) : '';
+            }
+        },
+
+        actualizarImporte(metodo, campo, event) {
+            const valor = event.target.value;
+
+            if (valor.includes(',')) {
+                event.target.value = metodo[campo] || '';
+                return;
+            }
+
+            const [entero, ...decimales] = valor.replace(/[^\d.]/g, '').split('.');
+            const valorValidado = decimales.length
+                ? `${entero}.${decimales.join('').slice(0, 2)}`
+                : entero;
+
+            metodo[campo] = valorValidado;
+            event.target.value = valorValidado;
+            this.activarMetodo(metodo);
+        },
+
+        montoAplicado(metodo) {
+            if (!metodo.efectivo) return Number(metodo.monto) || 0;
+            return Math.min(Number(metodo.monto_recibido) || 0, this.montoDisponiblePara(metodo));
+        },
+
+        montoDisponiblePara(metodoActual) {
+            const otrosPagos = this.metodosPago
+                .filter(metodo => metodo !== metodoActual && metodo.activo)
+                .reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
+
+            return Math.max(0, Math.round((this.totalVenta() - otrosPagos) * 100) / 100);
+        },
+
+        pagosValidos() {
+            const pagos = this.metodosPago.filter(metodo => metodo.activo);
+            const montoPagado = pagos.reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
+            const pagosIndividualesValidos = pagos.every(metodo =>
+                this.decimalValido(metodo.efectivo ? metodo.monto_recibido : metodo.monto)
+                && this.montoAplicado(metodo) > 0
+                && (!metodo.efectivo || Number(metodo.monto_recibido) > 0)
+            );
+
+            return pagosIndividualesValidos
+                && Math.round(montoPagado * 100) <= Math.round(this.totalVenta() * 100)
+                && (this.ventaCredito
+                    || Math.round(montoPagado * 100) >= Math.round(this.totalVenta() * 100));
+        },
+
+        totalPagadoModal() {
+            return this.metodosPago
+                .filter(metodo => metodo.activo)
+                .reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
+        },
+
+        diferenciaEfectivo(metodo) {
+            return Math.round(
+                ((Number(metodo.monto_recibido) || 0) - this.montoAplicado(metodo) + Number.EPSILON) * 100
+            ) / 100;
+        },
+
+        confirmarVenta(event) {
+            if (!this.modalPagoAbierto || !this.pagosValidos()) return;
+            event.target.submit();
+        },
+
+        enviarConEnter() {
+            if (this.modalPagoAbierto && this.pagosValidos()) {
+                this.$refs.formularioVenta.requestSubmit();
+            }
         },
 
         formularioValido() {
             return this.detalles.length > 0
-                && this.detalles.every(detalle => this.detalleValido(detalle))
-                && this.pagosValidos();
+                && this.detalles.every(detalle => this.detalleValido(detalle));
         },
-    }" class="space-y-5">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-            <div class="pl-3">
-                <p class="text-sm font-medium text-slate-500">Punto de venta</p>
-                <h1 class="mt-1 text-2xl font-semibold text-slate-900">Registrar venta</h1>
-            </div>
-            <x-secondary-link href="{{ route('ventas.index') }}">Volver a ventas</x-secondary-link>
-        </div>
+    }" class="space-y-3">
+        <x-section-title>
+            Registrar venta
+        </x-section-title>
 
-        <form action="{{ route('ventas.store') }}" method="POST" class="space-y-5">
+        <form action="{{ route('ventas.store') }}" method="POST" class="space-y-5"
+            x-ref="formularioVenta" @submit.prevent="confirmarVenta($event)">
             @csrf
 
             @if (session('success'))
@@ -193,6 +330,7 @@
 
             @include('ventas.partials._buscador-producto')
             @include('ventas.partials._detalles')
+            @include('ventas.partials._modal-pago')
 
             <p x-cloak x-show="errorFormulario" x-text="errorFormulario"
                 class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert"></p>
@@ -201,16 +339,6 @@
                 <p class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{{ $message }}</p>
             @enderror
 
-            @include('ventas.partials._pagos')
-
-            <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-                <x-secondary-link href="{{ route('ventas.index') }}">Cancelar</x-secondary-link>
-                <button type="submit" :disabled="!formularioValido()"
-                    onclick="return confirm('¿Registrar esta venta? Se actualizarán las existencias del inventario.');"
-                    class="rounded-md bg-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50">
-                    Registrar venta
-                </button>
-            </div>
         </form>
     </div>
 </x-app-layout>
