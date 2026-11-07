@@ -54,26 +54,28 @@
                     {{ $proveedor->created_at->format('d/m/Y H:i') }}
                 </td>
 
-                <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
-                    <a href="{{ route('proveedores.show', $proveedor) }}" wire:navigate
-                        class="text-indigo-600 hover:text-indigo-900 font-medium">
-                        Ver
-                    </a>
+                <td class="w-64 whitespace-nowrap px-6 py-3">
+                    <div class="flex items-center justify-center gap-3">
+                        <x-action-icon element="a" href="{{ route('proveedores.show', $proveedor) }}" wire:navigate
+                            title="Ver proveedor">
+                            <x-lucide-eye class="h-5 w-5" />
+                        </x-action-icon>
 
-                    <a href="{{ route('proveedores.edit', $proveedor) }}" wire:navigate
-                        class="text-indigo-600 hover:text-indigo-900 font-medium">
-                        Editar
-                    </a>
+                        <x-action-icon element="a" href="{{ route('proveedores.edit', $proveedor) }}" wire:navigate
+                            title="Editar proveedor" color="green">
+                            <x-lucide-pencil class="h-5 w-5" />
+                        </x-action-icon>
 
-                    <form action="{{ route('proveedores.destroy', $proveedor) }}" method="POST" class="inline-block"
-                        onsubmit="return confirm('¿Deseas eliminar este proveedor?')">
-                        @csrf
-                        @method('DELETE')
+                        <form action="{{ route('proveedores.destroy', $proveedor) }}" method="POST"
+                            onsubmit="return confirm('¿Deseas eliminar este proveedor?')">
+                            @csrf
+                            @method('DELETE')
 
-                        <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
-                            Eliminar
-                        </button>
-                    </form>
+                            <x-action-icon type="submit" title="Eliminar proveedor" color="red">
+                                <x-lucide-trash-2 class="h-5 w-5" />
+                            </x-action-icon>
+                        </form>
+                    </div>
                 </td>
             </tr>
 

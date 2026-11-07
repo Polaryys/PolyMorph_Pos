@@ -152,8 +152,8 @@ class VentasController extends Controller
         return response()->json(
             MetodoPago::query()
                 ->where('estado', true)
-                ->orderBy('nombre')
-                ->get(['id', 'nombre'])
+                ->orderBy('created_at')
+                ->get(['id', 'nombre', 'tipo_captura'])
         );
     }
 
@@ -193,6 +193,7 @@ class VentasController extends Controller
             ],
             'reembolso.referencia' => ['nullable', 'string', 'max:100'],
         ]);
+        $this->validarModoCapturaPagos($datos['pagos'] ?? []);
 
         $tipoOperacion = $datos['tipo_operacion'] ?? 'VENTA';
         $movimientosDetalle = collect($datos['detalles'])->map(
@@ -672,6 +673,7 @@ class VentasController extends Controller
             'pagos.*.monto_recibido' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
             'pagos.*.referencia' => ['nullable', 'string', 'max:100'],
         ]);
+        $this->validarModoCapturaPagos($datos['pagos']);
 
         DB::transaction(function () use ($datos, $venta) {
             $venta = Venta::query()
@@ -732,6 +734,36 @@ class VentasController extends Controller
         return redirect()
             ->route('ventas.show', $venta)
             ->with('success', 'El pago se registró correctamente.');
+    }
+
+    private function validarModoCapturaPagos(array $pagos): void
+    {
+        $metodosPago = MetodoPago::query()
+            ->whereIn('id', array_column($pagos, 'metodo_pago_id'))
+            ->get()
+            ->keyBy('id');
+
+        foreach ($pagos as $indice => $pago) {
+            $metodoPago = $metodosPago->get($pago['metodo_pago_id']);
+
+            if ($metodoPago?->tipo_captura === MetodoPago::TIPO_CAPTURA_MONTOS) {
+                $montoRecibido = $pago['monto_recibido'] ?? null;
+
+                if ($montoRecibido === null || (float) $montoRecibido < (float) $pago['monto']) {
+                    throw ValidationException::withMessages([
+                        "pagos.{$indice}.monto_recibido" => 'El monto recibido debe cubrir el monto aplicado.',
+                    ]);
+                }
+
+                continue;
+            }
+
+            if (($pago['monto_recibido'] ?? null) !== null) {
+                throw ValidationException::withMessages([
+                    "pagos.{$indice}.monto_recibido" => 'Este método de pago no permite registrar monto recibido ni cambio.',
+                ]);
+            }
+        }
     }
 
     /**

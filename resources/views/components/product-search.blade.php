@@ -126,7 +126,7 @@
                 {{-- Información --}}
                 <div class="min-w-0 flex-1">
                     <p class="truncate text-sm font-semibold text-slate-800"
-                        x-text="`${producto.nombre} - ${producto.marcaNombre}`">
+                        x-text="producto.marcaNombre ? `${producto.nombre} - ${producto.marcaNombre}` : producto.nombre">
                     </p>
 
                     <p class="text-xs text-slate-500">
@@ -182,7 +182,9 @@
                 </p>
 
                 <p class="truncate text-sm font-semibold text-slate-800"
-                    x-text="`${seleccionado?.nombre} - ${seleccionado?.marcaNombre}`">
+                    x-text="seleccionado?.marcaNombre
+                        ? `${seleccionado.nombre} - ${seleccionado.marcaNombre}`
+                        : seleccionado?.nombre">
                 </p>
 
                 <p class="text-xs text-slate-500">

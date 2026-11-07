@@ -15,9 +15,11 @@ return new class extends Migration
             $table->id();
             $table->string('nombre', 50);
             $table->string('descripcion', 255)->nullable();
+            $table->enum('tipo_captura', ['PERMITIR MONTOS', 'PERMITIR REFERENCIA'])
+                ->default('PERMITIR REFERENCIA');
             $table->boolean('estado')->default(true);
             $table->timestamps();
-            
+
         });
     }
 

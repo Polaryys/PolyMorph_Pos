@@ -41,7 +41,7 @@
                             <input type="hidden" :name="metodo.activo ? `pagos[${indice}][metodo_pago_id]` : null"
                                 :value="metodo.id">
 
-                            <template x-if="!metodo.efectivo">
+                            <template x-if="!metodo.permite_montos">
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-slate-600"
                                         :for="`abono-${indice}`">Monto a abonar</label>
@@ -55,7 +55,7 @@
                                 </div>
                             </template>
 
-                            <template x-if="metodo.efectivo">
+                            <template x-if="metodo.permite_montos">
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-slate-600"
                                         :for="`abono-efectivo-${indice}`">Monto recibido</label>
@@ -71,7 +71,7 @@
                                 </div>
                             </template>
 
-                            <template x-if="metodo.efectivo">
+                            <template x-if="metodo.permite_montos">
                                 <div aria-live="polite">
                                     <span class="mb-1 block text-xs font-medium text-slate-600">Cambio</span>
                                     <div class="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm"
@@ -80,7 +80,7 @@
                                 </div>
                             </template>
 
-                            <template x-if="!metodo.efectivo">
+                            <template x-if="!metodo.permite_montos">
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-slate-600"
                                         :for="`referencia-abono-${indice}`">Referencia (opcional)</label>

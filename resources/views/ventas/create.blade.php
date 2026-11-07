@@ -252,7 +252,7 @@
                 const metodos = await respuesta.json();
                 this.metodosPago = metodos.map(metodo => ({
                     ...metodo,
-                    efectivo: metodo.nombre.trim().toLowerCase() === 'efectivo',
+                    permite_montos: metodo.tipo_captura === 'PERMITIR MONTOS',
                     activo: false,
                     monto: '',
                     monto_recibido: '',
@@ -275,7 +275,7 @@
         activarMetodo(metodo) {
             if (this.omitirActivacionEnfoqueInicial) return;
             metodo.activo = true;
-            if (!metodo.efectivo && !Number(metodo.monto)) {
+            if (!metodo.permite_montos && !Number(metodo.monto)) {
                 const montoDisponible = this.montoDisponiblePara(metodo);
                 metodo.monto = montoDisponible > 0 ? montoDisponible.toFixed(2) : '';
             }
@@ -300,7 +300,7 @@
         },
 
         montoAplicado(metodo) {
-            if (!metodo.efectivo) return Number(metodo.monto) || 0;
+            if (!metodo.permite_montos) return Number(metodo.monto) || 0;
             return Math.min(Number(metodo.monto_recibido) || 0, this.montoDisponiblePara(metodo));
         },
 
@@ -316,9 +316,9 @@
             const pagos = this.metodosPago.filter(metodo => metodo.activo);
             const montoPagado = pagos.reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
             const pagosIndividualesValidos = pagos.every(metodo =>
-                this.decimalValido(metodo.efectivo ? metodo.monto_recibido : metodo.monto)
+                this.decimalValido(metodo.permite_montos ? metodo.monto_recibido : metodo.monto)
                 && this.montoAplicado(metodo) > 0
-                && (!metodo.efectivo || Number(metodo.monto_recibido) > 0)
+                && (!metodo.permite_montos || Number(metodo.monto_recibido) >= this.montoAplicado(metodo))
             );
 
             return pagosIndividualesValidos

@@ -66,33 +66,30 @@
                         {{ $marca->updated_at->format('d/m/Y H:i') }}
                     </td>
 
-                    <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
+                    <td class="w-64 whitespace-nowrap px-6 py-3">
+                        <div class="flex items-center justify-center gap-3">
+                            <x-action-icon
+                                @click="
+                                    modo = 'editar';
+                                    nombre = {{ Js::from($marca->nombre) }};
+                                    action = {{ Js::from(route('marcas.update', $marca)) }};
+                                    editar = true;
+                                    abierto = true
+                                "
+                                title="Editar marca" color="green">
+                                <x-lucide-pencil class="h-5 w-5" />
+                            </x-action-icon>
 
-                        <!-- EDITAR -->
-                        <button type="button"
-                            @click="
-                        modo = 'editar';
-                        nombre = {{ Js::from($marca->nombre) }};
-                        action = {{ Js::from(route('marcas.update', $marca)) }};
-                        editar = true;
-                        abierto = true
-                    "
-                            class="text-indigo-600 hover:text-indigo-900 font-medium">
-                            Editar
-                        </button>
+                            <form action="{{ route('marcas.destroy', $marca) }}" method="POST"
+                                onsubmit="return confirm('¿Deseas eliminar esta marca?')">
+                                @csrf
+                                @method('DELETE')
 
-                        <!-- ELIMINAR -->
-                        <form action="{{ route('marcas.destroy', $marca) }}" method="POST" class="inline-block"
-                            onsubmit="return confirm('¿Deseas eliminar esta marca?')">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
-                                Eliminar
-                            </button>
-                        </form>
-
+                                <x-action-icon type="submit" title="Eliminar marca" color="red">
+                                    <x-lucide-trash-2 class="h-5 w-5" />
+                                </x-action-icon>
+                            </form>
+                        </div>
                     </td>
                 </tr>
 

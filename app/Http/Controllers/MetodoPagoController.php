@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers;
 
-
 use App\Models\MetodoPago;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 
 class MetodoPagoController extends Controller
@@ -47,6 +46,10 @@ class MetodoPagoController extends Controller
                 'string',
                 'max:255',
             ],
+            'tipo_captura' => ['required', Rule::in([
+                MetodoPago::TIPO_CAPTURA_MONTOS,
+                MetodoPago::TIPO_CAPTURA_REFERENCIA,
+            ])],
             'estado' => ['required', 'boolean'],
         ]);
 
@@ -91,6 +94,10 @@ class MetodoPagoController extends Controller
                 'string',
                 'max:255',
             ],
+            'tipo_captura' => ['required', Rule::in([
+                MetodoPago::TIPO_CAPTURA_MONTOS,
+                MetodoPago::TIPO_CAPTURA_REFERENCIA,
+            ])],
             'estado' => ['required', 'boolean'],
         ]);
 
@@ -113,6 +120,7 @@ class MetodoPagoController extends Controller
         }
 
         $metodoPago->delete();
+
         return redirect()
             ->route('metodos-pago.index')
             ->with('success', 'Metodo eliminado exitosamente.');

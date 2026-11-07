@@ -58,7 +58,7 @@ class InventarioController extends Controller
                 'inventario_id' => $presentacion->inventario_id,
                 'nombre' => $presentacion->nombre,
                 'sku' => $presentacion->codigoSKU,
-                'marcaNombre' => $presentacion->inventario?->marca?->nombre ?? 'Sin marca',
+                'marcaNombre' => $presentacion->inventario?->marca?->nombre,
                 'imagen' => $presentacion->imagen
                     ? asset('storage/imagenes/' . $presentacion->imagen->nombre_archivo)
                     : null,

@@ -92,16 +92,16 @@
                     <div class="flex items-center justify-center gap-3">
 
                         <!-- Ver -->
-                        <a href="{{ route('articulos.show', $articulo) }}" wire:navigate title="Ver artículo"
-                            aria-label="Ver artículo" class="text-slate-500 hover:text-indigo-600 transition">
+                        <x-action-icon element="a" href="{{ route('articulos.show', $articulo) }}" wire:navigate
+                            title="Ver artículo">
                             <x-lucide-eye class="w-5 h-5" />
-                        </a>
+                        </x-action-icon>
 
                         <!-- Editar -->
-                        <a href="{{ route('articulos.edit', $articulo) }}" wire:navigate title="Editar artículo"
-                            aria-label="Editar artículo" class="text-slate-500 hover:text-green-600 transition">
+                        <x-action-icon element="a" href="{{ route('articulos.edit', $articulo) }}" wire:navigate
+                            title="Editar artículo" color="green">
                             <x-lucide-pencil class="w-5 h-5" />
-                        </a>
+                        </x-action-icon>
 
                         <!-- Eliminar -->
                         <form action="{{ route('articulos.destroy', $articulo) }}" method="POST"
@@ -110,10 +110,9 @@
                             @csrf
                             @method('DELETE')
 
-                            <button type="submit" title="Eliminar artículo" aria-label="Eliminar artículo"
-                                class="text-slate-500 hover:text-red-600 transition">
+                            <x-action-icon type="submit" title="Eliminar artículo" color="red">
                                 <x-lucide-trash-2 class="w-5 h-5" />
-                            </button>
+                            </x-action-icon>
                         </form>
 
                     </div>

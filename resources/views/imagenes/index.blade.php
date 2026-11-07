@@ -2,22 +2,7 @@
     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
 
         {{-- search imagen --}}
-        <form action="{{ route('imagenes.index') }}" method="GET" class="flex flex-1 items-center gap-2">
-
-            <input type="search" name="buscar" value="{{ request('buscar') }}" placeholder="Buscar imagen por nombre..."
-                class="w-full max-w-md  border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
-
-            <button type="submit"
-                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
-                Buscar
-            </button>
-
-            @if (request()->filled('buscar'))
-                <a href="{{ route('imagenes.index') }}" wire:navigate class="text-sm text-gray-600 hover:text-gray-900">
-                    Limpiar
-                </a>
-            @endif
-        </form>
+        <x-search-bar :action="route('imagenes.index')" :buscar="request('buscar')" placeholder="Buscar imagen por nombre..." class="flex-1" />
 
         {{-- subir imagenes --}}
         <a href="{{ route('imagenes.create') }}" wire:navigate

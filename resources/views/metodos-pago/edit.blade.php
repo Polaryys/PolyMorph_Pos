@@ -50,6 +50,24 @@
                 </div>
 
                 <div>
+                    <label for="tipo_captura" class="block text-sm font-medium text-gray-700 mb-1">
+                        Captura del pago
+                    </label>
+                    <select name="tipo_captura" id="tipo_captura" required
+                        class="w-full rounded-md border-gray-300 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        <option value="PERMITIR MONTOS" @selected(old('tipo_captura', $metodoPago->tipo_captura) === 'PERMITIR MONTOS')>
+                            PERMITIR MONTOS (recibido y cambio)
+                        </option>
+                        <option value="PERMITIR REFERENCIA" @selected(old('tipo_captura', $metodoPago->tipo_captura) === 'PERMITIR REFERENCIA')>
+                            PERMITIR REFERENCIA
+                        </option>
+                    </select>
+                    @error('tipo_captura')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
                     <label for="estado" class="block text-sm font-medium text-gray-700 mb-1">
                         Estado
                     </label>

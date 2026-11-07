@@ -7,11 +7,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MetodoPago extends Model
 {
+    public const TIPO_CAPTURA_MONTOS = 'PERMITIR MONTOS';
+
+    public const TIPO_CAPTURA_REFERENCIA = 'PERMITIR REFERENCIA';
+
     protected $table = 'metodos_pago';
 
     protected $fillable = [
         'nombre',
         'descripcion',
+        'tipo_captura',
         'estado',
     ];
 

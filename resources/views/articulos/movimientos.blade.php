@@ -14,7 +14,7 @@
             <th class="px-4 py-3 text-center whitespace-nowrap">Diferencia</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Despues</th>
             <th class="px-4 py-3 text-left">Motivo</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Fecha de creación</th>
+            <th class="px-4 py-3 text-center whitespace-nowrap">Fecha registro</th>
         </x-slot:headers>
 
         @forelse ($movimientos as $movimiento)
@@ -60,7 +60,7 @@
                 </td>
 
                 <td class="px-4 py-3 text-center whitespace-nowrap text-slate-700">
-                    {{ $movimiento->created_at?->format('d/m/Y H:i:s') ?? '—' }}
+                    {{ $movimiento->created_at?->format('d/m/Y H:i') ?? '—' }}
                 </td>
             </tr>
         @empty

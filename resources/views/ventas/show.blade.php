@@ -243,7 +243,7 @@
                     const metodos = await respuesta.json();
                     this.metodosPago = metodos.map(metodo => ({
                         ...metodo,
-                        efectivo: metodo.nombre.trim().toLowerCase() === 'efectivo',
+                        permite_montos: metodo.tipo_captura === 'PERMITIR MONTOS',
                         activo: false,
                         monto: '',
                         monto_recibido: '',
@@ -259,15 +259,15 @@
             activarMetodo(metodo) {
                 metodo.activo = true;
                 const montoDisponible = this.montoDisponiblePara(metodo);
-                if (metodo.efectivo && !Number(metodo.monto_recibido)) {
+                if (metodo.permite_montos && !Number(metodo.monto_recibido)) {
                     metodo.monto_recibido = montoDisponible.toFixed(2);
-                } else if (!metodo.efectivo && !Number(metodo.monto)) {
+                } else if (!metodo.permite_montos && !Number(metodo.monto)) {
                     metodo.monto = montoDisponible.toFixed(2);
                 }
             },
 
             montoAplicado(metodo) {
-                if (!metodo.efectivo) return Number(metodo.monto) || 0;
+                if (!metodo.permite_montos) return Number(metodo.monto) || 0;
                 return Math.min(Number(metodo.monto_recibido) || 0, this.montoDisponiblePara(metodo));
             },
 
@@ -297,10 +297,10 @@
 
                 return pagos.length > 0
                     && pagos.every(metodo => {
-                        const montoIngresado = metodo.efectivo ? metodo.monto_recibido : metodo.monto;
+                        const montoIngresado = metodo.permite_montos ? metodo.monto_recibido : metodo.monto;
                         return /^\d+(\.\d{1,2})?$/.test(String(montoIngresado || ''))
                             && this.montoAplicado(metodo) > 0
-                            && (!metodo.efectivo || Number(metodo.monto_recibido) >= this.montoAplicado(metodo));
+                            && (!metodo.permite_montos || Number(metodo.monto_recibido) >= this.montoAplicado(metodo));
                     })
                     && Math.round(total * 100) <= Math.round(this.saldoPendiente * 100);
             },

@@ -79,28 +79,28 @@
                     {{ $usuario->created_at->format('d/m/Y H:i') }}
                 </td>
 
-                <td class="px-6 py-3 w-64 text-center whitespace-nowrap space-x-8">
+                <td class="w-64 whitespace-nowrap px-6 py-3">
+                    <div class="flex items-center justify-center gap-3">
+                        <x-action-icon element="a" href="{{ route('usuarios.show', $usuario) }}" wire:navigate
+                            title="Ver usuario">
+                            <x-lucide-eye class="h-5 w-5" />
+                        </x-action-icon>
 
-                    <a href="{{ route('usuarios.show', $usuario) }}" wire:navigate
-                        class="text-indigo-600 hover:text-indigo-900 font-medium">
-                        Ver
-                    </a>
+                        <x-action-icon element="a" href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
+                            title="Editar usuario" color="green">
+                            <x-lucide-pencil class="h-5 w-5" />
+                        </x-action-icon>
 
-                    <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
-                        class="text-indigo-600 hover:text-indigo-900 font-medium">
-                        Editar
-                    </a>
+                        <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST"
+                            onsubmit="return confirm('¿Deseas eliminar este usuario?')">
+                            @csrf
+                            @method('DELETE')
 
-                    <form action="{{ route('usuarios.destroy', $usuario) }}" method="POST" class="inline-block"
-                        onsubmit="return confirm('¿Deseas eliminar este usuario?')">
-                        @csrf
-                        @method('DELETE')
-
-                        <button type="submit" class="text-red-600 hover:text-red-900 font-medium">
-                            Eliminar
-                        </button>
-                    </form>
-
+                            <x-action-icon type="submit" title="Eliminar usuario" color="red">
+                                <x-lucide-trash-2 class="h-5 w-5" />
+                            </x-action-icon>
+                        </form>
+                    </div>
                 </td>
             </tr>
 

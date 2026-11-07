@@ -40,7 +40,7 @@
                             <input type="hidden" :name="metodo.activo ? `pagos[${indice}][metodo_pago_id]` : null"
                                 :value="metodo.id">
 
-                            <template x-if="!metodo.efectivo">
+                            <template x-if="!metodo.permite_montos">
                             <div>
                                 <label class="mb-1 block text-xs font-medium text-slate-600"
                                     :for="`monto-pago-${indice}`">Monto</label>
@@ -55,7 +55,7 @@
                             </div>
                             </template>
 
-                            <template x-if="metodo.efectivo">
+                            <template x-if="metodo.permite_montos">
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-slate-600"
                                         :for="`recibido-${indice}`">Monto recibido</label>
@@ -73,7 +73,7 @@
                                 </div>
                             </template>
 
-                            <template x-if="metodo.efectivo">
+                            <template x-if="metodo.permite_montos">
                                 <div aria-live="polite">
                                     <span class="mb-1 block text-xs font-medium text-slate-600">Cambio / faltante</span>
                                     <div class="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm"
@@ -85,7 +85,7 @@
                                 </div>
                             </template>
 
-                            <template x-if="!metodo.efectivo">
+                            <template x-if="!metodo.permite_montos">
                                 <div class="sm:col-span-2 lg:col-span-2">
                                     <label class="mb-1 block text-xs font-medium text-slate-600"
                                         :for="`referencia-${indice}`">Referencia (opcional)</label>
@@ -119,7 +119,7 @@
             </p>
             <p x-show="!cargandoMetodosPago && !errorPago && !pagosValidos()" x-cloak
                 class="text-sm text-red-600" role="alert">
-                Registra el total de la venta o activa «Venta al crédito». El monto recibido en efectivo debe cubrir su monto aplicado.
+                Registra el total de la venta o activa «Venta al crédito». El monto recibido debe cubrir su monto aplicado.
             </p>
         </div>
 

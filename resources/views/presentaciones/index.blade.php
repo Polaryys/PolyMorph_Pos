@@ -95,18 +95,16 @@
                     <div class="flex items-center justify-center gap-3">
 
                         <!-- Ver -->
-                        <a href="{{ route('presentaciones.show', $presentacion) }}" wire:navigate
-                            title="Ver presentación" aria-label="Ver presentación"
-                            class="text-slate-500 hover:text-indigo-600 transition">
+                        <x-action-icon element="a" href="{{ route('presentaciones.show', $presentacion) }}"
+                            wire:navigate title="Ver presentación">
                             <x-lucide-eye class="w-5 h-5" />
-                        </a>
+                        </x-action-icon>
 
                         <!-- Editar -->
-                        <a href="{{ route('presentaciones.edit', $presentacion) }}" wire:navigate
-                            title="Editar presentación" aria-label="Editar presentación"
-                            class="text-slate-500 hover:text-green-600 transition">
+                        <x-action-icon element="a" href="{{ route('presentaciones.edit', $presentacion) }}"
+                            wire:navigate title="Editar presentación" color="green">
                             <x-lucide-pencil class="w-5 h-5" />
-                        </a>
+                        </x-action-icon>
 
                         <!-- Desactivar -->
                         <form action="{{ route('presentaciones.destroy', $presentacion) }}" method="POST"
@@ -115,10 +113,9 @@
                             @csrf
                             @method('DELETE')
 
-                            <button type="submit" title="Desactivar presentación" aria-label="Desactivar presentación"
-                                class="text-slate-500 hover:text-red-600 transition">
+                            <x-action-icon type="submit" title="Desactivar presentación" color="red">
                                 <x-lucide-trash-2 class="w-5 h-5" />
-                            </button>
+                            </x-action-icon>
                         </form>
 
                     </div>
