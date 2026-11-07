@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cliente;
 use App\Models\Inventario;
 use App\Models\MetodoPago;
 use App\Models\Presentacion;
@@ -110,6 +111,40 @@ class VentasController extends Controller
             ->values();
 
         return response()->json($presentaciones);
+    }
+
+    public function buscarClientes(Request $request): JsonResponse
+    {
+        $datos = $request->validate([
+            'buscar' => ['required', 'string', 'min:1', 'max:100'],
+        ]);
+        $buscar = trim($datos['buscar']);
+
+        if ($buscar === '') {
+            return response()->json([]);
+        }
+
+        $clientes = Cliente::query()
+            ->select(['id', 'nit', 'nombres', 'apellidos', 'telefono'])
+            ->where(function ($query) use ($buscar) {
+                $query->where('nit', 'like', "%{$buscar}%")
+                    ->orWhere('nombres', 'like', "%{$buscar}%")
+                    ->orWhere('apellidos', 'like', "%{$buscar}%")
+                    ->orWhere('telefono', 'like', "%{$buscar}%");
+            })
+            ->orderBy('nombres')
+            ->orderBy('apellidos')
+            ->limit(10)
+            ->get()
+            ->map(fn (Cliente $cliente) => [
+                'id' => $cliente->id,
+                'nit' => $cliente->nit,
+                'nombre' => trim($cliente->nombres.' '.$cliente->apellidos),
+                'telefono' => $cliente->telefono,
+            ])
+            ->values();
+
+        return response()->json($clientes);
     }
 
     public function metodosPago(): JsonResponse
@@ -615,7 +650,88 @@ class VentasController extends Controller
             'operacionesRelacionadas:id,numero_venta,venta_referencia_id,tipo_operacion,estado_venta,estado_pago,total',
         ]);
 
-        return view('ventas.show', compact('venta'));
+        $totalProductos = round((float) $venta->detalles->sum(
+            fn (VentaDetalle $detalle) => (float) $detalle->subtotal + (float) $detalle->descuento
+        ), 2);
+        $montoPagado = round((float) $venta->detallesPago->sum('monto'), 2);
+        $saldoPendiente = max(0, round((float) $venta->total - $montoPagado, 2));
+
+        return view('ventas.show', compact('venta', 'totalProductos', 'montoPagado', 'saldoPendiente'));
+    }
+
+    public function registrarPago(Request $request, Venta $venta)
+    {
+        $datos = $request->validate([
+            'pagos' => ['required', 'array', 'min:1'],
+            'pagos.*.metodo_pago_id' => [
+                'required',
+                'integer',
+                Rule::exists('metodos_pago', 'id')->where('estado', true),
+            ],
+            'pagos.*.monto' => ['required', 'numeric', 'gt:0', 'decimal:0,2'],
+            'pagos.*.monto_recibido' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
+            'pagos.*.referencia' => ['nullable', 'string', 'max:100'],
+        ]);
+
+        DB::transaction(function () use ($datos, $venta) {
+            $venta = Venta::query()
+                ->whereKey($venta->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            if ($venta->tipo_operacion !== 'VENTA' || $venta->estado_venta !== 'REGISTRADA') {
+                throw ValidationException::withMessages([
+                    'pagos' => 'Solo se pueden registrar pagos para ventas registradas.',
+                ]);
+            }
+
+            $pagos = $datos['pagos'];
+            $montoNuevo = round(array_sum(array_column($pagos, 'monto')), 2);
+            $montoPagado = round((float) $venta->detallesPago()->sum('monto'), 2);
+            $saldoPendiente = round((float) $venta->total - $montoPagado, 2);
+
+            if ($saldoPendiente <= 0) {
+                throw ValidationException::withMessages([
+                    'pagos' => 'Esta venta ya no tiene saldo pendiente.',
+                ]);
+            }
+
+            if ($montoNuevo > $saldoPendiente) {
+                throw ValidationException::withMessages([
+                    'pagos' => 'La suma de los pagos no puede superar el saldo pendiente.',
+                ]);
+            }
+
+            foreach ($pagos as $pago) {
+                $montoRecibido = $pago['monto_recibido'] ?? null;
+
+                if ($montoRecibido !== null && (float) $montoRecibido < (float) $pago['monto']) {
+                    throw ValidationException::withMessages([
+                        'pagos' => 'El monto recibido no puede ser menor al monto aplicado.',
+                    ]);
+                }
+
+                $venta->detallesPago()->create([
+                    'metodo_pago_id' => $pago['metodo_pago_id'],
+                    'monto' => $pago['monto'],
+                    'monto_recibido' => $montoRecibido,
+                    'cambio' => $montoRecibido === null
+                        ? null
+                        : round((float) $montoRecibido - (float) $pago['monto'], 2),
+                    'referencia' => $pago['referencia'] ?? null,
+                    'fecha_pago' => now(),
+                ]);
+            }
+
+            $venta->estado_pago = $montoPagado + $montoNuevo >= (float) $venta->total
+                ? 'PAGADO'
+                : 'PARCIAL';
+            $venta->save();
+        });
+
+        return redirect()
+            ->route('ventas.show', $venta)
+            ->with('success', 'El pago se registró correctamente.');
     }
 
     /**
@@ -718,6 +834,8 @@ class VentasController extends Controller
 
             // Marca la venta como anulada dentro de la misma transacción del inventario.
             $venta->estado_venta = 'ANULADA';
+            // Conserva los pagos registrados como historial; la venta ya no tiene estado de pago vigente.
+            $venta->estado_pago = null;
             $venta->save();
         });
 

@@ -50,8 +50,9 @@
                         'bg-green-100 text-green-700' => $venta->estado_pago === 'PAGADO',
                         'bg-amber-100 text-amber-700' => $venta->estado_pago === 'PARCIAL',
                         'bg-slate-100 text-slate-700' => $venta->estado_pago === 'PENDIENTE',
+                        'bg-slate-100 text-slate-500' => $venta->estado_pago === null,
                     ])>
-                        {{ ucfirst(strtolower($venta->estado_pago)) }}
+                        {{ $venta->estado_pago ? ucfirst(strtolower($venta->estado_pago)) : 'No aplica' }}
                     </span>
                 </td>
                 <td class="px-4 py-3 text-center whitespace-nowrap">

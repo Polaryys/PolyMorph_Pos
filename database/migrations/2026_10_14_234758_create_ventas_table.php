@@ -33,7 +33,7 @@ return new class extends Migration {
                 'PENDIENTE',
                 'PARCIAL',
                 'PAGADO',
-            ])->default('PENDIENTE');
+            ])->nullable()->default('PENDIENTE');
             $table->foreignId('venta_referencia_id')
                 ->nullable()
                 ->constrained('ventas')

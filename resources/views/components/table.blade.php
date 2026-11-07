@@ -1,12 +1,12 @@
 @props(['headers', 'paginator' => null])
 
-<div class="mt-3 overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+<div class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
 
     <div class="overflow-x-auto">
         <table class="min-w-full border-collapse text-left text-sm">
 
             {{-- Encabezado --}}
-            <thead class="bg-slate-700 text-xs font-semibold uppercase tracking-wider text-white">
+            <thead class="bg-indigo-100 text-xs font-semibold uppercase tracking-wider text-indigo-600">
                 <tr>
                     {{ $headers }}
                 </tr>

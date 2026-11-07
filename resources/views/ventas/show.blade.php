@@ -38,7 +38,7 @@
                     {{ ucfirst(strtolower($venta->estado_venta)) }}
                 </x-detail-field>
                 <x-detail-field label="Estado de pago">
-                    {{ ucfirst(strtolower($venta->estado_pago)) }}
+                    {{ $venta->estado_pago ? ucfirst(strtolower($venta->estado_pago)) : 'No aplica' }}
                 </x-detail-field>
                 <x-detail-field label="Vendedor">
                     {{ $venta->vendedor?->nombres ?? '—' }}
@@ -89,8 +89,6 @@
                 <x-slot:headers>
                     <th class="whitespace-nowrap px-4 py-3">Artículo</th>
                     <th class="whitespace-nowrap px-4 py-3 text-center">Cantidad</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-center">Factor</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-center">Cantidad base</th>
                     <th class="whitespace-nowrap px-4 py-3 text-right">Precio unitario</th>
                     <th class="whitespace-nowrap px-4 py-3 text-right">Precio aplicado</th>
                     <th class="whitespace-nowrap px-4 py-3 text-right">Descuento</th>
@@ -117,10 +115,6 @@
                         <td class="whitespace-nowrap px-4 py-3 text-center">
                             {{ number_format((float) $detalle->cantidad, 2) }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-center">{{ $detalle->factor }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-center">
-                            {{ number_format((float) $detalle->cantidad_base, 2) }}
-                        </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
                             Q {{ number_format((float) $detalle->precio_unitario, 2) }}
                         </td>
@@ -141,7 +135,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-8 text-center text-slate-400">
+                        <td colspan="7" class="px-6 py-8 text-center text-slate-400">
                             Esta venta no tiene artículos registrados.
                         </td>
                     </tr>
@@ -214,7 +208,9 @@
                             <td class="px-4 py-3">
                                 {{ ucfirst(strtolower($operacion->estado_venta)) }}
                                 <span class="text-xs text-slate-500">
-                                    · {{ ucfirst(strtolower($operacion->estado_pago)) }}
+                                    · {{ $operacion->estado_pago
+                                        ? ucfirst(strtolower($operacion->estado_pago))
+                                        : 'No aplica' }}
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 text-right">
@@ -226,19 +222,113 @@
             </section>
         @endif
 
-        <section class="flex flex-col gap-2 rounded border border-slate-200 bg-white p-5 shadow-sm sm:ml-auto sm:w-96">
+        <section x-data="{
+            modalPagoAbierto: false,
+            cargandoMetodosPago: false,
+            errorPago: '',
+            metodosPago: [],
+            saldoPendiente: {{ json_encode($saldoPendiente) }},
+
+            async abrirModalPago() {
+                this.modalPagoAbierto = true;
+                this.cargandoMetodosPago = true;
+                this.errorPago = '';
+
+                try {
+                    const respuesta = await fetch('{{ route('ventas.metodos-pago') }}', {
+                        headers: { Accept: 'application/json' },
+                    });
+                    if (!respuesta.ok) throw new Error('No se pudieron cargar los métodos de pago.');
+
+                    const metodos = await respuesta.json();
+                    this.metodosPago = metodos.map(metodo => ({
+                        ...metodo,
+                        efectivo: metodo.nombre.trim().toLowerCase() === 'efectivo',
+                        activo: false,
+                        monto: '',
+                        monto_recibido: '',
+                        referencia: '',
+                    }));
+                } catch (error) {
+                    this.errorPago = error.message;
+                } finally {
+                    this.cargandoMetodosPago = false;
+                }
+            },
+
+            activarMetodo(metodo) {
+                metodo.activo = true;
+                const montoDisponible = this.montoDisponiblePara(metodo);
+                if (metodo.efectivo && !Number(metodo.monto_recibido)) {
+                    metodo.monto_recibido = montoDisponible.toFixed(2);
+                } else if (!metodo.efectivo && !Number(metodo.monto)) {
+                    metodo.monto = montoDisponible.toFixed(2);
+                }
+            },
+
+            montoAplicado(metodo) {
+                if (!metodo.efectivo) return Number(metodo.monto) || 0;
+                return Math.min(Number(metodo.monto_recibido) || 0, this.montoDisponiblePara(metodo));
+            },
+
+            montoDisponiblePara(metodoActual) {
+                const otrosPagos = this.metodosPago
+                    .filter(metodo => metodo !== metodoActual && metodo.activo)
+                    .reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
+
+                return Math.max(0, Math.round((this.saldoPendiente - otrosPagos) * 100) / 100);
+            },
+
+            actualizarImporte(metodo, campo, event) {
+                const valor = event.target.value;
+                const [entero, ...decimales] = valor.replace(/[^\d.]/g, '').split('.');
+                const valorValidado = decimales.length
+                    ? `${entero}.${decimales.join('').slice(0, 2)}`
+                    : entero;
+
+                metodo[campo] = valorValidado;
+                event.target.value = valorValidado;
+                metodo.activo = true;
+            },
+
+            pagosValidos() {
+                const pagos = this.metodosPago.filter(metodo => metodo.activo);
+                const total = pagos.reduce((suma, metodo) => suma + this.montoAplicado(metodo), 0);
+
+                return pagos.length > 0
+                    && pagos.every(metodo => {
+                        const montoIngresado = metodo.efectivo ? metodo.monto_recibido : metodo.monto;
+                        return /^\d+(\.\d{1,2})?$/.test(String(montoIngresado || ''))
+                            && this.montoAplicado(metodo) > 0
+                            && (!metodo.efectivo || Number(metodo.monto_recibido) >= this.montoAplicado(metodo));
+                    })
+                    && Math.round(total * 100) <= Math.round(this.saldoPendiente * 100);
+            },
+        }" class="flex flex-col gap-2 rounded border border-slate-200 bg-white p-5 shadow-sm sm:ml-auto sm:w-96">
             <div class="flex justify-between gap-4 text-sm text-slate-600">
-                <span>Descuentos</span>
-                <span>Q {{ number_format((float) $venta->total_descuentos, 2) }}</span>
+                <span>Total de productos</span>
+                <span>Q {{ number_format($totalProductos, 2) }}</span>
             </div>
             <div class="flex justify-between gap-4 text-sm text-slate-600">
-                <span>Costo total</span>
-                <span>Q {{ number_format((float) $venta->costo_total, 2) }}</span>
+                <span>Total de descuentos</span>
+                <span>Q {{ number_format((float) $venta->total_descuentos, 2) }}</span>
             </div>
             <div class="flex justify-between gap-4 border-t border-slate-200 pt-3 text-lg font-bold text-slate-900">
                 <span>Total de la venta</span>
                 <span>Q {{ number_format((float) $venta->total, 2) }}</span>
             </div>
+            <div class="flex justify-between gap-4 text-sm font-semibold text-slate-700">
+                <span>Total pagado</span>
+                <span>Q {{ number_format($montoPagado, 2) }}</span>
+            </div>
+
+            @if ($saldoPendiente > 0 && $venta->tipo_operacion === 'VENTA' && $venta->estado_venta === 'REGISTRADA')
+                <button type="button" @click="abrirModalPago()"
+                    class="mt-2 rounded-md bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-800">
+                    Completar pago
+                </button>
+                @include('ventas.partials._modal-completar-pago')
+            @endif
         </section>
 
         <div class="flex justify-end gap-3">

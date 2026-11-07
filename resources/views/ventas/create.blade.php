@@ -2,11 +2,17 @@
     <div x-data="{
         buscar: '',
         resultados: [],
+        buscarCliente: '',
+        resultadosClientes: [],
+        clienteSeleccionado: null,
         detalles: [],
         cargando: false,
+        cargandoClientes: false,
         errorBusqueda: false,
+        errorBusquedaClientes: false,
         errorFormulario: '',
         versionBusqueda: 0,
+        versionBusquedaClientes: 0,
         modalPagoAbierto: false,
         cargandoMetodosPago: false,
         metodosPago: [],
@@ -44,6 +50,50 @@
             } finally {
                 if (version === this.versionBusqueda) this.cargando = false;
             }
+        },
+
+        async buscarClientes() {
+            const version = ++this.versionBusquedaClientes;
+            const termino = this.buscarCliente.trim();
+
+            if (!termino) {
+                this.resultadosClientes = [];
+                this.cargandoClientes = false;
+                return;
+            }
+
+            this.cargandoClientes = true;
+            this.errorBusquedaClientes = false;
+
+            try {
+                const url = new URL('{{ route('ventas.buscar-clientes') }}', window.location.origin);
+                url.searchParams.set('buscar', termino);
+                const respuesta = await fetch(url, { headers: { Accept: 'application/json' } });
+
+                if (!respuesta.ok) throw new Error('No se pudo realizar la búsqueda.');
+
+                const resultados = await respuesta.json();
+                if (version === this.versionBusquedaClientes) this.resultadosClientes = resultados;
+            } catch (error) {
+                if (version === this.versionBusquedaClientes) {
+                    this.resultadosClientes = [];
+                    this.errorBusquedaClientes = true;
+                }
+            } finally {
+                if (version === this.versionBusquedaClientes) this.cargandoClientes = false;
+            }
+        },
+
+        seleccionarCliente(cliente) {
+            this.versionBusquedaClientes++;
+            this.clienteSeleccionado = cliente;
+            this.buscarCliente = '';
+            this.resultadosClientes = [];
+            this.cargandoClientes = false;
+        },
+
+        quitarCliente() {
+            this.clienteSeleccionado = null;
         },
 
         seleccionar(producto) {
@@ -120,7 +170,7 @@
             return Math.max(0, Math.round((Number(detalle.cantidad) * ahorroUnitario + Number.EPSILON) * 100) / 100);
         },
 
-        actualizarDescuentoAutomatico(detalle) {
+        actualizarDescuentoAutomatico(detalle, conservarDescuento = false) {
             const cantidad = Number(detalle.cantidad);
 
             if (
@@ -130,7 +180,9 @@
                 detalle.tipo_precio = 'unitario';
             }
 
-            detalle.descuento = this.descuentoAutomatico(detalle).toFixed(2);
+            if (!conservarDescuento) {
+                detalle.descuento = this.descuentoAutomatico(detalle).toFixed(2);
+            }
         },
 
         ajustarCantidad(detalle, cambio) {
@@ -139,7 +191,7 @@
                 ? this.cantidadDisponible(detalle)
                 : Infinity;
             detalle.cantidad = Math.min(cantidadMaxima, Math.max(1, cantidadActual + cambio));
-            this.actualizarDescuentoAutomatico(detalle);
+            this.actualizarDescuentoAutomatico(detalle, true);
         },
 
         totalVenta() {
@@ -311,6 +363,8 @@
             x-ref="formularioVenta" @submit.prevent="confirmarVenta($event)">
             @csrf
 
+            <input type="hidden" name="cliente_id" :value="clienteSeleccionado?.id ?? ''">
+
             @if (session('success'))
                 <div class="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700" role="status">
                     {{ session('success') }}
@@ -328,7 +382,10 @@
                 </div>
             @endif
 
-            @include('ventas.partials._buscador-producto')
+            <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
+                @include('ventas.partials._buscador-producto')
+                @include('ventas.partials._buscador-cliente')
+            </div>
             @include('ventas.partials._detalles')
             @include('ventas.partials._modal-pago')
 

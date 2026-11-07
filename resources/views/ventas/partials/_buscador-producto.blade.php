@@ -1,9 +1,12 @@
 <div class="relative">
+    <label for="buscar-producto" class="mb-1 block text-sm font-medium text-slate-700">
+        Buscar productos
+    </label>
     <div class="flex items-center gap-2">
             <x-lucide-search class="h-5 w-5 shrink-0 text-slate-400" />
             <x-text-input id="buscar-producto" type="search" x-model="buscar"
                 @input.debounce.300ms="buscarProductos()" @keydown.enter.prevent
-                placeholder="Buscar por nombre o SKU..." autocomplete="off" class="w-full sm:max-w-xl" />
+                placeholder="Buscar por nombre o SKU..." autocomplete="off" class="w-full" />
             <span x-show="cargando" x-cloak class="text-sm text-slate-500">Buscando...</span>
         </div>
 

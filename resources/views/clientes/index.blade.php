@@ -1,6 +1,6 @@
 <x-app-layout>
     <!-- Encabezado y Acción -->
-    <x-primary-link href="{{ route('clientes.create') }}" wire:navigate>
+    <x-primary-link href="{{ route('clientes.create') }}" wire:navigate class="mb-3">
         + Agregar Cliente
     </x-primary-link>
 

@@ -68,6 +68,8 @@ Route::middleware('auth')->group(function () {
         ->name('ventas.create');
     Route::get('/ventas/buscar-productos', [VentasController::class, 'buscarProductos'])
         ->name('ventas.buscar-productos');
+    Route::get('/ventas/buscar-clientes', [VentasController::class, 'buscarClientes'])
+        ->name('ventas.buscar-clientes');
     Route::get('/ventas/metodos-pago', [VentasController::class, 'metodosPago'])
         ->name('ventas.metodos-pago');
     Route::get('/ventas', [VentasController::class, 'index'])
@@ -76,6 +78,8 @@ Route::middleware('auth')->group(function () {
         ->name('ventas.store');
     Route::post('/ventas/{venta}/anular', [VentasController::class, 'anular'])
         ->name('ventas.anular');
+    Route::post('/ventas/{venta}/pagos', [VentasController::class, 'registrarPago'])
+        ->name('ventas.pagos.store');
     Route::get('/ventas/{venta}', [VentasController::class, 'show'])
         ->name('ventas.show');
 

@@ -46,7 +46,7 @@
                         </button>
                         <input type="number" min="1" step="1"
                             :max="detalle.tipo_item === 'PRODUCTO' ? cantidadDisponible(detalle) : null"
-                            @change="actualizarDescuentoAutomatico(detalle)"
+                            @change="actualizarDescuentoAutomatico(detalle, true)"
                             x-model.number="detalle.cantidad"
                             class="w-16 appearance-none [appearance:textfield] [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none border-y border-slate-300 p-2 text-center text-sm focus:border-indigo-500 focus:ring-indigo-500">
                         <button type="button" @click="ajustarCantidad(detalle, 1)"
@@ -62,7 +62,7 @@
                         <span class="text-base font-semibold text-slate-900"
                             x-text="'Q ' + precioActual(detalle, detalle.tipo_precio, detalle.cantidad).toFixed(2)"></span>
                         <select x-model="detalle.tipo_precio" @change="actualizarDescuentoAutomatico(detalle)"
-                            class="w-28 rounded-md border-slate-300 px-2 py-1.5 text-xs focus:border-indigo-500 focus:ring-indigo-500">
+                            class="w-24 rounded-md border-slate-300 px-2 py-1.5 text-xs focus:border-indigo-500 focus:ring-indigo-500">
                         <option value="unitario">Unitario</option>
                         <template x-if="detalle.precio_docena_actual !== null && Number(detalle.cantidad) * Number(detalle.factor || 1) >= 12">
                             <option value="docena">+ Docena</option>
