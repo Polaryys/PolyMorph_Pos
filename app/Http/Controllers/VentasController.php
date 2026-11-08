@@ -10,6 +10,7 @@ use App\Models\Venta;
 use App\Models\VentaDetalle;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
@@ -182,16 +183,9 @@ class VentasController extends Controller
                 'integer',
                 Rule::exists('metodos_pago', 'id')->where('estado', true),
             ],
-            'pagos.*.monto' => ['required', 'numeric', 'gt:0', 'decimal:0,2'],
+            'pagos.*.monto' => ['required', 'numeric', 'decimal:0,2'],
             'pagos.*.monto_recibido' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
             'pagos.*.referencia' => ['nullable', 'string', 'max:100'],
-            'reembolso' => ['sometimes', 'array'],
-            'reembolso.metodo_pago_id' => [
-                'required_with:reembolso',
-                'integer',
-                Rule::exists('metodos_pago', 'id')->where('estado', true),
-            ],
-            'reembolso.referencia' => ['nullable', 'string', 'max:100'],
         ]);
         $this->validarModoCapturaPagos($datos['pagos'] ?? []);
 
@@ -215,15 +209,9 @@ class VentasController extends Controller
             ]);
         }
 
-        if ($tipoOperacion !== 'VENTA' && ! empty($datos['pagos']) && ! empty($datos['reembolso'])) {
+        if ($tipoOperacion === 'VENTA' && ! empty($datos['venta_referencia_id'])) {
             throw ValidationException::withMessages([
-                'pagos' => 'Una operación no puede cobrar y reembolsar al mismo tiempo.',
-            ]);
-        }
-
-        if ($tipoOperacion === 'VENTA' && (! empty($datos['venta_referencia_id']) || ! empty($datos['reembolso']))) {
-            throw ValidationException::withMessages([
-                'tipo_operacion' => 'Una venta normal no puede tener una venta de referencia ni registrar reembolsos.',
+                'tipo_operacion' => 'Una venta normal no puede tener una venta de referencia.',
             ]);
         }
 
@@ -241,6 +229,12 @@ class VentasController extends Controller
                 if ($ventaOriginal->tipo_operacion !== 'VENTA' || $ventaOriginal->estado_venta !== 'REGISTRADA') {
                     throw ValidationException::withMessages([
                         'venta_referencia_id' => 'Solo se pueden devolver artículos de una venta registrada.',
+                    ]);
+                }
+
+                if (! $this->estaDentroDelPlazoDeOperacion($ventaOriginal)) {
+                    throw ValidationException::withMessages([
+                        'venta_referencia_id' => 'El plazo para realizar cambios o devoluciones venció: son 5 días hábiles, excluyendo domingos.',
                     ]);
                 }
 
@@ -488,7 +482,10 @@ class VentasController extends Controller
                     'subtotal' => $subtotal,
                 ];
 
-                $totalDescuentos = round($totalDescuentos + $descuento, 2);
+                $totalDescuentos = round(
+                    $totalDescuentos + ($esDevolucion ? -$descuento : $descuento),
+                    2
+                );
             }
 
             foreach ($cambiosInventario as $inventarioId => $cambioCantidad) {
@@ -514,40 +511,41 @@ class VentasController extends Controller
                 : round($costoEntregado - $costoDevuelto, 2);
             $pagos = $datos['pagos'] ?? [];
             $montoPagado = round(array_sum(array_column($pagos, 'monto')), 2);
+            $pagosConSignoInvalido = $total > 0
+                ? collect($pagos)->contains(fn (array $pago) => (float) $pago['monto'] <= 0)
+                : ($total < 0
+                    ? collect($pagos)->contains(fn (array $pago) => (float) $pago['monto'] >= 0)
+                    : $pagos !== []);
 
-            if ($montoPagado > max($total, 0)) {
+            if ($pagosConSignoInvalido) {
                 throw ValidationException::withMessages([
-                    'pagos' => 'La suma de los pagos no puede superar el saldo a cobrar.',
+                    'pagos' => 'Los cobros deben ser positivos y los reembolsos negativos, según el saldo de la operación.',
+                ]);
+            }
+
+            if (abs($montoPagado) > abs($total)) {
+                throw ValidationException::withMessages([
+                    'pagos' => 'La suma de los movimientos no puede superar el saldo de la operación.',
+                ]);
+            }
+
+            if ($tipoOperacion !== 'VENTA' && $total !== 0.0 && abs($montoPagado) < abs($total)) {
+                throw ValidationException::withMessages([
+                    'pagos' => 'El cobro o reembolso debe cubrir por completo la diferencia de la operación.',
                 ]);
             }
 
             if (
                 $tipoOperacion === 'VENTA'
                 && empty($datos['venta_credito'])
-                && $montoPagado < max($total, 0)
+                && $montoPagado < $total
             ) {
                 throw ValidationException::withMessages([
                     'pagos' => 'El pago debe cubrir el total o marcar la venta al crédito.',
                 ]);
             }
 
-            if ($tipoOperacion !== 'VENTA' && $total < 0 && empty($datos['reembolso'])) {
-                throw ValidationException::withMessages([
-                    'reembolso' => 'Debes indicar el método para registrar el reembolso al cliente.',
-                ]);
-            }
-
-            if ($tipoOperacion !== 'VENTA' && $total >= 0 && ! empty($datos['reembolso'])) {
-                throw ValidationException::withMessages([
-                    'reembolso' => 'Solo se registra un reembolso cuando el saldo favorece al cliente.',
-                ]);
-            }
-
-            $estadoPago = $total < 0
-                ? 'PAGADO'
-                : ($montoPagado <= 0
-                    ? ($total <= 0 ? 'PAGADO' : 'PENDIENTE')
-                    : ($montoPagado >= $total ? 'PAGADO' : 'PARCIAL'));
+            $estadoPago = $this->calcularEstadoPago($total, $montoPagado);
 
             $venta = Venta::create([
                 'numero_venta' => 'TMP-'.Str::random(16),
@@ -593,22 +591,11 @@ class VentasController extends Controller
                     'metodo_pago_id' => $pago['metodo_pago_id'],
                     'monto' => $pago['monto'],
                     'monto_recibido' => $montoRecibido,
-                    'cambio' => $montoRecibido === null
+                    'cambio' => $montoRecibido === null || (float) $pago['monto'] < 0
                         ? null
                         : round((float) $montoRecibido - (float) $pago['monto'], 2),
                     'referencia' => $pago['referencia'] ?? null,
                     'fecha_pago' => now(),
-                ]);
-            }
-
-            if ($total < 0) {
-                $venta->reembolsos()->create([
-                    'metodo_pago_id' => $datos['reembolso']['metodo_pago_id'],
-                    'usuario_id' => Auth::id(),
-                    'monto' => abs($total),
-                    'estado' => 'PROCESADO',
-                    'referencia' => $datos['reembolso']['referencia'] ?? null,
-                    'fecha_reembolso' => now(),
                 ]);
             }
 
@@ -631,9 +618,11 @@ class VentasController extends Controller
             return $venta;
         });
 
-        return redirect()
-            ->back()
-            ->with('success', "La operación {$venta->numero_venta} se registró correctamente.");
+        $redirect = $tipoOperacion === 'VENTA'
+            ? redirect()->back()
+            : redirect()->route('ventas.show', $venta);
+
+        return $redirect->with('success', "La operación {$venta->numero_venta} se registró correctamente.");
     }
 
     /**
@@ -647,17 +636,71 @@ class VentasController extends Controller
             'cliente:id,nit,nombres,apellidos,telefono,correo,clasificacion',
             'detalles.presentacion.inventario.marca',
             'detallesPago.metodoPago',
+            'reembolsos.metodoPago',
             'ventaReferencia:id,numero_venta',
             'operacionesRelacionadas:id,numero_venta,venta_referencia_id,tipo_operacion,estado_venta,estado_pago,total',
+            'operacionesRelacionadas.detalles:id,venta_id,detalle_referencia_id,tipo_movimiento,cantidad,subtotal',
         ]);
 
         $totalProductos = round((float) $venta->detalles->sum(
-            fn (VentaDetalle $detalle) => (float) $detalle->subtotal + (float) $detalle->descuento
+            fn (VentaDetalle $detalle) => ((float) $detalle->subtotal + (float) $detalle->descuento)
+                * ($detalle->tipo_movimiento === 'DEVOLUCION' ? -1 : 1)
         ), 2);
-        $montoPagado = round((float) $venta->detallesPago->sum('monto'), 2);
-        $saldoPendiente = max(0, round((float) $venta->total - $montoPagado, 2));
+        $montoReembolsadoAnterior = (float) $venta->reembolsos
+            ->where('estado', 'PROCESADO')
+            ->sum('monto');
+        $montoPagado = round((float) $venta->detallesPago->sum('monto') - $montoReembolsadoAnterior, 2);
+        $saldoPendiente = round((float) $venta->total - $montoPagado, 2);
+        $devolucionesRegistradas = $venta->operacionesRelacionadas
+            ->where('estado_venta', 'REGISTRADA')
+            ->flatMap(fn (Venta $operacion) => $operacion->detalles)
+            ->where('tipo_movimiento', 'DEVOLUCION')
+            ->groupBy('detalle_referencia_id');
+        $detallesDisponiblesCambio = $venta->tipo_operacion === 'VENTA'
+            ? $venta->detalles
+                ->where('tipo_movimiento', 'VENTA')
+                ->map(function (VentaDetalle $detalle) use ($devolucionesRegistradas) {
+                    $devolucionesPrevias = $devolucionesRegistradas->get($detalle->id, collect());
+                    $cantidadRestante = round(
+                        (float) $detalle->cantidad - (float) $devolucionesPrevias->sum('cantidad'),
+                        2
+                    );
 
-        return view('ventas.show', compact('venta', 'totalProductos', 'montoPagado', 'saldoPendiente'));
+                    return [
+                        'id' => $detalle->id,
+                        'nombre' => $detalle->presentacion?->nombre ?? 'Presentación no disponible',
+                        'sku' => $detalle->presentacion?->codigoSKU,
+                        'tipo_item' => $detalle->tipo_item,
+                        'cantidad_original' => (float) $detalle->cantidad,
+                        'cantidad_disponible' => max(0, $cantidadRestante),
+                        'factor' => (int) $detalle->factor,
+                        'precio_aplicado' => (float) $detalle->precio_aplicado,
+                        'subtotal_original' => (float) $detalle->subtotal,
+                        'subtotal_disponible' => round(
+                            (float) $detalle->subtotal - (float) $devolucionesPrevias->sum('subtotal'),
+                            2
+                        ),
+                        'reingresa_inventario' => $detalle->tipo_item === 'PRODUCTO',
+                    ];
+                })
+                ->filter(fn (array $detalle) => $detalle['cantidad_disponible'] > 0)
+                ->values()
+            : collect();
+
+        $estadoPago = $venta->total < 0 && $venta->estado_pago === 'PAGADO'
+            ? 'REEMBOLSADO'
+            : $venta->estado_pago;
+        $puedeCambiarOAnular = $this->estaDentroDelPlazoDeOperacion($venta);
+
+        return view('ventas.show', compact(
+            'venta',
+            'totalProductos',
+            'montoPagado',
+            'saldoPendiente',
+            'estadoPago',
+            'detallesDisponiblesCambio',
+            'puedeCambiarOAnular'
+        ));
     }
 
     public function registrarPago(Request $request, Venta $venta)
@@ -669,7 +712,7 @@ class VentasController extends Controller
                 'integer',
                 Rule::exists('metodos_pago', 'id')->where('estado', true),
             ],
-            'pagos.*.monto' => ['required', 'numeric', 'gt:0', 'decimal:0,2'],
+            'pagos.*.monto' => ['required', 'numeric', 'decimal:0,2'],
             'pagos.*.monto_recibido' => ['nullable', 'numeric', 'min:0', 'decimal:0,2'],
             'pagos.*.referencia' => ['nullable', 'string', 'max:100'],
         ]);
@@ -681,33 +724,46 @@ class VentasController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
-            if ($venta->tipo_operacion !== 'VENTA' || $venta->estado_venta !== 'REGISTRADA') {
+            if ($venta->estado_venta !== 'REGISTRADA') {
                 throw ValidationException::withMessages([
-                    'pagos' => 'Solo se pueden registrar pagos para ventas registradas.',
+                    'pagos' => 'Solo se pueden registrar movimientos para operaciones registradas.',
                 ]);
             }
 
             $pagos = $datos['pagos'];
             $montoNuevo = round(array_sum(array_column($pagos, 'monto')), 2);
-            $montoPagado = round((float) $venta->detallesPago()->sum('monto'), 2);
+            $montoReembolsadoAnterior = (float) $venta->reembolsos()
+                ->where('estado', 'PROCESADO')
+                ->sum('monto');
+            $montoPagado = round((float) $venta->detallesPago()->sum('monto') - $montoReembolsadoAnterior, 2);
             $saldoPendiente = round((float) $venta->total - $montoPagado, 2);
 
-            if ($saldoPendiente <= 0) {
+            if ($saldoPendiente === 0.0) {
                 throw ValidationException::withMessages([
-                    'pagos' => 'Esta venta ya no tiene saldo pendiente.',
+                    'pagos' => 'Esta operación ya no tiene saldo pendiente.',
                 ]);
             }
 
-            if ($montoNuevo > $saldoPendiente) {
+            $signoIncorrecto = $saldoPendiente > 0
+                ? collect($pagos)->contains(fn (array $pago) => (float) $pago['monto'] <= 0)
+                : collect($pagos)->contains(fn (array $pago) => (float) $pago['monto'] >= 0);
+
+            if ($signoIncorrecto || ($montoNuevo > 0) !== ($saldoPendiente > 0)) {
                 throw ValidationException::withMessages([
-                    'pagos' => 'La suma de los pagos no puede superar el saldo pendiente.',
+                    'pagos' => 'Los cobros deben ser positivos y los reembolsos negativos, según el saldo pendiente.',
+                ]);
+            }
+
+            if (abs($montoNuevo) > abs($saldoPendiente)) {
+                throw ValidationException::withMessages([
+                    'pagos' => 'La suma de los movimientos no puede superar el saldo pendiente.',
                 ]);
             }
 
             foreach ($pagos as $pago) {
                 $montoRecibido = $pago['monto_recibido'] ?? null;
 
-                if ($montoRecibido !== null && (float) $montoRecibido < (float) $pago['monto']) {
+                if ($montoRecibido !== null && (float) $pago['monto'] > 0 && (float) $montoRecibido < (float) $pago['monto']) {
                     throw ValidationException::withMessages([
                         'pagos' => 'El monto recibido no puede ser menor al monto aplicado.',
                     ]);
@@ -717,7 +773,7 @@ class VentasController extends Controller
                     'metodo_pago_id' => $pago['metodo_pago_id'],
                     'monto' => $pago['monto'],
                     'monto_recibido' => $montoRecibido,
-                    'cambio' => $montoRecibido === null
+                    'cambio' => $montoRecibido === null || (float) $pago['monto'] < 0
                         ? null
                         : round((float) $montoRecibido - (float) $pago['monto'], 2),
                     'referencia' => $pago['referencia'] ?? null,
@@ -725,15 +781,54 @@ class VentasController extends Controller
                 ]);
             }
 
-            $venta->estado_pago = $montoPagado + $montoNuevo >= (float) $venta->total
-                ? 'PAGADO'
-                : 'PARCIAL';
+            $montoPagadoNuevo = round($montoPagado + $montoNuevo, 2);
+            $venta->estado_pago = $this->calcularEstadoPago((float) $venta->total, $montoPagadoNuevo);
             $venta->save();
         });
 
         return redirect()
             ->route('ventas.show', $venta)
-            ->with('success', 'El pago se registró correctamente.');
+            ->with('success', 'El movimiento de pago se registró correctamente.');
+    }
+
+    private function calcularEstadoPago(float $total, float $montoPagado): string
+    {
+        $total = round($total, 2);
+        $montoPagado = round($montoPagado, 2);
+
+        if ($total === 0.0) {
+            return 'PAGADO';
+        }
+
+        if ($total < 0) {
+            if (abs($montoPagado) >= abs($total)) {
+                return 'REEMBOLSADO';
+            }
+
+            return $montoPagado === 0.0 ? 'PENDIENTE' : 'PARCIAL';
+        }
+
+        if ($montoPagado >= $total) {
+            return 'PAGADO';
+        }
+
+        return $montoPagado === 0.0 ? 'PENDIENTE' : 'PARCIAL';
+    }
+
+    private function estaDentroDelPlazoDeOperacion(Venta $venta): bool
+    {
+        $fechaLimite = $venta->created_at->copy();
+        $diasHabilesTranscurridos = 0;
+
+        while ($diasHabilesTranscurridos < 5) {
+            $fechaLimite->addDay();
+
+            if ($fechaLimite->dayOfWeek !== Carbon::SUNDAY) {
+                $diasHabilesTranscurridos++;
+            }
+        }
+
+        return now()->lessThanOrEqualTo($fechaLimite);
     }
 
     private function validarModoCapturaPagos(array $pagos): void
@@ -749,7 +844,13 @@ class VentasController extends Controller
             if ($metodoPago?->tipo_captura === MetodoPago::TIPO_CAPTURA_MONTOS) {
                 $montoRecibido = $pago['monto_recibido'] ?? null;
 
-                if ($montoRecibido === null || (float) $montoRecibido < (float) $pago['monto']) {
+                if ((float) $pago['monto'] < 0 && $montoRecibido !== null) {
+                    throw ValidationException::withMessages([
+                        "pagos.{$indice}.monto_recibido" => 'No se registra monto recibido al realizar un reembolso.',
+                    ]);
+                }
+
+                if ((float) $pago['monto'] > 0 && ($montoRecibido === null || (float) $montoRecibido < (float) $pago['monto'])) {
                     throw ValidationException::withMessages([
                         "pagos.{$indice}.monto_recibido" => 'El monto recibido debe cubrir el monto aplicado.',
                     ]);
@@ -781,6 +882,12 @@ class VentasController extends Controller
             if ($venta->estado_venta !== 'REGISTRADA' || $venta->tipo_operacion !== 'VENTA') {
                 throw ValidationException::withMessages([
                     'venta' => 'Solo se pueden anular ventas registradas.',
+                ]);
+            }
+
+            if (! $this->estaDentroDelPlazoDeOperacion($venta)) {
+                throw ValidationException::withMessages([
+                    'venta' => 'El plazo para anular esta venta venció: son 5 días hábiles, excluyendo domingos.',
                 ]);
             }
 

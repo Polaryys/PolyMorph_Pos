@@ -74,7 +74,7 @@ class PresentacionController extends Controller
                 })
                 ->with([
                     'imagen:id,nombre_archivo',
-                    'inventario:id,cantidad',
+                    'inventario:id,cantidad,costoPromedioUnitario',
                 ])
                 ->first();
 
@@ -85,6 +85,8 @@ class PresentacionController extends Controller
                     'sku' => $presentacionBase->codigoSKU,
                     'codigoBarras' => $presentacionBase->codigoBarras,
                     'cantidad' => $presentacionBase->inventario?->cantidad ?? 0,
+                    'precioUnitario' => (float) $presentacionBase->precioUnitario,
+                    'costoPromedioUnitario' => (float) ($presentacionBase->inventario?->costoPromedioUnitario ?? 0),
                     'imagen' => $presentacionBase->imagen
                         ? asset(
                             'storage/imagenes/' .
@@ -119,13 +121,14 @@ class PresentacionController extends Controller
                 'id',
                 'inventario_id',
                 'nombre',
+                'precioUnitario',
                 'codigoSKU',
                 'codigoBarras',
                 'imagen_id',
             ])
             ->with([
                 'imagen:id,nombre_archivo',
-                'inventario:id,marca_id,cantidad',
+                'inventario:id,marca_id,cantidad,costoPromedioUnitario',
                 'inventario.marca:id,nombre',
             ])
             ->orderBy('nombre')
@@ -138,6 +141,8 @@ class PresentacionController extends Controller
                 'codigoBarras' => $presentacion->codigoBarras,
                 'marcaNombre' => $presentacion->inventario?->marca?->nombre,
                 'cantidad' => $presentacion->inventario?->cantidad ?? 0,
+                'precioUnitario' => (float) $presentacion->precioUnitario,
+                'costoPromedioUnitario' => (float) ($presentacion->inventario?->costoPromedioUnitario ?? 0),
                 'imagen' => $presentacion->imagen
                     ? asset('storage/imagenes/' . $presentacion->imagen->nombre_archivo)
                     : null,

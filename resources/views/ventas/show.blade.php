@@ -38,7 +38,7 @@
                     {{ ucfirst(strtolower($venta->estado_venta)) }}
                 </x-detail-field>
                 <x-detail-field label="Estado de pago">
-                    {{ $venta->estado_pago ? ucfirst(strtolower($venta->estado_pago)) : 'No aplica' }}
+                    {{ $estadoPago ? ucfirst(strtolower($estadoPago)) : 'No aplica' }}
                 </x-detail-field>
                 <x-detail-field label="Vendedor">
                     {{ $venta->vendedor?->nombres ?? '—' }}
@@ -97,6 +97,7 @@
                 </x-slot:headers>
 
                 @forelse ($venta->detalles as $detalle)
+                    @php($signoDetalle = $detalle->tipo_movimiento === 'DEVOLUCION' ? -1 : 1)
                     <tr class="transition-colors hover:bg-indigo-50/50">
                         <td class="px-4 py-3">
                             <p class="font-semibold text-slate-900">
@@ -104,6 +105,13 @@
                             </p>
                             <p class="mt-1 text-xs text-slate-500">
                                 {{ $detalle->tipo_item }}
+                                @if ($detalle->tipo_movimiento === 'DEVOLUCION')
+                                    <span class="mx-1">·</span>
+                                    Devolución
+                                @elseif ($detalle->tipo_movimiento === 'ENTREGA_CAMBIO')
+                                    <span class="mx-1">·</span>
+                                    Entrega de cambio
+                                @endif
                                 <span class="mx-1">·</span>
                                 SKU: {{ $detalle->presentacion?->codigoSKU ?? '—' }}
                                 @if ($marca = $detalle->presentacion?->inventario?->marca?->nombre)
@@ -113,23 +121,23 @@
                             </p>
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">
-                            {{ number_format((float) $detalle->cantidad, 2) }}
+                            {{ number_format($signoDetalle * (float) $detalle->cantidad, 2) }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
-                            Q {{ number_format((float) $detalle->precio_unitario, 2) }}
+                            Q {{ number_format($signoDetalle * (float) $detalle->precio_unitario, 2) }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
-                            Q {{ number_format((float) $detalle->precio_aplicado, 2) }}
+                            Q {{ number_format($signoDetalle * (float) $detalle->precio_aplicado, 2) }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
-                            Q {{ number_format((float) $detalle->descuento, 2) }}
+                            Q {{ number_format($signoDetalle * (float) $detalle->descuento, 2) }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right font-semibold text-slate-900">
-                            Q {{ number_format((float) $detalle->subtotal, 2) }}
+                            Q {{ number_format($signoDetalle * (float) $detalle->subtotal, 2) }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
                             {{ $detalle->subtotal_costo !== null
-                                ? 'Q '.number_format((float) $detalle->subtotal_costo, 2)
+                                ? 'Q '.number_format($signoDetalle * (float) $detalle->subtotal_costo, 2)
                                 : '—' }}
                         </td>
                     </tr>
@@ -143,8 +151,10 @@
             </x-table>
         </section>
 
+        @include('ventas.partials._modal-cambio')
+
         <section class="space-y-3">
-            <x-section-title>Pagos recibidos</x-section-title>
+            <x-section-title>Movimientos de pago</x-section-title>
             <x-table>
                 <x-slot:headers>
                     <th class="whitespace-nowrap px-4 py-3">Método de pago</th>
@@ -177,12 +187,30 @@
                         </td>
                     </tr>
                 @empty
-                    <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">
-                            Esta venta aún no tiene pagos registrados.
-                        </td>
-                    </tr>
+                    @if ($venta->reembolsos->where('estado', 'PROCESADO')->isEmpty())
+                        <tr>
+                            <td colspan="6" class="px-6 py-8 text-center text-slate-400">
+                                Esta operación aún no tiene movimientos de pago registrados.
+                            </td>
+                        </tr>
+                    @endif
                 @endforelse
+                @foreach ($venta->reembolsos->where('estado', 'PROCESADO') as $reembolso)
+                    <tr class="transition-colors hover:bg-indigo-50/50">
+                        <td class="px-4 py-3 font-medium text-slate-900">
+                            {{ $reembolso->metodoPago?->nombre ?? 'Método no disponible' }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-3">
+                            {{ $reembolso->fecha_reembolso?->format('d/m/Y H:i') ?? '—' }}
+                        </td>
+                        <td class="px-4 py-3">{{ $reembolso->referencia ?: '—' }}</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-right text-rose-700">
+                            Q -{{ number_format((float) $reembolso->monto, 2) }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-3 text-right">—</td>
+                        <td class="whitespace-nowrap px-4 py-3 text-right">—</td>
+                    </tr>
+                @endforeach
             </x-table>
         </section>
 
@@ -198,6 +226,9 @@
                     </x-slot:headers>
 
                     @foreach ($venta->operacionesRelacionadas as $operacion)
+                        @php($estadoPagoOperacion = $operacion->total < 0 && $operacion->estado_pago === 'PAGADO'
+                            ? 'REEMBOLSADO'
+                            : $operacion->estado_pago)
                         <tr class="transition-colors hover:bg-indigo-50/50">
                             <td class="px-4 py-3">
                                 <a href="{{ route('ventas.show', $operacion) }}" class="font-medium text-indigo-700 hover:text-indigo-900">
@@ -208,8 +239,8 @@
                             <td class="px-4 py-3">
                                 {{ ucfirst(strtolower($operacion->estado_venta)) }}
                                 <span class="text-xs text-slate-500">
-                                    · {{ $operacion->estado_pago
-                                        ? ucfirst(strtolower($operacion->estado_pago))
+                                    · {{ $estadoPagoOperacion
+                                        ? ucfirst(strtolower($estadoPagoOperacion))
                                         : 'No aplica' }}
                                 </span>
                             </td>
@@ -259,24 +290,52 @@
             activarMetodo(metodo) {
                 metodo.activo = true;
                 const montoDisponible = this.montoDisponiblePara(metodo);
-                if (metodo.permite_montos && !Number(metodo.monto_recibido)) {
+                if (metodo.permite_montos && this.saldoPendiente > 0 && !Number(metodo.monto_recibido)) {
                     metodo.monto_recibido = montoDisponible.toFixed(2);
-                } else if (!metodo.permite_montos && !Number(metodo.monto)) {
+                } else if ((!metodo.permite_montos || this.saldoPendiente < 0) && !Number(metodo.monto)) {
                     metodo.monto = montoDisponible.toFixed(2);
                 }
             },
 
             montoAplicado(metodo) {
-                if (!metodo.permite_montos) return Number(metodo.monto) || 0;
-                return Math.min(Number(metodo.monto_recibido) || 0, this.montoDisponiblePara(metodo));
+                let montoAsignado = 0;
+                const saldo = Math.abs(this.saldoPendiente);
+
+                for (const pago of this.metodosPago.filter(item => item.activo)) {
+                    const montoIngresado = pago.permite_montos && this.saldoPendiente > 0
+                        ? Number(pago.monto_recibido) || 0
+                        : Number(pago.monto) || 0;
+                    const montoAplicado = Math.min(
+                        montoIngresado,
+                        Math.max(0, saldo - montoAsignado)
+                    );
+
+                    if (pago === metodo) {
+                        return this.saldoPendiente < 0 ? -montoAplicado : montoAplicado;
+                    }
+
+                    montoAsignado += montoAplicado;
+                }
+
+                return 0;
             },
 
             montoDisponiblePara(metodoActual) {
+                let montoAsignado = 0;
                 const otrosPagos = this.metodosPago
-                    .filter(metodo => metodo !== metodoActual && metodo.activo)
-                    .reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
+                    .filter(metodo => metodo !== metodoActual && metodo.activo);
 
-                return Math.max(0, Math.round((this.saldoPendiente - otrosPagos) * 100) / 100);
+                for (const metodo of otrosPagos) {
+                    const montoIngresado = metodo.permite_montos && this.saldoPendiente > 0
+                        ? Number(metodo.monto_recibido) || 0
+                        : Number(metodo.monto) || 0;
+                    montoAsignado += Math.min(
+                        montoIngresado,
+                        Math.max(0, Math.abs(this.saldoPendiente) - montoAsignado)
+                    );
+                }
+
+                return Math.max(0, Math.round((Math.abs(this.saldoPendiente) - montoAsignado) * 100) / 100);
             },
 
             actualizarImporte(metodo, campo, event) {
@@ -293,16 +352,19 @@
 
             pagosValidos() {
                 const pagos = this.metodosPago.filter(metodo => metodo.activo);
-                const total = pagos.reduce((suma, metodo) => suma + this.montoAplicado(metodo), 0);
+                const total = pagos.reduce((suma, metodo) => suma + Math.abs(this.montoAplicado(metodo)), 0);
 
                 return pagos.length > 0
                     && pagos.every(metodo => {
-                        const montoIngresado = metodo.permite_montos ? metodo.monto_recibido : metodo.monto;
+                        const recibeEfectivo = metodo.permite_montos && this.saldoPendiente > 0;
+                        const montoIngresado = recibeEfectivo ? metodo.monto_recibido : metodo.monto;
                         return /^\d+(\.\d{1,2})?$/.test(String(montoIngresado || ''))
-                            && this.montoAplicado(metodo) > 0
-                            && (!metodo.permite_montos || Number(metodo.monto_recibido) >= this.montoAplicado(metodo));
+                            && Math.abs(this.montoAplicado(metodo)) > 0
+                            && (recibeEfectivo
+                                || Number(montoIngresado) === Math.abs(this.montoAplicado(metodo)))
+                            && (!recibeEfectivo || Number(metodo.monto_recibido) >= Math.abs(this.montoAplicado(metodo)));
                     })
-                    && Math.round(total * 100) <= Math.round(this.saldoPendiente * 100);
+                    && Math.round(total * 100) <= Math.round(Math.abs(this.saldoPendiente) * 100);
             },
         }" class="flex flex-col gap-2 rounded border border-slate-200 bg-white p-5 shadow-sm sm:ml-auto sm:w-96">
             <div class="flex justify-between gap-4 text-sm text-slate-600">
@@ -314,18 +376,18 @@
                 <span>Q {{ number_format((float) $venta->total_descuentos, 2) }}</span>
             </div>
             <div class="flex justify-between gap-4 border-t border-slate-200 pt-3 text-lg font-bold text-slate-900">
-                <span>Total de la venta</span>
+                <span>Total de la operación</span>
                 <span>Q {{ number_format((float) $venta->total, 2) }}</span>
             </div>
             <div class="flex justify-between gap-4 text-sm font-semibold text-slate-700">
-                <span>Total pagado</span>
+                <span>Cobrado / reembolsado</span>
                 <span>Q {{ number_format($montoPagado, 2) }}</span>
             </div>
 
-            @if ($saldoPendiente > 0 && $venta->tipo_operacion === 'VENTA' && $venta->estado_venta === 'REGISTRADA')
+            @if ($saldoPendiente !== 0.0 && $venta->estado_venta === 'REGISTRADA')
                 <button type="button" @click="abrirModalPago()"
                     class="mt-2 rounded-md bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-800">
-                    Completar pago
+                    {{ $saldoPendiente < 0 ? 'Registrar reembolso' : 'Completar cobro' }}
                 </button>
                 @include('ventas.partials._modal-completar-pago')
             @endif
@@ -333,11 +395,18 @@
 
         <div class="flex justify-end gap-3">
             @if ($venta->tipo_operacion === 'VENTA' && $venta->estado_venta === 'REGISTRADA' && $venta->operacionesRelacionadas->isEmpty())
-                <form action="{{ route('ventas.anular', $venta) }}" method="POST"
-                    onsubmit="return confirm('¿Anular esta venta? Se devolverá el stock de sus productos al inventario.');">
-                    @csrf
-                    <x-danger-button type="submit">Anular venta</x-danger-button>
-                </form>
+                @if ($puedeCambiarOAnular)
+                    <form action="{{ route('ventas.anular', $venta) }}" method="POST"
+                        onsubmit="return confirm('¿Anular esta venta? Se devolverá el stock de sus productos al inventario.');">
+                        @csrf
+                        <x-danger-button type="submit">Anular venta</x-danger-button>
+                    </form>
+                @else
+                    <x-danger-button type="button" disabled class="cursor-not-allowed opacity-50"
+                        title="El plazo de 5 días hábiles, excluyendo domingos, venció.">
+                        Anular venta
+                    </x-danger-button>
+                @endif
             @endif
             <x-secondary-link href="{{ route('ventas.index') }}">Volver a ventas</x-secondary-link>
         </div>

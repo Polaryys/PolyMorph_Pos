@@ -44,8 +44,20 @@
                         Factor de conversión <span class="text-red-500">*</span>
                     </x-input-label>
                     <x-text-input type="number" id="factor" name="factor" min="1" step="1" required
-                        :value="old('factor', 1)" :error="$errors->has('factor')" class="mt-1" />
+                        x-model.number="factorPresentacion" :error="$errors->has('factor')" class="mt-1" />
                     <x-input-error :messages="$errors->get('factor')" />
+                </div>
+
+                <div class="sm:col-span-2">
+                    <x-input-label for="costoPromedioPresentacion">
+                        Costo promedio de la presentación
+                    </x-input-label>
+                    <input type="text" id="costoPromedioPresentacion" readonly tabindex="-1" aria-readonly="true"
+                        :value="(
+                            Number(productoSeleccionadoData?.costoPromedioUnitario ?? 0)
+                            * Number(factorPresentacion || 0)
+                        ).toFixed(2)"
+                        class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 text-gray-500 shadow-sm">
                 </div>
 
                 <div class="sm:col-span-2">
@@ -57,7 +69,7 @@
                     <x-input-error :messages="$errors->get('precioUnitario')" />
                 </div>
 
-                <div class="sm:col-span-2">
+                <div class="sm:col-span-3">
                     <x-input-label for="ubicacion">
                         Ubicación
                     </x-input-label>
@@ -67,7 +79,7 @@
                     <x-input-error :messages="$errors->get('ubicacion')" />
                 </div>
 
-                <div class="sm:col-span-6">
+                <div class="sm:col-span-3">
                     <x-input-label for="fecha_vencimiento">
                         Fecha de vencimiento
                     </x-input-label>

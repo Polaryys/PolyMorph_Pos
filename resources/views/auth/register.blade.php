@@ -110,7 +110,7 @@
                             autocomplete="new-password" />
 
                         <button type="button" @click="showPassword = !showPassword"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                            class="absolute inset-y-0 right-0 flex items-center rounded-sm pr-3 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                             :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
 
                             <!-- Ojo abierto -->
@@ -146,7 +146,7 @@
                             required autocomplete="new-password" />
 
                         <button type="button" @click="showPassword = !showPassword"
-                            class="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+                            class="absolute inset-y-0 right-0 flex items-center rounded-sm pr-3 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
                             :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
 
                             <svg x-show="showPassword" class="h-5 w-5" fill="none" viewBox="0 0 24 24"

@@ -10,6 +10,7 @@
         <x-slot:headers>
             <th class="px-4 py-3 text-center whitespace-nowrap">Fecha y hora</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">No. de registro</th>
+            <th class="px-4 py-3 text-left whitespace-nowrap">Tipo de operación</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">Vendedor</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">Cliente</th>
             <th class="px-4 py-3 text-right whitespace-nowrap">Total</th>
@@ -25,6 +26,14 @@
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap font-semibold text-indigo-700">
                     {{ $venta->numero_venta }}
+                </td>
+                <td class="px-4 py-3 whitespace-nowrap text-slate-900">
+                    {{ match ($venta->tipo_operacion) {
+                        'VENTA' => 'Venta',
+                        'DEVOLUCION' => 'Devolución',
+                        'CAMBIO' => 'Cambio',
+                        default => $venta->tipo_operacion,
+                    } }}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-slate-900">
                     {{ $venta->vendedor?->username ?? '—' }}
@@ -45,14 +54,18 @@
                     </span>
                 </td>
                 <td class="px-4 py-3 text-center whitespace-nowrap">
+                    @php($estadoPago = $venta->total < 0 && $venta->estado_pago === 'PAGADO'
+                        ? 'REEMBOLSADO'
+                        : $venta->estado_pago)
                     <span @class([
                         'inline-flex rounded-full px-2.5 py-1 text-xs font-semibold',
-                        'bg-green-100 text-green-700' => $venta->estado_pago === 'PAGADO',
-                        'bg-amber-100 text-amber-700' => $venta->estado_pago === 'PARCIAL',
-                        'bg-slate-100 text-slate-700' => $venta->estado_pago === 'PENDIENTE',
-                        'bg-slate-100 text-slate-500' => $venta->estado_pago === null,
+                        'bg-green-100 text-green-700' => $estadoPago === 'PAGADO',
+                        'bg-violet-100 text-violet-700' => $estadoPago === 'REEMBOLSADO',
+                        'bg-amber-100 text-amber-700' => $estadoPago === 'PARCIAL',
+                        'bg-slate-100 text-slate-700' => $estadoPago === 'PENDIENTE',
+                        'bg-slate-100 text-slate-500' => $estadoPago === null,
                     ])>
-                        {{ $venta->estado_pago ? ucfirst(strtolower($venta->estado_pago)) : 'No aplica' }}
+                        {{ $estadoPago ? ucfirst(strtolower($estadoPago)) : 'No aplica' }}
                     </span>
                 </td>
                 <td class="px-4 py-3 text-center whitespace-nowrap">
@@ -64,7 +77,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                <td colspan="9" class="px-6 py-8 text-center text-slate-400">
                     No hay ventas registradas.
                 </td>
             </tr>

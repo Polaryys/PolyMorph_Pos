@@ -35,7 +35,7 @@
                         </span>
                         <span class="min-w-0">
                             <span class="block truncate text-sm font-semibold text-slate-800"
-                                x-text="`${producto.nombre} - ${producto.marca}`"></span>
+                                x-text="producto.marca ? `${producto.nombre} - ${producto.marca}` : producto.nombre"></span>
                             <span class="mt-1 block text-xs text-slate-500">
                                 SKU: <span x-text="producto.sku"></span>
                             </span>
@@ -62,7 +62,9 @@
             <div class="min-w-0">
                 <p class="text-xs font-semibold uppercase tracking-wide text-indigo-600">Producto seleccionado</p>
                 <h3 class="mt-1 text-base font-semibold text-slate-900"
-                    x-text="seleccionado ? `${seleccionado.nombre} - ${seleccionado.marca}` : ''"></h3>
+                    x-text="seleccionado
+                        ? (seleccionado.marca ? `${seleccionado.nombre} - ${seleccionado.marca}` : seleccionado.nombre)
+                        : ''"></h3>
                 <p class="mt-1 text-sm text-slate-600">
                     SKU: <span class="font-medium" x-text="seleccionado?.sku"></span>
                 </p>

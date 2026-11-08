@@ -100,7 +100,7 @@ class ComprasController extends Controller
                 'presentacion_id' => $presentacion->id,
                 'nombre' => $presentacion->nombre,
                 'sku' => $presentacion->codigoSKU,
-                'marca' => $presentacion->inventario?->marca?->nombre ?? 'Sin marca',
+                'marca' => $presentacion->inventario?->marca?->nombre,
                 'imagen' => $presentacion->imagen
                     ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
                     : null,
@@ -663,7 +663,7 @@ class ComprasController extends Controller
                     'presentacion_id' => $presentacion->id,
                     'nombre' => $presentacion->nombre,
                     'sku' => $presentacion->codigoSKU,
-                    'marca' => $inventario->marca?->nombre ?? 'Sin marca',
+                    'marca' => $inventario->marca?->nombre,
                     'cantidad_actual' => (int) $inventario->cantidad,
                     'costo_promedio_actual' => number_format((float) $inventario->costoPromedioUnitario, 2, '.', ''),
                     'precio_unitario_actual' => number_format((float) $presentacion->precioUnitario, 2, '.', ''),

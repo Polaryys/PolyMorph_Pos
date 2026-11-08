@@ -7,10 +7,11 @@
         @csrf
         <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
             <div>
-                <h2 id="titulo-modal-abono" class="text-lg font-semibold text-slate-900">Completar pago</h2>
+                <h2 id="titulo-modal-abono" class="text-lg font-semibold text-slate-900"
+                    x-text="saldoPendiente < 0 ? 'Registrar reembolso' : 'Completar cobro'"></h2>
                 <p class="mt-1 text-sm text-slate-500">
-                    Saldo pendiente: <strong class="text-slate-800"
-                        x-text="'Q ' + saldoPendiente.toFixed(2)"></strong>
+                    <span x-text="saldoPendiente < 0 ? 'Pendiente de reembolsar:' : 'Pendiente de cobrar:'"></span>
+                    <strong class="text-slate-800" x-text="'Q ' + Math.abs(saldoPendiente).toFixed(2)"></strong>
                 </p>
             </div>
             <button type="button" @click="modalPagoAbierto = false" aria-label="Cerrar"
@@ -25,7 +26,7 @@
                 class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"></p>
 
             <fieldset class="space-y-3" :disabled="cargandoMetodosPago">
-                <legend class="mb-2 text-sm font-semibold text-slate-800">Métodos de pago</legend>
+                <legend class="mb-2 text-sm font-semibold text-slate-800">Método para registrar el movimiento</legend>
                 <template x-for="(metodo, indice) in metodosPago" :key="metodo.id">
                     <div class="rounded-lg border border-slate-200 p-3"
                         :class="metodo.activo ? 'border-indigo-300 bg-indigo-50/40' : 'bg-white'">
@@ -44,18 +45,20 @@
                             <template x-if="!metodo.permite_montos">
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-slate-600"
-                                        :for="`abono-${indice}`">Monto a abonar</label>
+                                        :for="`abono-${indice}`"
+                                        x-text="saldoPendiente < 0 ? 'Monto a reembolsar' : 'Monto a cobrar'"></label>
                                     <input :id="`abono-${indice}`" type="text" inputmode="decimal"
                                         pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
-                                        :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                         :value="metodo.monto"
                                         @focus="activarMetodo(metodo)"
                                         @input="actualizarImporte(metodo, 'monto', $event)"
                                         class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                    <input type="hidden" :name="metodo.activo ? `pagos[${indice}][monto]` : null"
+                                        :value="montoAplicado(metodo).toFixed(2)">
                                 </div>
                             </template>
 
-                            <template x-if="metodo.permite_montos">
+                            <template x-if="metodo.permite_montos && saldoPendiente > 0">
                                 <div>
                                     <label class="mb-1 block text-xs font-medium text-slate-600"
                                         :for="`abono-efectivo-${indice}`">Monto recibido</label>
@@ -71,7 +74,22 @@
                                 </div>
                             </template>
 
-                            <template x-if="metodo.permite_montos">
+                            <template x-if="metodo.permite_montos && saldoPendiente < 0">
+                                <div>
+                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                            :for="`reembolso-efectivo-${indice}`">Monto a reembolsar</label>
+                                        <input :id="`reembolso-efectivo-${indice}`" type="text" inputmode="decimal"
+                                            pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
+                                            :value="metodo.monto"
+                                            @focus="activarMetodo(metodo)"
+                                            @input="actualizarImporte(metodo, 'monto', $event)"
+                                            class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        <input type="hidden" :name="metodo.activo ? `pagos[${indice}][monto]` : null"
+                                            :value="montoAplicado(metodo).toFixed(2)">
+                                </div>
+                            </template>
+
+                            <template x-if="metodo.permite_montos && saldoPendiente > 0">
                                 <div aria-live="polite">
                                     <span class="mb-1 block text-xs font-medium text-slate-600">Cambio</span>
                                     <div class="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm"
@@ -101,8 +119,9 @@
             </fieldset>
 
             <p class="text-sm text-slate-600" aria-live="polite">
-                Abono: Q <span x-text="metodosPago.filter(metodo => metodo.activo)
-                    .reduce((total, metodo) => total + montoAplicado(metodo), 0).toFixed(2)"></span>
+                <span x-text="saldoPendiente < 0 ? 'Reembolso:' : 'Cobro:'"></span>
+                Q <span x-text="Math.abs(metodosPago.filter(metodo => metodo.activo)
+                    .reduce((total, metodo) => total + montoAplicado(metodo), 0)).toFixed(2)"></span>
             </p>
         </div>
 
@@ -113,7 +132,7 @@
             </button>
             <button type="submit" :disabled="cargandoMetodosPago || !!errorPago || !pagosValidos()"
                 class="rounded-md bg-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50">
-                Registrar abono
+                <span x-text="saldoPendiente < 0 ? 'Registrar reembolso' : 'Registrar cobro'"></span>
             </button>
         </div>
     </form>

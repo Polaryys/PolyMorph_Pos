@@ -300,16 +300,41 @@
         },
 
         montoAplicado(metodo) {
-            if (!metodo.permite_montos) return Number(metodo.monto) || 0;
-            return Math.min(Number(metodo.monto_recibido) || 0, this.montoDisponiblePara(metodo));
+            let montoAsignado = 0;
+
+            for (const pago of this.metodosPago.filter(item => item.activo)) {
+                const montoIngresado = pago.permite_montos
+                    ? Number(pago.monto_recibido) || 0
+                    : Number(pago.monto) || 0;
+                const montoAplicado = Math.min(
+                    montoIngresado,
+                    Math.max(0, this.totalVenta() - montoAsignado)
+                );
+
+                if (pago === metodo) return montoAplicado;
+
+                montoAsignado += montoAplicado;
+            }
+
+            return 0;
         },
 
         montoDisponiblePara(metodoActual) {
+            let montoAsignado = 0;
             const otrosPagos = this.metodosPago
-                .filter(metodo => metodo !== metodoActual && metodo.activo)
-                .reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
+                .filter(metodo => metodo !== metodoActual && metodo.activo);
 
-            return Math.max(0, Math.round((this.totalVenta() - otrosPagos) * 100) / 100);
+            for (const metodo of otrosPagos) {
+                const montoIngresado = metodo.permite_montos
+                    ? Number(metodo.monto_recibido) || 0
+                    : Number(metodo.monto) || 0;
+                montoAsignado += Math.min(
+                    montoIngresado,
+                    Math.max(0, this.totalVenta() - montoAsignado)
+                );
+            }
+
+            return Math.max(0, Math.round((this.totalVenta() - montoAsignado) * 100) / 100);
         },
 
         pagosValidos() {
@@ -319,6 +344,7 @@
                 this.decimalValido(metodo.permite_montos ? metodo.monto_recibido : metodo.monto)
                 && this.montoAplicado(metodo) > 0
                 && (!metodo.permite_montos || Number(metodo.monto_recibido) >= this.montoAplicado(metodo))
+                && (metodo.permite_montos || Number(metodo.monto) === this.montoAplicado(metodo))
             );
 
             return pagosIndividualesValidos
