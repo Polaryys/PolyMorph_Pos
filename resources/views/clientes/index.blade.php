@@ -15,11 +15,11 @@
     <x-table :paginator="$clientes">
 
         <x-slot:headers>
-            <th class="px-6 py-2.5 w-24 text-center">No.</th>
-            <th class="px-6 py-2.5 w-24 text-center">NIT</th>
+            <th class="px-6 py-2.5 w-16 text-center">No.</th>
+            <th class="px-6 py-2.5 text-left">NIT</th>
             <th class="px-6 py-2.5">Nombres</th>
             <th class="px-6 py-2.5">Teléfono</th>
-            <th class="px-6 py-2.5">Clasificación</th>
+            <th class="px-6 py-2.5 w-16">Clasificación</th>
             <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
             <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Editado</th>
             <th class="px-6 py-2.5 text-center w-40">Acciones</th>
@@ -28,7 +28,7 @@
         @forelse ($clientes as $cliente)
             <tr class="hover:bg-slate-50 transition-colors">
 
-                <td class="px-6 py-3 w-24 text-center font-mono text-slate-500">
+                <td class="px-6 py-3 w-16 text-center font-mono text-slate-500">
                     {{ ($clientes->currentPage() - 1) * $clientes->perPage() + $loop->iteration }}
                 </td>
 
@@ -44,7 +44,7 @@
                     {{ $cliente->telefono }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 w-16 font-medium text-slate-900">
                     {{ $cliente->clasificacion }}
                 </td>
 

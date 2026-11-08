@@ -18,19 +18,19 @@
     <x-table :paginator="$proveedores">
 
         <x-slot:headers>
-            <th class="px-6 py-2.5 w-24 text-center">No.</th>
-            <th class="px-6 py-2.5 w-24 text-center">NIT</th>
+            <th class="px-6 py-2.5 w-16 text-center">No.</th>
+            <th class="px-6 py-2.5 w-40 text-center">NIT</th>
             <th class="px-6 py-2.5">Nombre</th>
             <th class="px-6 py-2.5">Teléfono</th>
             <th class="px-6 py-2.5">Correo</th>
-            <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
-            <th class="px-6 py-2.5 text-center w-64">Acciones</th>
+            <th class="px-6 py-2.5 text-center whitespace-nowrap w-32">Creado</th>
+            <th class="px-6 py-2.5 text-center w-24">Acciones</th>
         </x-slot:headers>
 
         @forelse ($proveedores as $proveedor)
             <tr class="hover:bg-slate-50 transition-colors">
 
-                <td class="px-6 py-3 w-24 text-center font-mono text-slate-500">
+                <td class="px-6 py-3 text-center font-mono text-slate-500">
                     {{ ($proveedores->currentPage() - 1) * $proveedores->perPage() + $loop->iteration }}
                 </td>
 
@@ -38,15 +38,15 @@
                     {{ $proveedor->nit }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-normal text-slate-900">
                     {{ $proveedor->nombre }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-normal text-slate-900">
                     {{ $proveedor->telefono }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-normal text-slate-900">
                     {{ $proveedor->correo ?: '—' }}
                 </td>
 
@@ -54,7 +54,7 @@
                     {{ $proveedor->created_at->format('d/m/Y H:i') }}
                 </td>
 
-                <td class="w-64 whitespace-nowrap px-6 py-3">
+                <td class="w-32 whitespace-nowrap px-6 py-3">
                     <div class="flex items-center justify-center gap-3">
                         <x-action-icon element="a" href="{{ route('proveedores.show', $proveedor) }}" wire:navigate
                             title="Ver proveedor">
