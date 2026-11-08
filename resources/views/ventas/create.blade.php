@@ -20,14 +20,13 @@
         errorPago: '',
         omitirActivacionEnfoqueInicial: false,
 
-        async buscarProductos() {
+        async buscarProductos(termino = this.buscar.trim()) {
             const version = ++this.versionBusqueda;
-            const termino = this.buscar.trim();
 
             if (!termino) {
                 this.resultados = [];
                 this.cargando = false;
-                return;
+                return [];
             }
 
             this.cargando = true;
@@ -41,15 +40,48 @@
                 if (!respuesta.ok) throw new Error('No se pudo realizar la búsqueda.');
 
                 const resultados = await respuesta.json();
-                if (version === this.versionBusqueda) this.resultados = resultados;
+                if (version === this.versionBusqueda) {
+                    this.resultados = resultados;
+                    return resultados;
+                }
+
+                return [];
             } catch (error) {
                 if (version === this.versionBusqueda) {
                     this.resultados = [];
                     this.errorBusqueda = true;
                 }
+
+                return [];
             } finally {
                 if (version === this.versionBusqueda) this.cargando = false;
             }
+        },
+
+        async agregarProductoConEnter() {
+            const termino = this.buscar.trim();
+            if (!termino) return;
+
+            const resultados = await this.buscarProductos(termino);
+            if (this.buscar.trim() !== termino) return;
+
+            const skuBuscado = termino.toLowerCase();
+            const coincidenciaExacta = resultados.find(
+                producto => String(producto.sku ?? '').trim().toLowerCase() === skuBuscado
+            );
+            const producto = coincidenciaExacta
+                ?? (resultados.length === 1 ? resultados[0] : null);
+
+            if (producto) this.seleccionar(producto, true);
+        },
+
+        enfocarBuscadorProductos() {
+            this.$nextTick(() => this.$refs.buscadorProductos?.focus({ preventScroll: true }));
+        },
+
+        cerrarModalPago() {
+            this.modalPagoAbierto = false;
+            this.enfocarBuscadorProductos();
         },
 
         async buscarClientes() {
@@ -96,13 +128,32 @@
             this.clienteSeleccionado = null;
         },
 
-        seleccionar(producto) {
+        seleccionar(producto, incrementarExistente = false) {
             this.versionBusqueda++;
             this.buscar = '';
             this.resultados = [];
             this.cargando = false;
-            if (this.detalles.some(detalle => detalle.presentacion_id === producto.presentacion_id)) {
-                this.errorFormulario = 'Este producto ya está agregado. Puedes cambiar su cantidad en la tabla.';
+
+            const detalleExistente = this.detalles.find(
+                detalle => detalle.presentacion_id === producto.presentacion_id
+            );
+
+            if (detalleExistente) {
+                if (!incrementarExistente) {
+                    this.errorFormulario = 'Este producto ya está agregado. Puedes cambiar su cantidad en la tabla.';
+                    this.enfocarBuscadorProductos();
+                    return;
+                }
+
+                if (Number(detalleExistente.cantidad) >= this.cantidadDisponible(detalleExistente)) {
+                    this.errorFormulario = 'No hay existencias suficientes para agregar otra unidad.';
+                    this.enfocarBuscadorProductos();
+                    return;
+                }
+
+                this.ajustarCantidad(detalleExistente, 1);
+                this.errorFormulario = '';
+                this.enfocarBuscadorProductos();
                 return;
             }
 
@@ -115,11 +166,13 @@
 
             if (!this.detalleValido(detalle)) {
                 this.errorFormulario = 'Este producto no tiene existencias suficientes para agregarlo.';
+                this.enfocarBuscadorProductos();
                 return;
             }
 
             this.detalles.push(detalle);
             this.errorFormulario = '';
+            this.enfocarBuscadorProductos();
         },
 
         decimalValido(valor, requerido = true) {
@@ -254,6 +307,7 @@
                     ...metodo,
                     permite_montos: metodo.tipo_captura === 'PERMITIR MONTOS',
                     activo: false,
+                    montoInicializado: false,
                     monto: '',
                     monto_recibido: '',
                     referencia: '',
@@ -274,8 +328,19 @@
 
         activarMetodo(metodo) {
             if (this.omitirActivacionEnfoqueInicial) return;
+
+            if (metodo.montoInicializado) {
+                const montoIngresado = metodo.permite_montos
+                    ? metodo.monto_recibido
+                    : metodo.monto;
+                metodo.activo = Number(montoIngresado) > 0;
+                return;
+            }
+
             metodo.activo = true;
-            if (!metodo.permite_montos && !Number(metodo.monto)) {
+            metodo.montoInicializado = true;
+
+            if (!metodo.permite_montos) {
                 const montoDisponible = this.montoDisponiblePara(metodo);
                 metodo.monto = montoDisponible > 0 ? montoDisponible.toFixed(2) : '';
             }
@@ -296,7 +361,8 @@
 
             metodo[campo] = valorValidado;
             event.target.value = valorValidado;
-            this.activarMetodo(metodo);
+            metodo.montoInicializado = true;
+            metodo.activo = Number(valorValidado) > 0;
         },
 
         montoAplicado(metodo) {
@@ -380,7 +446,7 @@
             return this.detalles.length > 0
                 && this.detalles.every(detalle => this.detalleValido(detalle));
         },
-    }" class="space-y-3">
+    }" x-init="enfocarBuscadorProductos()" class="space-y-3">
         <x-section-title>
             Registrar venta
         </x-section-title>
@@ -388,6 +454,8 @@
         <form action="{{ route('ventas.store') }}" method="POST" class="space-y-5"
             x-ref="formularioVenta" @submit.prevent="confirmarVenta($event)">
             @csrf
+            <input type="hidden" name="idempotency_key"
+                value="{{ old('idempotency_key', (string) \Illuminate\Support\Str::uuid()) }}">
 
             <input type="hidden" name="cliente_id" :value="clienteSeleccionado?.id ?? ''">
 

@@ -1,5 +1,5 @@
 <div x-cloak x-show="modalPagoAbierto" x-transition.opacity
-    @click.self="modalPagoAbierto = false" @keydown.escape.window="modalPagoAbierto = false"
+    @click.self="cerrarModalPago()" @keydown.escape.window="if (modalPagoAbierto) cerrarModalPago()"
     @keydown.enter.prevent="enviarConEnter()"
     class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4"
     role="dialog" aria-modal="true" aria-labelledby="titulo-modal-pago">
@@ -12,7 +12,7 @@
                     Total: <strong class="text-slate-800" x-text="'Q ' + totalVenta().toFixed(2)"></strong>
                 </p>
             </div>
-            <button type="button" @click="modalPagoAbierto = false" aria-label="Cerrar"
+            <button type="button" @click="cerrarModalPago()" aria-label="Cerrar"
                 class="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800">
                 <x-lucide-x class="h-5 w-5" />
             </button>
@@ -124,7 +124,7 @@
         </div>
 
         <div class="flex flex-col-reverse gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
-            <button type="button" @click="modalPagoAbierto = false"
+            <button type="button" @click="cerrarModalPago()"
                 class="rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
                 Cancelar
             </button>

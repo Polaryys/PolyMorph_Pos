@@ -5,6 +5,8 @@
     <form action="{{ route('ventas.pagos.store', $venta) }}" method="POST"
         class="my-auto w-full max-w-3xl overflow-hidden rounded-xl bg-white shadow-2xl">
         @csrf
+        <input type="hidden" name="idempotency_key"
+            value="{{ old('idempotency_key', (string) \Illuminate\Support\Str::uuid()) }}">
         <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
             <div>
                 <h2 id="titulo-modal-abono" class="text-lg font-semibold text-slate-900"

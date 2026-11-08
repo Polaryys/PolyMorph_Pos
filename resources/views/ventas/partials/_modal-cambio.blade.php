@@ -364,17 +364,18 @@
                 <h2 class="font-semibold text-slate-900">Cambios y devoluciones</h2>
                 <p class="mt-1 text-sm text-slate-500">Registra una operación relacionada con esta venta.</p>
             </div>
-            @if ($puedeCambiarOAnular)
+            @if ($puedeCambiar)
                 <button type="button" @click="abrirSelectorCambio()"
                     class="rounded-md bg-amber-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-amber-700">
                     Cambiar
                 </button>
             @else
-                <button type="button" disabled
-                    class="cursor-not-allowed rounded-md bg-slate-400 px-4 py-2.5 text-sm font-semibold text-white"
-                    title="El plazo de 5 días hábiles, excluyendo domingos, venció.">
-                    Cambiar
-                </button>
+                <span title="{{ $razonBloqueoCambio }}" class="inline-flex cursor-not-allowed">
+                    <button type="button" disabled
+                        class="pointer-events-none rounded-md bg-slate-400 px-4 py-2.5 text-sm font-semibold text-white">
+                        Cambiar
+                    </button>
+                </span>
             @endif
         </div>
 
