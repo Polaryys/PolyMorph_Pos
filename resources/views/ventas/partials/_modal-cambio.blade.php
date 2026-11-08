@@ -392,6 +392,8 @@
                 @submit="confirmarEnvioCambio($event)"
                 class="space-y-4">
                 @csrf
+                <input type="hidden" name="idempotency_key"
+                    value="{{ old('idempotency_key', (string) \Illuminate\Support\Str::uuid()) }}">
                 <input type="hidden" name="tipo_operacion"
                     :value="productosCambio.length ? 'CAMBIO' : 'DEVOLUCION'">
                 <input type="hidden" name="venta_referencia_id" value="{{ $venta->id }}">

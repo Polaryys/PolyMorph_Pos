@@ -69,8 +69,4 @@ class Venta extends Model
         return $this->hasMany(VentaDetallePago::class, 'venta_id');
     }
 
-    public function reembolsos(): HasMany
-    {
-        return $this->hasMany(VentaReembolso::class, 'venta_id');
-    }
 }

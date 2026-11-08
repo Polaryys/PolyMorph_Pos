@@ -187,30 +187,12 @@
                         </td>
                     </tr>
                 @empty
-                    @if ($venta->reembolsos->where('estado', 'PROCESADO')->isEmpty())
-                        <tr>
-                            <td colspan="6" class="px-6 py-8 text-center text-slate-400">
-                                Esta operación aún no tiene movimientos de pago registrados.
-                            </td>
-                        </tr>
-                    @endif
-                @endforelse
-                @foreach ($venta->reembolsos->where('estado', 'PROCESADO') as $reembolso)
-                    <tr class="transition-colors hover:bg-indigo-50/50">
-                        <td class="px-4 py-3 font-medium text-slate-900">
-                            {{ $reembolso->metodoPago?->nombre ?? 'Método no disponible' }}
+                    <tr>
+                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">
+                            Esta operación aún no tiene movimientos de pago registrados.
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3">
-                            {{ $reembolso->fecha_reembolso?->format('d/m/Y H:i') ?? '—' }}
-                        </td>
-                        <td class="px-4 py-3">{{ $reembolso->referencia ?: '—' }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right text-rose-700">
-                            Q -{{ number_format((float) $reembolso->monto, 2) }}
-                        </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">—</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">—</td>
                     </tr>
-                @endforeach
+                @endforelse
             </x-table>
         </section>
 

@@ -113,7 +113,7 @@ class MetodoPagoController extends Controller
      */
     public function destroy(MetodoPago $metodoPago)
     {
-        if ($metodoPago->pagosVenta()->exists() || $metodoPago->reembolsos()->exists()) {
+        if ($metodoPago->pagosVenta()->exists()) {
             return redirect()
                 ->route('metodos-pago.index')
                 ->with('error', 'Este método ya tiene movimientos asociados. Desactívalo en lugar de eliminarlo.');

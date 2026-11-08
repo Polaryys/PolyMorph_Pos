@@ -32,8 +32,4 @@ class MetodoPago extends Model
         return $this->hasMany(VentaDetallePago::class, 'metodo_pago_id');
     }
 
-    public function reembolsos(): HasMany
-    {
-        return $this->hasMany(VentaReembolso::class, 'metodo_pago_id');
-    }
 }
