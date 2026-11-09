@@ -1,14 +1,36 @@
 <x-app-layout>
+    <div x-data="{
+        modalCargaAbierto: {{ old('modal_carga_imagenes') ? 'true' : 'false' }},
+        cargandoImagenes: false,
+        archivosSeleccionados: 0,
+
+        iniciarCarga(event) {
+            if (this.cargandoImagenes) {
+                event.preventDefault();
+                return;
+            }
+
+            this.cargandoImagenes = true;
+        },
+
+        cerrarModalCarga() {
+            if (this.cargandoImagenes) return;
+
+            this.modalCargaAbierto = false;
+            this.$refs.archivosCarga.value = '';
+            this.archivosSeleccionados = 0;
+        },
+    }" @keydown.escape.window="if (modalCargaAbierto) cerrarModalCarga()">
     <div class="flex flex-wrap items-center justify-between gap-3 mb-4">
 
         {{-- search imagen --}}
         <x-search-bar :action="route('imagenes.index')" :buscar="request('buscar')" placeholder="Buscar imagen por nombre..." class="flex-1" />
 
         {{-- subir imagenes --}}
-        <a href="{{ route('imagenes.create') }}" wire:navigate
+        <button type="button" @click="modalCargaAbierto = true"
             class="shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
             + Cargar imágenes
-        </a>
+        </button>
 
     </div>
 
@@ -166,4 +188,8 @@
 
     {{-- Modal de edición --}}
     @include('imagenes.partials.edit')
+
+    {{-- Modal de carga --}}
+    @include('imagenes.partials.upload')
+    </div>
 </x-app-layout>

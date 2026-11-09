@@ -138,6 +138,7 @@
             this.buscarArticulo = '';
             this.resultadosCambio = [];
             this.errorCambio = '';
+            this.carritoCambioAbierto = true;
         },
 
         subtotalDevolucion(detalle) {
@@ -358,10 +359,13 @@
 
             this.enviandoCambio = true;
         },
-    }" class="rounded border border-slate-200 bg-white p-5 shadow-sm">
+    }" class="rounded border bg-white p-5 shadow-sm transition-colors"
+        :class="devolucionesCambio.length || productosCambio.length || detallesDisponibles.some(detalle => detalle.seleccionada)
+            ? 'border-amber-400'
+            : 'border-slate-200'">
         <div class="flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
             <div>
-                <h2 class="font-semibold text-slate-900">Cambios y devoluciones</h2>
+                <h2 class="font-semibold text-slate-900">Cambios y Devoluciones</h2>
                 <p class="mt-1 text-sm text-slate-500">Registra una operación relacionada con esta venta.</p>
             </div>
             @if ($puedeCambiar)
@@ -379,6 +383,31 @@
             @endif
         </div>
 
+        <div class="mt-4 max-w-xl">
+            <label for="buscar-articulo-cambio" class="mb-1 block text-sm font-medium text-slate-700">
+                Agregar productos para efectuar el cambio (Opcional)
+            </label>
+            <input id="buscar-articulo-cambio" type="search" x-model="buscarArticulo"
+                @input.debounce.300ms="buscarArticulosCambio()"
+                placeholder="Buscar por nombre o SKU"
+                class="w-full rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+            <div x-show="cargandoBusquedaCambio" class="mt-2 text-xs text-slate-500">Buscando...</div>
+            <div x-show="resultadosCambio.length"
+                class="mt-2 max-h-48 overflow-y-auto rounded-md border border-slate-200">
+                <template x-for="producto in resultadosCambio" :key="producto.presentacion_id">
+                    <button type="button" @click="agregarProductoCambio(producto)"
+                        class="flex w-full items-center justify-between gap-3 border-b border-slate-100 px-3 py-2 text-left text-sm last:border-0 hover:bg-indigo-50">
+                        <span>
+                            <span class="block font-medium text-slate-900" x-text="producto.nombre"></span>
+                            <span class="text-xs text-slate-500" x-text="producto.sku || producto.tipo_item"></span>
+                        </span>
+                        <span class="whitespace-nowrap text-slate-700"
+                            x-text="'Q ' + Number(producto.precio_unitario_actual).toFixed(2)"></span>
+                    </button>
+                </template>
+            </div>
+        </div>
+
         <div x-cloak x-show="carritoCambioAbierto" x-transition class="mt-5 space-y-4 border-t border-slate-200 pt-5">
             <div class="flex flex-wrap items-center justify-between gap-3">
                 <h3 class="font-semibold text-slate-900">Artículos de la operación</h3>
@@ -388,7 +417,7 @@
                 </button>
             </div>
 
-            <form x-ref="formularioCambio" action="{{ route('ventas.store') }}" method="POST"
+            <form id="formulario-cambio" x-ref="formularioCambio" action="{{ route('ventas.store') }}" method="POST"
                 @submit="confirmarEnvioCambio($event)"
                 class="space-y-4">
                 @csrf
@@ -501,76 +530,54 @@
                     </table>
                 </div>
 
-                <div class="grid gap-3 sm:grid-cols-2 sm:items-end">
-                    <div>
-                        <label for="buscar-articulo-cambio" class="mb-1 block text-sm font-medium text-slate-700">
-                            Agregar artículos
-                        </label>
-                        <input id="buscar-articulo-cambio" type="search" x-model="buscarArticulo"
-                            @input.debounce.300ms="buscarArticulosCambio()"
-                            placeholder="Buscar por nombre o SKU"
-                            class="w-full rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                        <div x-show="cargandoBusquedaCambio" class="mt-2 text-xs text-slate-500">Buscando...</div>
-                        <div x-show="resultadosCambio.length" class="mt-2 max-h-48 overflow-y-auto rounded-md border border-slate-200">
-                            <template x-for="producto in resultadosCambio" :key="producto.presentacion_id">
-                                <button type="button" @click="agregarProductoCambio(producto)"
-                                    class="flex w-full items-center justify-between gap-3 border-b border-slate-100 px-3 py-2 text-left text-sm last:border-0 hover:bg-indigo-50">
-                                    <span>
-                                        <span class="block font-medium text-slate-900" x-text="producto.nombre"></span>
-                                        <span class="text-xs text-slate-500" x-text="producto.sku || producto.tipo_item"></span>
-                                    </span>
-                                    <span class="whitespace-nowrap text-slate-700"
-                                        x-text="'Q ' + Number(producto.precio_unitario_actual).toFixed(2)"></span>
-                                </button>
-                            </template>
-                        </div>
-                    </div>
-                    <div>
-                        <label for="motivo-cambio" class="mb-1 block text-sm font-medium text-slate-700">
-                            Motivo <span class="text-red-600">*</span>
-                        </label>
-                        <textarea id="motivo-cambio" name="motivo_operacion" x-model="motivoCambio"
-                            maxlength="1000" required rows="2"
-                            class="w-full rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
-                    </div>
-                </div>
-
                 <p x-show="errorCambio" x-text="errorCambio" role="alert"
                     class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"></p>
 
-                <div class="flex flex-col gap-3 border-t border-slate-200 pt-4 sm:flex-row sm:items-center sm:justify-between">
+                <div class="grid gap-3 border-t border-slate-200 pt-4 lg:grid-cols-[auto_minmax(0,1fr)] lg:items-end">
                     <p class="text-sm font-semibold text-slate-700">
                         Diferencia:
                         <span :class="totalCambio() < 0 ? 'text-rose-700' : 'text-slate-900'"
                             x-text="'Q ' + totalCambio().toFixed(2)"></span>
                     </p>
-                    <button type="button" @click="abrirModalPagoCambio()" :disabled="!formularioCambioValido()"
-                        class="rounded-md bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-50">
-                        Continuar al pago o reembolso
-                    </button>
+                    <div class="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-end">
+                        <div class="flex min-w-0 items-center gap-3">
+                            <label for="motivo-cambio" class="shrink-0 text-sm font-medium text-slate-700">
+                                Motivo <span class="text-red-600">*</span>
+                            </label>
+                            <textarea id="motivo-cambio" name="motivo_operacion" x-model="motivoCambio"
+                                maxlength="1000" required rows="1"
+                                class="min-w-0 flex-1 rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500"></textarea>
+                        </div>
+                        <button type="button" @click="abrirModalPagoCambio()" :disabled="!formularioCambioValido()"
+                            class="rounded-md bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-50">
+                            Continuar al pago o reembolso
+                        </button>
+                    </div>
                 </div>
 
+                <template x-teleport="body">
                 <div x-cloak x-show="modalPagoCambioAbierto" x-transition.opacity
                     @click.self="modalPagoCambioAbierto = false" @keydown.escape.window="modalPagoCambioAbierto = false"
-                    class="fixed inset-0 z-[60] flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4"
+                    class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/40 p-4"
                     role="dialog" aria-modal="true" aria-labelledby="titulo-modal-pago-cambio">
-                    <div class="my-auto w-full max-w-3xl overflow-hidden rounded-xl bg-white shadow-2xl">
-                        <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+                    <div class="my-auto w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-xl"
+                        @click.stop>
+                        <div class="mb-5 flex items-start justify-between border-b border-gray-200 pb-3">
                             <div>
-                                <h2 id="titulo-modal-pago-cambio" class="text-lg font-semibold text-slate-900"
+                                <h2 id="titulo-modal-pago-cambio" class="text-lg font-semibold text-indigo-600"
                                     x-text="totalCambio() < 0 ? 'Registrar reembolso' : (totalCambio() > 0 ? 'Registrar cobro' : 'Confirmar operación')"></h2>
-                                <p class="mt-1 text-sm text-slate-500">
+                                <p class="mt-1 text-sm text-gray-500">
                                     <span x-text="totalCambio() < 0 ? 'Monto a reembolsar:' : (totalCambio() > 0 ? 'Monto a cobrar:' : 'Diferencia:')"></span>
-                                    <strong class="text-slate-800" x-text="'Q ' + Math.abs(totalCambio()).toFixed(2)"></strong>
+                                    <strong class="text-gray-800" x-text="'Q ' + Math.abs(totalCambio()).toFixed(2)"></strong>
                                 </p>
                             </div>
                             <button type="button" @click="modalPagoCambioAbierto = false" aria-label="Volver al carrito"
-                                class="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+                                class="rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800">
                                 <x-lucide-x class="h-5 w-5" />
                             </button>
                         </div>
 
-                        <div class="max-h-[70vh] space-y-4 overflow-y-auto px-5 py-5 sm:px-6">
+                        <div class="max-h-[70vh] space-y-4 overflow-y-auto">
                             <p x-show="cargandoMetodosPagoCambio" class="text-sm text-slate-500">
                                 Cargando métodos de pago...
                             </p>
@@ -587,22 +594,23 @@
                                     Método para liquidar la diferencia
                                 </legend>
                                 <template x-for="(metodo, indice) in metodosPagoCambio" :key="metodo.id">
-                                    <div class="rounded-lg border border-slate-200 p-3"
-                                        :class="metodo.activo ? 'border-indigo-300 bg-indigo-50/40' : 'bg-white'">
+                                    <div class="grid grid-cols-1 gap-3 rounded-md border p-3 sm:grid-cols-4"
+                                        :class="metodo.activo ? 'border-indigo-300 bg-indigo-50/40' : 'border-gray-200 bg-white'">
                                         <button type="button"
                                             @click="metodo.activo ? metodo.activo = false : activarMetodoPagoCambio(metodo)"
                                             :aria-pressed="metodo.activo"
-                                            class="flex items-center gap-2 rounded font-medium text-slate-800 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                            class="flex items-center gap-2 rounded text-left text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:col-span-1">
                                             <span x-text="metodo.nombre"></span>
                                             <span x-show="metodo.activo"
                                                 class="text-xs font-normal text-indigo-700">Seleccionado</span>
                                         </button>
 
-                                        <div x-show="metodo.activo" class="mt-3 grid grid-cols-1 gap-3 sm:grid-cols-2">
-                                            <input type="hidden"
+                                        <input type="hidden" form="formulario-cambio"
                                                 :name="metodo.activo ? `pagos[${indice}][metodo_pago_id]` : null"
                                                 :value="metodo.id">
 
+                                        <div x-show="metodo.activo"
+                                            class="grid grid-cols-1 gap-3 sm:col-span-3 sm:grid-cols-2">
                                             <template x-if="!metodo.permite_montos">
                                                 <div>
                                                     <label class="mb-1 block text-xs font-medium text-slate-600"
@@ -614,7 +622,7 @@
                                                         @focus="activarMetodoPagoCambio(metodo)"
                                                         @input="actualizarImportePagoCambio(metodo, 'monto', $event)"
                                                         class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                                    <input type="hidden"
+                                                    <input type="hidden" form="formulario-cambio"
                                                         :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                                         :value="montoAplicadoPagoCambio(metodo).toFixed(2)">
                                                 </div>
@@ -627,12 +635,13 @@
                                                     <input :id="`monto-recibido-cambio-${indice}`" type="text"
                                                         inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                                         maxlength="15"
+                                                        form="formulario-cambio"
                                                         :name="metodo.activo ? `pagos[${indice}][monto_recibido]` : null"
                                                         :value="metodo.monto_recibido"
                                                         @focus="activarMetodoPagoCambio(metodo)"
                                                         @input="actualizarImportePagoCambio(metodo, 'monto_recibido', $event)"
                                                         class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                                    <input type="hidden"
+                                                    <input type="hidden" form="formulario-cambio"
                                                         :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                                         :value="montoAplicadoPagoCambio(metodo).toFixed(2)">
                                                 </div>
@@ -648,7 +657,7 @@
                                                         @focus="activarMetodoPagoCambio(metodo)"
                                                         @input="actualizarImportePagoCambio(metodo, 'monto', $event)"
                                                         class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
-                                                    <input type="hidden"
+                                                    <input type="hidden" form="formulario-cambio"
                                                         :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                                         :value="montoAplicadoPagoCambio(metodo).toFixed(2)">
                                                 </div>
@@ -668,6 +677,7 @@
                                                     <label class="mb-1 block text-xs font-medium text-slate-600"
                                                         :for="`referencia-cambio-${indice}`">Referencia (opcional)</label>
                                                     <input :id="`referencia-cambio-${indice}`" type="text" maxlength="100"
+                                                        form="formulario-cambio"
                                                         :name="metodo.activo ? `pagos[${indice}][referencia]` : null"
                                                         x-model="metodo.referencia"
                                                         class="w-full rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
@@ -689,14 +699,14 @@
                             </p>
                         </div>
 
-                        <div class="flex flex-col-reverse gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                        <div class="mt-4 flex flex-col-reverse gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
                             <button type="button" @click="modalPagoCambioAbierto = false"
-                                class="rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
                                 Volver al carrito
                             </button>
-                            <button type="submit"
+                            <button type="submit" form="formulario-cambio"
                                 :disabled="enviandoCambio || cargandoMetodosPagoCambio || !!errorPagoCambio || !pagosCambioValidos()"
-                                class="rounded-md bg-green-700 px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-green-800 disabled:cursor-not-allowed disabled:opacity-50">
+                                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">
                                 <span x-text="enviandoCambio
                                     ? 'Registrando...'
                                     : (totalCambio() < 0
@@ -706,6 +716,7 @@
                         </div>
                     </div>
                 </div>
+                </template>
             </form>
         </div>
 

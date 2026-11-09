@@ -58,9 +58,9 @@ class ImagenController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(): RedirectResponse
     {
-        return view('imagenes.create');
+        return redirect()->route('imagenes.index');
     }
 
     /**

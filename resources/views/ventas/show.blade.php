@@ -149,6 +149,18 @@
                     </tr>
                 @endforelse
             </x-table>
+            @if (
+                $venta->estado_venta === 'REGISTRADA'
+                && in_array($venta->tipo_operacion, ['CAMBIO', 'DEVOLUCION'], true)
+                && filled($venta->motivo_operacion)
+            )
+                <div class="rounded border border-amber-200 bg-amber-50 p-4">
+                    <p class="text-sm font-semibold text-amber-900">
+                        {{ $venta->tipo_operacion === 'DEVOLUCION' ? 'Motivo de la devolución' : 'Motivo del cambio' }}
+                    </p>
+                    <p class="mt-1 whitespace-pre-line text-sm text-slate-700">{{ $venta->motivo_operacion }}</p>
+                </div>
+            @endif
         </section>
 
         @include('ventas.partials._modal-cambio')
@@ -362,7 +374,13 @@
                 <span>Q {{ number_format((float) $venta->total, 2) }}</span>
             </div>
             <div class="flex justify-between gap-4 text-sm font-semibold text-slate-700">
-                <span>Cobrado / reembolsado</span>
+                <span>{{ match ($venta->tipo_operacion) {
+                    'DEVOLUCION' => 'Reembolsado',
+                    'CAMBIO' => $venta->total < 0
+                        ? 'Reembolsado'
+                        : ($venta->total > 0 ? 'Cobrado' : 'Diferencia liquidada'),
+                    default => 'Cobrado',
+                } }}</span>
                 <span>Q {{ number_format($montoPagado, 2) }}</span>
             </div>
 

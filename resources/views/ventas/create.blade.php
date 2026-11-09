@@ -319,7 +319,7 @@
                 this.$nextTick(() => {
                     this.omitirActivacionEnfoqueInicial = true;
                     requestAnimationFrame(() => {
-                        this.$el.querySelector('[data-cash-received]')?.focus({ preventScroll: true });
+                        document.querySelector('[data-cash-received]')?.focus({ preventScroll: true });
                         this.omitirActivacionEnfoqueInicial = false;
                     });
                 });
@@ -451,7 +451,7 @@
             Registrar venta
         </x-section-title>
 
-        <form action="{{ route('ventas.store') }}" method="POST" class="space-y-5"
+        <form id="formulario-venta" action="{{ route('ventas.store') }}" method="POST" class="space-y-5"
             x-ref="formularioVenta" @submit.prevent="confirmarVenta($event)">
             @csrf
             <input type="hidden" name="idempotency_key"
