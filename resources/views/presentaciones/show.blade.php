@@ -159,6 +159,8 @@
             </x-table>
         </section>
 
+        @include('partials._historial-precios', ['historialPrecios' => $historialPrecios])
+
         <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 pt-5 sm:flex-row">
             <x-secondary-link href="{{ route('presentaciones.index') }}">
                 Volver

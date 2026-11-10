@@ -63,7 +63,8 @@
 
                 <option value="">Selecciona un rol</option>
 
-                <option value="Vendedor" {{ old('rol', $usuario->rol) === 'Vendedor' ? 'selected' : '' }}>
+                <option value="Vendedor" {{ old('rol', $usuario->rol) === 'Vendedor' ? 'selected' : '' }}
+                    @disabled($esUltimoAdministradorActivo)>
                     Vendedor
                 </option>
 
@@ -75,6 +76,11 @@
             </select>
 
             <x-input-error :messages="$errors->get('rol')" />
+            @if ($esUltimoAdministradorActivo)
+                <p class="mt-1 text-xs text-amber-700">
+                    No puedes cambiar el rol porque este es el único administrador activo.
+                </p>
+            @endif
         </div>
 
         <!-- TELÉFONO -->

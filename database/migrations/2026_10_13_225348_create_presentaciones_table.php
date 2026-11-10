@@ -28,7 +28,7 @@ return new class extends Migration
             $table->foreignId('imagen_id')
                 ->nullable()
                 ->constrained('imagenes')
-                ->onDelete('set null');
+                ->nullOnnDelete();
             $table->date('fecha_vencimiento')->nullable();
             $table->boolean('estado')->default(true);
             $table->timestamps();

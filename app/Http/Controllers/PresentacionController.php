@@ -270,10 +270,15 @@ class PresentacionController extends Controller
         $costoPromedioPresentacion =
             (float) ($presentacion->inventario?->costoPromedioUnitario ?? 0)
             * (int) ($presentacion->factor ?? 0);
+        $historialPrecios = $presentacion->historialPrecios()
+            ->orderByDesc('created_at')
+            ->orderByDesc('id')
+            ->paginate(10);
 
         return view('presentaciones.show', compact(
             'presentacion',
-            'costoPromedioPresentacion'
+            'costoPromedioPresentacion',
+            'historialPrecios'
         ));
     }
 

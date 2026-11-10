@@ -8,6 +8,7 @@
         buscarArticulo: '',
         resultadosCambio: [],
         cargandoBusquedaCambio: false,
+        errorBusquedaCambio: false,
         errorCambio: '',
         motivoCambio: '',
         versionBusquedaCambio: 0,
@@ -91,6 +92,11 @@
             this.errorCambio = '';
         },
 
+        cantidadDisponible(producto) {
+            if (producto.tipo_item !== 'PRODUCTO') return Infinity;
+            return Math.floor(Number(producto.cantidad_actual || 0) / Number(producto.factor || 1));
+        },
+
         async buscarArticulosCambio() {
             const version = ++this.versionBusquedaCambio;
             const termino = this.buscarArticulo.trim();
@@ -98,10 +104,12 @@
             if (!termino) {
                 this.resultadosCambio = [];
                 this.cargandoBusquedaCambio = false;
+                this.errorBusquedaCambio = false;
                 return;
             }
 
             this.cargandoBusquedaCambio = true;
+            this.errorBusquedaCambio = false;
             this.errorCambio = '';
 
             try {
@@ -116,6 +124,7 @@
             } catch (error) {
                 if (version === this.versionBusquedaCambio) {
                     this.resultadosCambio = [];
+                    this.errorBusquedaCambio = true;
                     this.errorCambio = error.message;
                 }
             } finally {
@@ -137,6 +146,7 @@
             this.versionBusquedaCambio++;
             this.buscarArticulo = '';
             this.resultadosCambio = [];
+            this.errorBusquedaCambio = false;
             this.errorCambio = '';
             this.carritoCambioAbierto = true;
         },
@@ -383,28 +393,62 @@
             @endif
         </div>
 
-        <div class="mt-4 max-w-xl">
+        <div x-cloak x-show="devolucionesCambio.length > 0" class="relative mt-4 max-w-xl">
             <label for="buscar-articulo-cambio" class="mb-1 block text-sm font-medium text-slate-700">
                 Agregar productos para efectuar el cambio (Opcional)
             </label>
             <input id="buscar-articulo-cambio" type="search" x-model="buscarArticulo"
                 @input.debounce.300ms="buscarArticulosCambio()"
-                placeholder="Buscar por nombre o SKU"
+                placeholder="Buscar por nombre, marca o SKU..."
+                autocomplete="off"
                 class="w-full rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
-            <div x-show="cargandoBusquedaCambio" class="mt-2 text-xs text-slate-500">Buscando...</div>
-            <div x-show="resultadosCambio.length"
-                class="mt-2 max-h-48 overflow-y-auto rounded-md border border-slate-200">
+            <div x-cloak x-show="buscarArticulo.trim().length > 0"
+                class="absolute z-30 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg">
+                <p x-show="cargandoBusquedaCambio" class="px-4 py-3 text-sm text-slate-500">Buscando...</p>
                 <template x-for="producto in resultadosCambio" :key="producto.presentacion_id">
                     <button type="button" @click="agregarProductoCambio(producto)"
-                        class="flex w-full items-center justify-between gap-3 border-b border-slate-100 px-3 py-2 text-left text-sm last:border-0 hover:bg-indigo-50">
-                        <span>
-                            <span class="block font-medium text-slate-900" x-text="producto.nombre"></span>
-                            <span class="text-xs text-slate-500" x-text="producto.sku || producto.tipo_item"></span>
+                        class="flex w-full items-center justify-between gap-4 border-b border-slate-100 px-4 py-3 text-left transition hover:bg-indigo-50">
+                        <span class="flex min-w-0 items-center gap-3">
+                            <span class="h-12 w-12 shrink-0 overflow-hidden rounded-md bg-slate-100">
+                                <template x-if="producto.imagen">
+                                    <img :src="producto.imagen" :alt="producto.nombre"
+                                        class="h-full w-full object-cover">
+                                </template>
+                                <template x-if="!producto.imagen">
+                                    <span class="flex h-full w-full items-center justify-center">
+                                        <x-lucide-image class="h-6 w-6 text-slate-400" />
+                                    </span>
+                                </template>
+                            </span>
+                            <span class="min-w-0">
+                                <span class="block truncate text-sm font-semibold text-slate-900"
+                                    x-text="producto.marca ? `${producto.nombre} - ${producto.marca}` : producto.nombre"></span>
+                                <span class="mt-1 block text-xs text-slate-500">
+                                    SKU: <span x-text="producto.sku"></span>
+                                </span>
+                            </span>
                         </span>
-                        <span class="whitespace-nowrap text-slate-700"
-                            x-text="'Q ' + Number(producto.precio_unitario_actual).toFixed(2)"></span>
+                        <span class="shrink-0 text-right">
+                            <span class="block text-lg font-bold text-indigo-700">
+                                Q <span x-text="Number(producto.precio_unitario_actual).toFixed(2)"></span>
+                            </span>
+                            <template x-if="producto.tipo_item === 'PRODUCTO'">
+                                <span class="mt-1 block text-xs text-slate-500">
+                                    <span x-text="cantidadDisponible(producto)"></span>
+                                    <span x-text="cantidadDisponible(producto) === 1 ? 'disponible' : 'disponibles'"></span>
+                                </span>
+                            </template>
+                            <template x-if="producto.tipo_item === 'SERVICIO'">
+                                <span class="font-medium text-indigo-700">Servicio</span>
+                            </template>
+                        </span>
                     </button>
                 </template>
+                <p x-show="!cargandoBusquedaCambio && !errorBusquedaCambio && resultadosCambio.length === 0"
+                    class="px-4 py-3 text-sm text-slate-500">No se encontraron productos coincidentes.</p>
+                <p x-show="errorBusquedaCambio" x-cloak class="px-4 py-3 text-sm text-red-600">
+                    No se pudo realizar la búsqueda. Inténtalo nuevamente.
+                </p>
             </div>
         </div>
 

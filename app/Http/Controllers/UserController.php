@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class UserController extends Controller
@@ -15,11 +17,20 @@ class UserController extends Controller
      */
     public function index(): View
     {
-        $usuarios = User::orderBy('nombres')
+        $usuarios = User::withCount([
+            'ventas',
+            'compras',
+            'movimientos',
+            'solicitudesIdempotencia',
+        ])->orderBy('nombres')
             ->orderBy('apellidos')
             ->paginate(10);
+        $administradoresActivos = User::query()
+            ->where('rol', 'Administrador')
+            ->where('estado', true)
+            ->count();
 
-        return view('usuarios.index', compact('usuarios'));
+        return view('usuarios.index', compact('usuarios', 'administradoresActivos'));
     }
 
     /**
@@ -117,7 +128,14 @@ class UserController extends Controller
      */
     public function edit(User $usuario): View
     {
-        return view('usuarios.edit', compact('usuario'));
+        $esUltimoAdministradorActivo = $usuario->rol === 'Administrador'
+            && $usuario->estado
+            && User::query()
+                ->where('rol', 'Administrador')
+                ->where('estado', true)
+                ->count() === 1;
+
+        return view('usuarios.edit', compact('usuario', 'esUltimoAdministradorActivo'));
     }
 
     /**
@@ -187,7 +205,34 @@ class UserController extends Controller
             unset($validated['password']);
         }
 
-        $usuario->update($validated);
+        DB::transaction(function () use ($usuario, $validated) {
+            $administradoresActivos = User::query()
+                ->where('rol', 'Administrador')
+                ->where('estado', true)
+                ->lockForUpdate()
+                ->pluck('id');
+            $usuarioActual = User::query()
+                ->whereKey($usuario->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+            $seguiraSiendoAdministradorActivo = $validated['rol'] === 'Administrador'
+                && (bool) $validated['estado'];
+
+            if (
+                $usuarioActual->rol === 'Administrador'
+                && $usuarioActual->estado
+                && ! $seguiraSiendoAdministradorActivo
+                && ! $administradoresActivos->contains(
+                    fn ($id) => (int) $id !== (int) $usuarioActual->id
+                )
+            ) {
+                throw ValidationException::withMessages([
+                    'estado' => 'No puedes desactivar ni cambiar el rol del único administrador activo.',
+                ]);
+            }
+
+            $usuarioActual->update($validated);
+        });
 
         return redirect()
             ->route('usuarios.index')
@@ -199,7 +244,56 @@ class UserController extends Controller
      */
     public function destroy(User $usuario): RedirectResponse
     {
-        $usuario->delete();
+        $mensajeBloqueo = DB::transaction(function () use ($usuario) {
+            $administradoresActivos = User::query()
+                ->where('rol', 'Administrador')
+                ->where('estado', true)
+                ->lockForUpdate()
+                ->pluck('id');
+            $usuarioActual = User::query()
+                ->whereKey($usuario->id)
+                ->lockForUpdate()
+                ->firstOrFail();
+
+            $actividades = [];
+            if ($usuarioActual->ventas()->exists()) {
+                $actividades[] = 'ventas realizadas';
+            }
+            if ($usuarioActual->compras()->exists()) {
+                $actividades[] = 'compras registradas';
+            }
+            if ($usuarioActual->movimientos()->exists()) {
+                $actividades[] = 'movimientos de inventario';
+            }
+            if ($usuarioActual->solicitudesIdempotencia()->exists()) {
+                $actividades[] = 'operaciones de venta registradas';
+            }
+
+            if ($actividades !== []) {
+                return 'No se puede eliminar al usuario porque tiene '.implode(', ', $actividades)
+                    .'. Desactívalo para conservar el historial.';
+            }
+
+            if (
+                $usuarioActual->rol === 'Administrador'
+                && $usuarioActual->estado
+                && ! $administradoresActivos->contains(
+                    fn ($id) => (int) $id !== (int) $usuarioActual->id
+                )
+            ) {
+                return 'No se puede eliminar al único administrador activo. Activa o crea otro administrador primero.';
+            }
+
+            $usuarioActual->delete();
+
+            return null;
+        });
+
+        if ($mensajeBloqueo !== null) {
+            return redirect()
+                ->route('usuarios.index')
+                ->with('error', $mensajeBloqueo);
+        }
 
         return redirect()
             ->route('usuarios.index')

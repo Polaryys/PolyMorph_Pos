@@ -7,6 +7,7 @@ use App\Models\Inventario;
 use App\Models\Imagen;
 use App\Models\Movimiento;
 use App\Models\Presentacion;
+use App\Services\ImportarInventarioInicialCsv;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -197,6 +198,112 @@ class InventarioController extends Controller
         return view('articulos.index', compact('articulos', 'buscar'));
     }
 
+    public function exportarCsv()
+    {
+        return response()->streamDownload(function () {
+            $archivo = fopen('php://output', 'w');
+            if ($archivo === false) {
+                throw new \RuntimeException('No se pudo iniciar la exportación del inventario.');
+            }
+
+            try {
+                fwrite($archivo, "\xEF\xBB\xBF");
+                fputcsv($archivo, [
+                    'ID interno',
+                    'SKU',
+                    'Nombre',
+                    'Tipo',
+                    'Categoría',
+                    'Marca',
+                    'Presentación base',
+                    'Unidad base',
+                    'Factor de conversión',
+                    'Existencias actuales',
+                    'Costo unitario',
+                    'Precio unitario',
+                    'Precio docena',
+                    'Precio ciento',
+                    'Stock mínimo',
+                    'Estado artículo',
+                    'Estado presentación base',
+                ], ',', '"', '');
+
+                Presentacion::query()
+                    ->select([
+                        'id',
+                        'inventario_id',
+                        'codigoSKU',
+                        'nombre',
+                        'factor',
+                        'precioUnitario',
+                        'precioUnitarioDocena',
+                        'precioUnitarioCiento',
+                        'estado',
+                    ])
+                    ->where('base', true)
+                    ->with([
+                        'inventario:id,tipo,costoPromedioUnitario,cantidad,umbral,marca_id,categoria_id,estado',
+                        'inventario.categoria:id,nombre',
+                        'inventario.marca:id,nombre',
+                    ])
+                    ->orderBy('id')
+                    ->chunkById(500, function ($presentaciones) use ($archivo) {
+                        foreach ($presentaciones as $presentacion) {
+                            $inventario = $presentacion->inventario;
+                            $precios = [
+                                $presentacion->precioUnitario,
+                                $presentacion->precioUnitarioDocena,
+                                $presentacion->precioUnitarioCiento,
+                            ];
+                            $precios = array_map(
+                                fn ($precio) => $precio === null
+                                    ? ''
+                                    : number_format((float) $precio, 2, '.', ''),
+                                $precios
+                            );
+
+                            fputcsv($archivo, [
+                                $inventario->id,
+                                $presentacion->codigoSKU,
+                                $presentacion->nombre,
+                                $inventario->tipo === 'PRODUCTO' ? 'Producto' : 'Servicio',
+                                $inventario->categoria?->nombre ?? '',
+                                $inventario->marca?->nombre ?? '',
+                                $presentacion->nombre,
+                                'unidad',
+                                $presentacion->factor,
+                                (int) ($inventario->cantidad ?? 0),
+                                number_format((float) ($inventario->costoPromedioUnitario ?? 0), 2, '.', ''),
+                                ...$precios,
+                                (int) ($inventario->umbral ?? 0),
+                                $inventario->estado ? 'Activo' : 'Inactivo',
+                                $presentacion->estado ? 'Activo' : 'Inactivo',
+                            ], ',', '"', '');
+                        }
+                    });
+            } finally {
+                fclose($archivo);
+            }
+        }, 'inventario_' . now()->format('Ymd_His') . '.csv', [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
+    }
+
+    public function importarCsv(Request $request, ImportarInventarioInicialCsv $importador)
+    {
+        // Valida el archivo recibido y delega al servicio la validación del contenido y la carga atómica.
+        $datos = $request->validate([
+            'archivo' => ['required', 'file', 'max:10240'],
+        ]);
+
+        $cantidad = $importador->importar($datos['archivo'], Auth::id());
+
+        // Confirma al usuario cuántos artículos base se crearon tras completar toda la importación.
+        return redirect()
+            ->route('articulos.index')
+            ->with('success', "Se importaron {$cantidad} artículos base correctamente.");
+    }
+
 
 
     /**
@@ -331,9 +438,17 @@ class InventarioController extends Controller
                     ->with('imagen');
             },
         ]);
+        $presentacion = $inventario->presentaciones->first();
+        $historialPrecios = $presentacion
+            ? $presentacion->historialPrecios()
+                ->orderByDesc('created_at')
+                ->orderByDesc('id')
+                ->paginate(10)
+            : null;
 
         return view('articulos.show', [
             'articulo' => $inventario,
+            'historialPrecios' => $historialPrecios,
         ]);
     }
 

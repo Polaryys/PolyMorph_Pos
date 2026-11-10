@@ -23,18 +23,7 @@
         </div>
 
         <!-- MENSAJES -->
-        @if (session('success'))
-            <div id="success-message"
-                class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
-                {{ session('success') }}
-            </div>
-
-            <script>
-                setTimeout(() => {
-                    document.getElementById('success-message')?.remove();
-                }, 3000);
-            </script>
-        @endif
+        <x-alert-message />
 
         <!-- TABLA -->
         <x-table :paginator="$marcas">

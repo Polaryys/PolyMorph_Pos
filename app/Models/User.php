@@ -3,9 +3,9 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Models\Imagen;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -60,5 +60,23 @@ class User extends Authenticatable
         return $this->belongsTo(Imagen::class, 'imagen_id');
     }
 
+    public function ventas(): HasMany
+    {
+        return $this->hasMany(Venta::class, 'vendedor_id');
+    }
 
+    public function compras(): HasMany
+    {
+        return $this->hasMany(Compra::class, 'usuario_id');
+    }
+
+    public function movimientos(): HasMany
+    {
+        return $this->hasMany(Movimiento::class, 'usuario_id');
+    }
+
+    public function solicitudesIdempotencia(): HasMany
+    {
+        return $this->hasMany(SolicitudIdempotencia::class, 'usuario_id');
+    }
 }

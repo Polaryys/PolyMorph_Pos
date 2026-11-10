@@ -1,4 +1,26 @@
 <x-app-layout>
+    <div x-data="{
+        modalImportacionAbierto: {{ old('modal_importacion') ? 'true' : 'false' }},
+        importandoInventario: false,
+        archivoSeleccionado: '',
+
+        iniciarImportacion(event) {
+            if (this.importandoInventario || !this.archivoSeleccionado) {
+                event.preventDefault();
+                return;
+            }
+
+            this.importandoInventario = true;
+        },
+
+        cerrarModalImportacion() {
+            if (this.importandoInventario) return;
+
+            this.modalImportacionAbierto = false;
+            this.$refs.archivoInventario.value = '';
+            this.archivoSeleccionado = '';
+        },
+    }" @keydown.escape.window="if (modalImportacionAbierto) cerrarModalImportacion()">
 
     <!-- Encabezado y acciones -->
     <div class="mb-5">
@@ -13,19 +35,8 @@
 
     </div>
 
-
     <!-- MENSAJES -->
-    @if (session('success'))
-        <div id="success-message" class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
-            {{ session('success') }}
-        </div>
-
-        <script>
-            setTimeout(() => {
-                document.getElementById('success-message')?.remove();
-            }, 3000);
-        </script>
-    @endif
+    <x-alert-message />
 
     <!-- TABLA DE ARTÍCULOS -->
     <x-table :paginator="$articulos">
@@ -129,4 +140,92 @@
 
     </x-table>
 
+    <div class="mt-4 flex flex-col justify-end gap-2 sm:flex-row">
+        <x-secondary-link href="{{ route('articulos.exportar-csv') }}">
+            Exportar CSV
+        </x-secondary-link>
+        <button type="button" @click="modalImportacionAbierto = true"
+            class="inline-flex items-center justify-center rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700">
+            Importar inventario inicial
+        </button>
+    </div>
+
+    <template x-teleport="body">
+        <div x-cloak x-show="modalImportacionAbierto" x-transition.opacity
+            class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4"
+            @click.self="cerrarModalImportacion()">
+            <div x-show="modalImportacionAbierto" x-transition
+                class="w-full max-w-lg overflow-hidden rounded-xl bg-white p-6 shadow-2xl"
+                role="dialog" aria-modal="true" aria-labelledby="titulo-modal-importacion" @click.stop>
+                <h2 id="titulo-modal-importacion"
+                    class="mb-4 border-b border-slate-200 pb-3 text-lg font-semibold text-slate-900">
+                    Importar inventario inicial
+                </h2>
+
+                <form action="{{ route('articulos.importar-csv') }}" method="POST" enctype="multipart/form-data"
+                    class="space-y-4" @submit="iniciarImportacion($event)">
+                    @csrf
+                    <input type="hidden" name="modal_importacion" value="1">
+
+                    @if ($errors->has('archivo'))
+                        <div class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert">
+                            <p class="font-medium">No se pudo importar el inventario:</p>
+                            <ul class="mt-1 list-inside list-disc">
+                                @foreach ($errors->get('archivo') as $error)
+                                    <li>{{ $error }}</li>
+                                @endforeach
+                            </ul>
+                        </div>
+                    @endif
+
+                    <div>
+                        <label for="archivo-inventario" class="mb-1 block text-sm font-medium text-slate-700">
+                            Archivo CSV
+                        </label>
+                        <input x-ref="archivoInventario" type="file" id="archivo-inventario" name="archivo"
+                            accept=".csv,text/csv" required
+                            @change="archivoSeleccionado = $event.target.files.length ? $event.target.files[0].name : ''"
+                            class="block w-full rounded-md border border-slate-300 text-sm text-slate-600 file:mr-4 file:border-0 file:bg-indigo-50 file:px-4 file:py-2.5 file:font-medium file:text-indigo-700 hover:file:bg-indigo-100">
+                        <p class="mt-2 text-xs text-slate-500">
+                            Sube el CSV de inventario con las columnas esperadas. Tamaño máximo: 10 MB.
+                        </p>
+                        <p x-show="archivoSeleccionado" class="mt-1 text-xs font-medium text-slate-600">
+                            <span x-text="archivoSeleccionado"></span>
+                        </p>
+                    </div>
+
+                    <div class="flex items-center justify-end gap-3 border-t border-slate-100 pt-4">
+                        <button type="button" @click="cerrarModalImportacion()" :disabled="importandoInventario"
+                            class="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-50">
+                            Cancelar
+                        </button>
+                        <button type="submit"
+                            :disabled="importandoInventario || !archivoSeleccionado"
+                            class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">
+                            <span x-text="importandoInventario ? 'Importando...' : 'Importar CSV'"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div x-cloak x-show="importandoInventario" x-transition.opacity
+            class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/70 p-4"
+            role="status" aria-live="polite">
+            <div class="w-full max-w-sm rounded-xl bg-white p-6 text-center shadow-2xl">
+                <svg class="mx-auto h-12 w-12 animate-spin text-indigo-600" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                        stroke-width="4"></circle>
+                    <path class="opacity-75" stroke="currentColor" stroke-linecap="round"
+                        stroke-width="4" d="M12 2a10 10 0 0 1 10 10"></path>
+                </svg>
+                <p class="mt-4 text-base font-semibold text-slate-900">Importando inventario...</p>
+                <p class="mt-2 text-sm text-slate-600">
+                    No cierres esta ventana ni vuelvas a enviar el archivo. Espera a que termine el proceso.
+                </p>
+            </div>
+        </div>
+    </template>
+    </div>
 </x-app-layout>

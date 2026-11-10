@@ -24,19 +24,7 @@
         </div>
 
         <!-- MENSAJES -->
-        @if (session('success'))
-            <div id="success-message"
-                class="mb-4 p-4 text-sm text-green-700 bg-green-100
-                       rounded-lg border border-green-200">
-                {{ session('success') }}
-            </div>
-
-            <script>
-                setTimeout(() => {
-                    document.getElementById('success-message')?.remove();
-                }, 3000);
-            </script>
-        @endif
+        <x-alert-message />
 
         <!-- Tabla de categorías -->
         <x-table :paginator="$categorias">
@@ -46,7 +34,7 @@
                 <th class="px-6 py-2.5">Nombre</th>
                 <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
                 <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Actualizado</th>
-                <th class="px-6 py-2.5 text-center w-64">Acciones</th>
+                <th class="px-6 py-2.5 text-center w-32">Acciones</th>
             </x-slot:headers>
 
             @forelse ($categorias as $categoria)
@@ -73,7 +61,7 @@
                     </td>
 
                     <!-- ACCIONES -->
-                    <td class="w-64 whitespace-nowrap px-6 py-3">
+                    <td class="w-32 whitespace-nowrap px-6 py-3">
                         <div class="flex items-center justify-center gap-3">
                             <x-action-icon
                                 @click="

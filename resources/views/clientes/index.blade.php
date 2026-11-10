@@ -4,12 +4,8 @@
         + Agregar Cliente
     </x-primary-link>
 
-    <!-- mensajes -->
-    @if (session('success'))
-        <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
-            {{ session('success') }}
-        </div>
-    @endif
+    <!-- MENSAJES -->
+    <x-alert-message />
 
     <!-- tabla de clientes -->
     <x-table :paginator="$clientes">

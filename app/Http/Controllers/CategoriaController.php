@@ -33,7 +33,7 @@ class CategoriaController extends Controller
             'nombre' => 'required|string|max:100|unique:categorias,nombre',
         ]);
 
-        Categoria::create([ 'nombre' => $request->nombre, ]);
+        Categoria::create(['nombre' => $request->nombre,]);
 
         return redirect()
             ->route('categorias.index')
@@ -77,6 +77,12 @@ class CategoriaController extends Controller
      */
     public function destroy(Categoria $categoria)
     {
+        if ($categoria->inventarios()->exists()) {
+            return redirect()
+                ->route('categorias.index')
+                ->with('error', 'No se puede eliminar la categoría porque está asociada a uno o varios productos.');
+        }
+
         $categoria->delete();
 
         return redirect()

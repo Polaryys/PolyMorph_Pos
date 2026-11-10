@@ -33,15 +33,17 @@
                             <span class="mt-1 block text-xs text-slate-500">
                                 SKU: <span x-text="producto.sku"></span>
                             </span>
-                            <span class="mt-1 block text-xs text-slate-600">
-                                Precio: Q <span x-text="Number(producto.precio_unitario_actual).toFixed(2)"></span>
-                            </span>
                         </span>
                     </span>
-                    <span class="shrink-0 text-right text-xs text-slate-500">
+                    <span class="shrink-0 text-right">
+                        <span class="block text-lg font-bold text-indigo-700">
+                            Q <span x-text="Number(producto.precio_unitario_actual).toFixed(2)"></span>
+                        </span>
                         <template x-if="producto.tipo_item === 'PRODUCTO'">
-                            <span>Existencias<br><strong class="text-slate-800"
-                                x-text="cantidadDisponible(producto)"></strong></span>
+                            <span class="mt-1 block text-xs text-slate-500">
+                                <span x-text="cantidadDisponible(producto)"></span>
+                                <span x-text="cantidadDisponible(producto) === 1 ? 'disponible' : 'disponibles'"></span>
+                            </span>
                         </template>
                         <template x-if="producto.tipo_item === 'SERVICIO'">
                             <span class="font-medium text-indigo-700">Servicio</span>

@@ -67,13 +67,19 @@
                     Activo
                 </option>
 
-                <option value="0" {{ old('estado', $usuario->estado) == 0 ? 'selected' : '' }}>
+                <option value="0" {{ old('estado', $usuario->estado) == 0 ? 'selected' : '' }}
+                    @disabled($esUltimoAdministradorActivo)>
                     Inactivo
                 </option>
 
             </select>
 
             <x-input-error :messages="$errors->get('estado')" />
+            @if ($esUltimoAdministradorActivo)
+                <p class="mt-1 text-xs text-amber-700">
+                    No puedes desactivarlo porque es el único administrador activo.
+                </p>
+            @endif
         </div>
 
     </div>

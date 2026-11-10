@@ -33,7 +33,7 @@ class MarcaController extends Controller
             'nombre' => 'required|string|max:55',
         ]);
 
-        Marca::create([ 'nombre' => $request->nombre, ]);
+        Marca::create(['nombre' => $request->nombre,]);
 
         return redirect()
             ->route('marcas.index')
@@ -77,7 +77,14 @@ class MarcaController extends Controller
      */
     public function destroy(Marca $marca)
     {
+        if ($marca->inventarios()->exists()) {
+            return redirect()
+                ->route('marcas.index')
+                ->with('error', 'No se puede eliminar la marca porque está asociada a uno o varios productos.');
+        }
+
         $marca->delete();
+
         return redirect()
             ->route('marcas.index')
             ->with('success', 'Marca eliminada exitosamente.');

@@ -20,11 +20,11 @@ return new class extends Migration
             $table->foreignId('marca_id')
                 ->nullable()
                 ->constrained('marcas')
-                ->onDelete('set null');
+                ->restrictOnDelete();
             $table->foreignId('categoria_id')
                 ->nullable()
                 ->constrained('categorias')
-                ->onDelete('set null');
+                ->restrictOnDelete();
             $table->boolean('estado')->default(true);
             $table->timestamps();
         });

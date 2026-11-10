@@ -169,6 +169,10 @@
             </section>
         @endif
 
+        @if ($historialPrecios)
+            @include('partials._historial-precios', ['historialPrecios' => $historialPrecios])
+        @endif
+
         <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 pt-5 sm:flex-row">
             <x-secondary-link href="{{ route('articulos.index') }}">
                 Volver

@@ -14,6 +14,7 @@ use App\Http\Controllers\ComprasController;
 use App\Http\Controllers\VentasController;
 use Illuminate\Support\Facades\Route;
 
+// Entrada pública y acceso al panel; el dashboard requiere sesión verificada.
 Route::get('/', function () {
     return view('welcome');
 });
@@ -23,10 +24,13 @@ Route::get('/dashboard', function () {
 })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware('auth')->group(function () {
+    // Perfil del usuario autenticado y operaciones de cuenta.
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::get('/profile/show', [ProfileController::class, 'show'])->name('profile.show');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // CRUD de catálogos usados por inventario y transacciones.
     Route::resource('marcas', MarcaController::class)
         ->except(['create', 'edit', 'show']);
 
@@ -37,6 +41,8 @@ Route::middleware('auth')->group(function () {
         'proveedores' => 'proveedor'
     ]);
     Route::resource('usuarios', UserController::class);
+
+    // Administración y selector de imágenes; gestión de métodos de pago.
     Route::resource('imagenes', ImagenController::class)
         ->except(['show', 'edit'])
         ->parameters(['imagenes' => 'imagen']);
@@ -45,9 +51,15 @@ Route::middleware('auth')->group(function () {
     Route::resource('metodos-pago', MetodoPagoController::class)
         ->parameters(['metodos-pago' => 'metodoPago']);
 
+    // CRUD de artículos y carga/descarga del inventario inicial mediante CSV.
+    Route::get('/articulos/exportar-csv', [InventarioController::class, 'exportarCsv'])
+        ->name('articulos.exportar-csv');
+    Route::post('/articulos/importar-csv', [InventarioController::class, 'importarCsv'])
+        ->name('articulos.importar-csv');
     Route::resource('articulos', InventarioController::class)
         ->parameters(['articulos' => 'inventario']);
 
+    // Ajustes de existencias, búsqueda de artículos y consulta de movimientos.
     Route::get('/inventario/ajuste', [InventarioController::class, 'mostrarAjusteInventario'])
         ->name('inventario.ajuste');
     Route::get('/inventario/movimientos', [InventarioController::class, 'movimientos'])
@@ -57,6 +69,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/inventario/ajuste', [InventarioController::class, 'ajustarInventario'])
         ->name('inventario.ajustar');
 
+    // Búsqueda y CRUD de presentaciones adicionales a la base.
     Route::get(
         '/presentaciones/buscar-productos',
         [PresentacionController::class, 'buscarProductos']
@@ -64,6 +77,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('presentaciones', PresentacionController::class)
         ->parameters(['presentaciones' => 'presentacion']);
 
+    // Búsqueda, registro, consulta, anulación y pagos de ventas.
     Route::get('/ventas/create', [VentasController::class, 'create'])
         ->name('ventas.create');
     Route::get('/ventas/buscar-productos', [VentasController::class, 'buscarProductos'])
@@ -83,6 +97,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/ventas/{venta}', [VentasController::class, 'show'])
         ->name('ventas.show');
 
+    // Búsqueda de productos y ciclo de vida de compras a proveedores.
     Route::get('/compras/buscar-productos', [ComprasController::class, 'buscarProductos'])
         ->name('compras.buscar-productos');
     Route::post('/compras', [ComprasController::class, 'store'])
@@ -107,4 +122,5 @@ Route::middleware('auth')->group(function () {
 
 });
 
+// Rutas de inicio de sesión, registro y recuperación de acceso.
 require __DIR__ . '/auth.php';

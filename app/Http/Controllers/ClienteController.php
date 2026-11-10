@@ -184,8 +184,15 @@ class ClienteController extends Controller
     /**
      * Remove the specified resource from storage.
      */
+
     public function destroy(Cliente $cliente)
     {
+        if ($cliente->ventas()->exists()) {
+            return redirect()
+                ->route('clientes.index')
+                ->with('error', 'No se puede eliminar el cliente porque tiene operaciones comerciales registradas.');
+        }
+
         $cliente->delete();
 
         return redirect()

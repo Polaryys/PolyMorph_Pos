@@ -27,23 +27,8 @@
             </button>
         </div>
 
-        @if (session('success'))
-            <div id="success-message" class="mb-4 rounded-lg border border-green-200 bg-green-100 p-4 text-sm text-green-700">
-                {{ session('success') }}
-            </div>
-
-            <script>
-                setTimeout(() => {
-                    document.getElementById('success-message')?.remove();
-                }, 3000);
-            </script>
-        @endif
-
-        @if (session('error'))
-            <div class="mb-4 rounded-lg border border-red-200 bg-red-100 p-4 text-sm text-red-700">
-                {{ session('error') }}
-            </div>
-        @endif
+        <!-- MENSAJES -->
+        <x-alert-message />
 
         <x-table :paginator="$metodosPago">
             <x-slot:headers>
@@ -98,7 +83,7 @@
                     <td class="w-40 whitespace-nowrap px-6 py-3 text-center">
                         <div class="flex items-center justify-center gap-3">
                             <x-action-icon
-                            @click="
+                                @click="
                                 modo = 'editar';
                                 nombre = {{ Js::from($metodoPago->nombre) }};
                                 descripcion = {{ Js::from($metodoPago->descripcion ?? '') }};
@@ -164,7 +149,9 @@
                             </label>
                             <input type="text" id="nombre" name="nombre" x-model="nombre" maxlength="50" required
                                 x-effect="if (abierto) $nextTick(() => $el.focus())"
-                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('nombre') border-red-500 @enderror">
+                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('nombre')
+border-red-500
+@enderror">
                             @error('nombre')
                                 <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                             @enderror
