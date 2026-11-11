@@ -1,8 +1,8 @@
 <x-app-layout>
     <div class="space-y-8">
         <section class="space-y-3">
-            <div class="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
-                <div class="flex flex-col justify-between gap-4 border-b border-slate-100 p-5 sm:flex-row sm:items-start sm:p-6">
+            <div class="overflow-hidden  bg-white shadow-sm">
+                <div class="flex flex-col justify-between gap-4 border-b border-slate-100 px-5 sm:flex-row sm:items-start sm:px-6">
                     <div class="min-w-0">
                         <p class="mb-1 text-xs font-medium text-slate-500">Numero de compra</p>
                         <h1 class="break-words text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
@@ -102,13 +102,15 @@
                 @forelse ($compra->detalles as $detalle)
                     <tr class="transition-colors hover:bg-indigo-50/50">
                         <td class="px-4 py-3">
-                            <p class="font-semibold text-slate-900">
-                                {{ $detalle->presentacion?->nombre ?? 'Producto no disponible' }}
+                            @php
+                                $nombreProducto = $detalle->presentacion?->nombre ?? 'Producto no disponible';
+                                $marcaProducto = $detalle->presentacion?->inventario?->marca?->nombre;
+                            @endphp
+                            <p class="whitespace-nowrap font-semibold text-slate-900">
+                                {{ $marcaProducto ? "{$nombreProducto} - {$marcaProducto}" : $nombreProducto }}
                             </p>
                             <p class="mt-1 text-xs text-slate-500">
                                 SKU: {{ $detalle->presentacion?->codigoSKU ?? '—' }}
-                                <span class="mx-1">·</span>
-                                Marca: {{ $detalle->presentacion?->inventario?->marca?->nombre ?? 'Sin marca' }}
                             </p>
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">

@@ -1,6 +1,5 @@
 <x-app-layout>
     <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <h1 class="text-xl font-semibold text-slate-800">Ventas</h1>
         <x-primary-link href="{{ route('ventas.create') }}" wire:navigate>
             + Nueva venta
         </x-primary-link>

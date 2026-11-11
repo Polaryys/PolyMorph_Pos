@@ -4,8 +4,8 @@
         resultados: [],
         buscarCliente: '',
         resultadosClientes: [],
-        clienteSeleccionado: null,
-        detalles: [],
+        clienteSeleccionado: @js($clienteSeleccionado),
+        detalles: @js($detalles),
         cargando: false,
         cargandoClientes: false,
         errorBusqueda: false,
@@ -19,91 +19,163 @@
         ventaCredito: false,
         errorPago: '',
         omitirActivacionEnfoqueInicial: false,
-
+        carritoGuardadoEstado: 'guardado',
+        carritoVersion: 0,
+        carritoGuardadoVersion: 0,
+        promesaGuardadoCarrito: null,
+        temporizadorGuardadoCarrito: null,
+    
+        programarGuardadoCarrito() {
+            this.carritoVersion++;
+            this.carritoGuardadoEstado = 'pendiente';
+            clearTimeout(this.temporizadorGuardadoCarrito);
+            this.temporizadorGuardadoCarrito = setTimeout(() => this.guardarCarrito(), 300);
+        },
+    
+        async guardarCarrito(keepalive = false) {
+            clearTimeout(this.temporizadorGuardadoCarrito);
+            this.temporizadorGuardadoCarrito = null;
+    
+            if (this.promesaGuardadoCarrito) {
+                await this.promesaGuardadoCarrito.catch(() => null);
+                if (this.carritoGuardadoVersion < this.carritoVersion) {
+                    return this.guardarCarrito(keepalive);
+                }
+                return this.carritoGuardadoEstado !== 'error';
+            }
+    
+            if (this.carritoGuardadoVersion === this.carritoVersion) {
+                return this.carritoGuardadoEstado !== 'error';
+            }
+    
+            const version = this.carritoVersion;
+            const solicitud = fetch('{{ route('ventas.carrito.guardar') }}', {
+                method: 'POST',
+                keepalive,
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name=csrf-token]')?.content ?? '',
+                },
+                body: JSON.stringify({
+                    cliente_id: this.clienteSeleccionado?.id ?? null,
+                    detalles: this.detalles.map(detalle => ({
+                        presentacion_id: detalle.presentacion_id,
+                        cantidad: detalle.cantidad,
+                        tipo_precio: detalle.tipo_precio,
+                        descuento: detalle.descuento,
+                    })),
+                }),
+            });
+    
+            this.promesaGuardadoCarrito = solicitud;
+            this.carritoGuardadoEstado = 'guardando';
+    
+            try {
+                const respuesta = await solicitud;
+                if (!respuesta.ok) throw new Error('No se pudo guardar el carrito.');
+                this.carritoGuardadoVersion = version;
+                this.carritoGuardadoEstado = 'guardado';
+            } catch (error) {
+                this.carritoGuardadoEstado = 'error';
+                return false;
+            } finally {
+                if (this.promesaGuardadoCarrito === solicitud) {
+                    this.promesaGuardadoCarrito = null;
+                }
+            }
+    
+            if (this.carritoGuardadoVersion < this.carritoVersion) {
+                return this.guardarCarrito(keepalive);
+            }
+    
+            return true;
+        },
+    
         async buscarProductos(termino = this.buscar.trim()) {
             const version = ++this.versionBusqueda;
-
+    
             if (!termino) {
                 this.resultados = [];
                 this.cargando = false;
                 return [];
             }
-
+    
             this.cargando = true;
             this.errorBusqueda = false;
-
+    
             try {
                 const url = new URL('{{ route('ventas.buscar-productos') }}', window.location.origin);
                 url.searchParams.set('buscar', termino);
                 const respuesta = await fetch(url, { headers: { Accept: 'application/json' } });
-
+    
                 if (!respuesta.ok) throw new Error('No se pudo realizar la búsqueda.');
-
+    
                 const resultados = await respuesta.json();
                 if (version === this.versionBusqueda) {
                     this.resultados = resultados;
                     return resultados;
                 }
-
+    
                 return [];
             } catch (error) {
                 if (version === this.versionBusqueda) {
                     this.resultados = [];
                     this.errorBusqueda = true;
                 }
-
+    
                 return [];
             } finally {
                 if (version === this.versionBusqueda) this.cargando = false;
             }
         },
-
+    
         async agregarProductoConEnter() {
             const termino = this.buscar.trim();
             if (!termino) return;
-
+    
             const resultados = await this.buscarProductos(termino);
             if (this.buscar.trim() !== termino) return;
-
+    
             const skuBuscado = termino.toLowerCase();
             const coincidenciaExacta = resultados.find(
                 producto => String(producto.sku ?? '').trim().toLowerCase() === skuBuscado
             );
-            const producto = coincidenciaExacta
-                ?? (resultados.length === 1 ? resultados[0] : null);
-
+            const producto = coincidenciaExacta ??
+                (resultados.length === 1 ? resultados[0] : null);
+    
             if (producto) this.seleccionar(producto, true);
         },
-
+    
         enfocarBuscadorProductos() {
             this.$nextTick(() => this.$refs.buscadorProductos?.focus({ preventScroll: true }));
         },
-
+    
         cerrarModalPago() {
             this.modalPagoAbierto = false;
             this.enfocarBuscadorProductos();
         },
-
+    
         async buscarClientes() {
             const version = ++this.versionBusquedaClientes;
             const termino = this.buscarCliente.trim();
-
+    
             if (!termino) {
                 this.resultadosClientes = [];
                 this.cargandoClientes = false;
                 return;
             }
-
+    
             this.cargandoClientes = true;
             this.errorBusquedaClientes = false;
-
+    
             try {
                 const url = new URL('{{ route('ventas.buscar-clientes') }}', window.location.origin);
                 url.searchParams.set('buscar', termino);
                 const respuesta = await fetch(url, { headers: { Accept: 'application/json' } });
-
+    
                 if (!respuesta.ok) throw new Error('No se pudo realizar la búsqueda.');
-
+    
                 const resultados = await respuesta.json();
                 if (version === this.versionBusquedaClientes) this.resultadosClientes = resultados;
             } catch (error) {
@@ -115,7 +187,7 @@
                 if (version === this.versionBusquedaClientes) this.cargandoClientes = false;
             }
         },
-
+    
         seleccionarCliente(cliente) {
             this.versionBusquedaClientes++;
             this.clienteSeleccionado = cliente;
@@ -123,63 +195,63 @@
             this.resultadosClientes = [];
             this.cargandoClientes = false;
         },
-
+    
         quitarCliente() {
             this.clienteSeleccionado = null;
         },
-
+    
         seleccionar(producto, incrementarExistente = false) {
             this.versionBusqueda++;
             this.buscar = '';
             this.resultados = [];
             this.cargando = false;
-
+    
             const detalleExistente = this.detalles.find(
                 detalle => detalle.presentacion_id === producto.presentacion_id
             );
-
+    
             if (detalleExistente) {
                 if (!incrementarExistente) {
                     this.errorFormulario = 'Este producto ya está agregado. Puedes cambiar su cantidad en la tabla.';
                     this.enfocarBuscadorProductos();
                     return;
                 }
-
+    
                 if (Number(detalleExistente.cantidad) >= this.cantidadDisponible(detalleExistente)) {
                     this.errorFormulario = 'No hay existencias suficientes para agregar otra unidad.';
                     this.enfocarBuscadorProductos();
                     return;
                 }
-
+    
                 this.ajustarCantidad(detalleExistente, 1);
                 this.errorFormulario = '';
                 this.enfocarBuscadorProductos();
                 return;
             }
-
+    
             const detalle = {
                 ...producto,
                 cantidad: 1,
                 tipo_precio: 'unitario',
             };
             detalle.descuento = this.descuentoAutomatico(detalle).toFixed(2);
-
+    
             if (!this.detalleValido(detalle)) {
                 this.errorFormulario = 'Este producto no tiene existencias suficientes para agregarlo.';
                 this.enfocarBuscadorProductos();
                 return;
             }
-
+    
             this.detalles.push(detalle);
             this.errorFormulario = '';
             this.enfocarBuscadorProductos();
         },
-
+    
         decimalValido(valor, requerido = true) {
             const texto = String(valor ?? '').trim();
             return texto === '' ? !requerido : /^\d+(\.\d{1,2})?$/.test(texto);
         },
-
+    
         precioActual(producto, tipoPrecio, cantidad) {
             if (!producto) return 0;
             const cantidadBase = Number(cantidad) * Number(producto.factor || 1);
@@ -191,117 +263,117 @@
             }
             return Number(producto.precio_unitario_actual);
         },
-
+    
         cantidadDisponible(producto) {
             if (producto.tipo_item !== 'PRODUCTO') return Infinity;
             return Math.floor(Number(producto.cantidad_actual || 0) / Number(producto.factor || 1));
         },
-
+    
         subtotalDetalle(detalle) {
             return Math.max(
                 0,
-                Number(detalle.cantidad) * Number(detalle.precio_unitario_actual)
-                    - (Number(detalle.descuento) || 0)
+                Number(detalle.cantidad) * Number(detalle.precio_unitario_actual) -
+                (Number(detalle.descuento) || 0)
             );
         },
-
+    
         totalImporte() {
             return this.detalles.reduce(
-                (total, detalle) => total
-                    + Number(detalle.cantidad) * Number(detalle.precio_unitario_actual),
+                (total, detalle) => total +
+                Number(detalle.cantidad) * Number(detalle.precio_unitario_actual),
                 0
             );
         },
-
+    
         totalDescuento() {
             return this.detalles.reduce((total, detalle) => total + (Number(detalle.descuento) || 0), 0);
         },
-
+    
         descuentoAutomatico(detalle) {
-            const ahorroUnitario = Number(detalle.precio_unitario_actual)
-                - this.precioActual(detalle, detalle.tipo_precio, detalle.cantidad);
+            const ahorroUnitario = Number(detalle.precio_unitario_actual) -
+                this.precioActual(detalle, detalle.tipo_precio, detalle.cantidad);
             return Math.max(0, Math.round((Number(detalle.cantidad) * ahorroUnitario + Number.EPSILON) * 100) / 100);
         },
-
+    
         actualizarDescuentoAutomatico(detalle, conservarDescuento = false) {
             const cantidad = Number(detalle.cantidad);
-
+    
             if (
-                (detalle.tipo_precio === 'docena' && cantidad * Number(detalle.factor || 1) < 12)
-                || (detalle.tipo_precio === 'ciento' && cantidad * Number(detalle.factor || 1) < 100)
+                (detalle.tipo_precio === 'docena' && cantidad * Number(detalle.factor || 1) < 12) ||
+                (detalle.tipo_precio === 'ciento' && cantidad * Number(detalle.factor || 1) < 100)
             ) {
                 detalle.tipo_precio = 'unitario';
             }
-
+    
             if (!conservarDescuento) {
                 detalle.descuento = this.descuentoAutomatico(detalle).toFixed(2);
             }
         },
-
+    
         ajustarCantidad(detalle, cambio) {
             const cantidadActual = Number(detalle.cantidad) || 1;
-            const cantidadMaxima = detalle.tipo_item === 'PRODUCTO'
-                ? this.cantidadDisponible(detalle)
-                : Infinity;
+            const cantidadMaxima = detalle.tipo_item === 'PRODUCTO' ?
+                this.cantidadDisponible(detalle) :
+                Infinity;
             detalle.cantidad = Math.min(cantidadMaxima, Math.max(1, cantidadActual + cambio));
             this.actualizarDescuentoAutomatico(detalle, true);
         },
-
+    
         totalVenta() {
             return this.detalles.reduce((total, detalle) => total + this.subtotalDetalle(detalle), 0);
         },
-
+    
         detalleValido(detalle) {
             const cantidad = Number(detalle.cantidad);
             const precio = this.precioActual(detalle, detalle.tipo_precio, cantidad);
             const descuento = Number(detalle.descuento);
-            const precioPorVolumenValido = detalle.tipo_precio === 'unitario'
-                || (detalle.tipo_precio === 'docena'
-                    && cantidad * Number(detalle.factor || 1) >= 12
-                    && detalle.precio_docena_actual !== null)
-                || (detalle.tipo_precio === 'ciento'
-                    && cantidad * Number(detalle.factor || 1) >= 100
-                    && detalle.precio_ciento_actual !== null);
-
-            return Number.isInteger(cantidad)
-                && cantidad > 0
-                && cantidad <= this.cantidadDisponible(detalle)
-                && (detalle.tipo_item !== 'PRODUCTO'
-                    || Number.isInteger(cantidad * Number(detalle.factor || 1)))
-                && precioPorVolumenValido
-                && precio >= 0
-                && this.decimalValido(detalle.descuento)
-                && descuento >= 0
-                && descuento <= cantidad * Number(detalle.precio_unitario_actual);
+            const precioPorVolumenValido = detalle.tipo_precio === 'unitario' ||
+                (detalle.tipo_precio === 'docena' &&
+                    cantidad * Number(detalle.factor || 1) >= 12 &&
+                    detalle.precio_docena_actual !== null) ||
+                (detalle.tipo_precio === 'ciento' &&
+                    cantidad * Number(detalle.factor || 1) >= 100 &&
+                    detalle.precio_ciento_actual !== null);
+    
+            return Number.isInteger(cantidad) &&
+                cantidad > 0 &&
+                cantidad <= this.cantidadDisponible(detalle) &&
+                (detalle.tipo_item !== 'PRODUCTO' ||
+                    Number.isInteger(cantidad * Number(detalle.factor || 1))) &&
+                precioPorVolumenValido &&
+                precio >= 0 &&
+                this.decimalValido(detalle.descuento) &&
+                descuento >= 0 &&
+                descuento <= cantidad * Number(detalle.precio_unitario_actual);
         },
-
+    
         quitarDetalle(indice) {
             this.detalles.splice(indice, 1);
         },
-
+    
         limpiarCarrito() {
             if (this.detalles.length && !confirm('¿Limpiar todos los productos del carrito?')) return;
             this.detalles = [];
             this.errorFormulario = '';
         },
-
+    
         async abrirModalPago() {
             if (!this.formularioValido()) {
                 this.errorFormulario = 'Agrega al menos un artículo disponible antes de registrar la venta.';
                 return;
             }
-
+    
             this.modalPagoAbierto = true;
             this.cargandoMetodosPago = true;
             this.errorPago = '';
             this.ventaCredito = false;
-
+    
             try {
                 const respuesta = await fetch('{{ route('ventas.metodos-pago') }}', {
                     headers: { Accept: 'application/json' },
                 });
                 if (!respuesta.ok) throw new Error('No se pudieron cargar los métodos de pago.');
-
+    
                 const metodos = await respuesta.json();
                 this.metodosPago = metodos.map(metodo => ({
                     ...metodo,
@@ -325,131 +397,132 @@
                 });
             }
         },
-
+    
         activarMetodo(metodo) {
             if (this.omitirActivacionEnfoqueInicial) return;
-
+    
             if (metodo.montoInicializado) {
-                const montoIngresado = metodo.permite_montos
-                    ? metodo.monto_recibido
-                    : metodo.monto;
+                const montoIngresado = metodo.permite_montos ?
+                    metodo.monto_recibido :
+                    metodo.monto;
                 metodo.activo = Number(montoIngresado) > 0;
                 return;
             }
-
+    
             metodo.activo = true;
             metodo.montoInicializado = true;
-
+    
             if (!metodo.permite_montos) {
                 const montoDisponible = this.montoDisponiblePara(metodo);
                 metodo.monto = montoDisponible > 0 ? montoDisponible.toFixed(2) : '';
             }
         },
-
+    
         actualizarImporte(metodo, campo, event) {
             const valor = event.target.value;
-
+    
             if (valor.includes(',')) {
                 event.target.value = metodo[campo] || '';
                 return;
             }
-
+    
             const [entero, ...decimales] = valor.replace(/[^\d.]/g, '').split('.');
-            const valorValidado = decimales.length
-                ? `${entero}.${decimales.join('').slice(0, 2)}`
-                : entero;
-
+            const valorValidado = decimales.length ?
+                `${entero}.${decimales.join('').slice(0, 2)}` :
+                entero;
+    
             metodo[campo] = valorValidado;
             event.target.value = valorValidado;
             metodo.montoInicializado = true;
             metodo.activo = Number(valorValidado) > 0;
         },
-
+    
         montoAplicado(metodo) {
             let montoAsignado = 0;
-
+    
             for (const pago of this.metodosPago.filter(item => item.activo)) {
-                const montoIngresado = pago.permite_montos
-                    ? Number(pago.monto_recibido) || 0
-                    : Number(pago.monto) || 0;
+                const montoIngresado = pago.permite_montos ?
+                    Number(pago.monto_recibido) || 0 :
+                    Number(pago.monto) || 0;
                 const montoAplicado = Math.min(
                     montoIngresado,
                     Math.max(0, this.totalVenta() - montoAsignado)
                 );
-
+    
                 if (pago === metodo) return montoAplicado;
-
+    
                 montoAsignado += montoAplicado;
             }
-
+    
             return 0;
         },
-
+    
         montoDisponiblePara(metodoActual) {
             let montoAsignado = 0;
             const otrosPagos = this.metodosPago
                 .filter(metodo => metodo !== metodoActual && metodo.activo);
-
+    
             for (const metodo of otrosPagos) {
-                const montoIngresado = metodo.permite_montos
-                    ? Number(metodo.monto_recibido) || 0
-                    : Number(metodo.monto) || 0;
+                const montoIngresado = metodo.permite_montos ?
+                    Number(metodo.monto_recibido) || 0 :
+                    Number(metodo.monto) || 0;
                 montoAsignado += Math.min(
                     montoIngresado,
                     Math.max(0, this.totalVenta() - montoAsignado)
                 );
             }
-
+    
             return Math.max(0, Math.round((this.totalVenta() - montoAsignado) * 100) / 100);
         },
-
+    
         pagosValidos() {
             const pagos = this.metodosPago.filter(metodo => metodo.activo);
             const montoPagado = pagos.reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
             const pagosIndividualesValidos = pagos.every(metodo =>
-                this.decimalValido(metodo.permite_montos ? metodo.monto_recibido : metodo.monto)
-                && this.montoAplicado(metodo) > 0
-                && (!metodo.permite_montos || Number(metodo.monto_recibido) >= this.montoAplicado(metodo))
-                && (metodo.permite_montos || Number(metodo.monto) === this.montoAplicado(metodo))
+                this.decimalValido(metodo.permite_montos ? metodo.monto_recibido : metodo.monto) &&
+                this.montoAplicado(metodo) > 0 &&
+                (!metodo.permite_montos || Number(metodo.monto_recibido) >= this.montoAplicado(metodo)) &&
+                (metodo.permite_montos || Number(metodo.monto) === this.montoAplicado(metodo))
             );
-
-            return pagosIndividualesValidos
-                && Math.round(montoPagado * 100) <= Math.round(this.totalVenta() * 100)
-                && (this.ventaCredito
-                    || Math.round(montoPagado * 100) >= Math.round(this.totalVenta() * 100));
+    
+            return pagosIndividualesValidos &&
+                Math.round(montoPagado * 100) <= Math.round(this.totalVenta() * 100) &&
+                (this.ventaCredito ||
+                    Math.round(montoPagado * 100) >= Math.round(this.totalVenta() * 100));
         },
-
+    
         totalPagadoModal() {
             return this.metodosPago
                 .filter(metodo => metodo.activo)
                 .reduce((total, metodo) => total + this.montoAplicado(metodo), 0);
         },
-
+    
         diferenciaEfectivo(metodo) {
             return Math.round(
                 ((Number(metodo.monto_recibido) || 0) - this.montoAplicado(metodo) + Number.EPSILON) * 100
             ) / 100;
         },
-
+    
         confirmarVenta(event) {
             if (!this.modalPagoAbierto || !this.pagosValidos()) return;
-            event.target.submit();
+            this.guardarCarrito().finally(() => event.target.submit());
         },
-
+    
         enviarConEnter() {
             if (this.modalPagoAbierto && this.pagosValidos()) {
                 this.$refs.formularioVenta.requestSubmit();
             }
         },
-
+    
         formularioValido() {
-            return this.detalles.length > 0
-                && this.detalles.every(detalle => this.detalleValido(detalle));
+            return this.detalles.length > 0 &&
+                this.detalles.every(detalle => this.detalleValido(detalle));
         },
-    }" x-init="enfocarBuscadorProductos()" class="space-y-3">
-        <x-section-title>
-            Registrar venta
-        </x-section-title>
+    }" x-init="$watch('detalles', () => programarGuardadoCarrito());
+    $watch('clienteSeleccionado', () => programarGuardadoCarrito());
+    window.addEventListener('pagehide', () => guardarCarrito(true));
+    enfocarBuscadorProductos()" class="space-y-3">
+
 
         <form id="formulario-venta" action="{{ route('ventas.store') }}" method="POST" class="space-y-5"
             x-ref="formularioVenta" @submit.prevent="confirmarVenta($event)">
@@ -460,21 +533,54 @@
             <input type="hidden" name="cliente_id" :value="clienteSeleccionado?.id ?? ''">
 
             @if (session('success'))
-                <div class="rounded-lg border border-green-200 bg-green-50 p-4 text-sm text-green-700" role="status">
-                    {{ session('success') }}
+                <x-alert-message />
+            @endif
+
+            {{-- Errores de validación --}}
+            @if ($errors->any())
+                <div id="alert-validation-errors" role="alert"
+                    class="mb-4 flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-100 p-4 text-sm text-red-700">
+                    <div>
+                        <p class="font-semibold">No se pudo registrar la venta:</p>
+
+                        <ul class="mt-1 list-inside list-disc">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+
+                    <button type="button" onclick="this.parentElement.remove()"
+                        class="shrink-0 opacity-70 transition-opacity hover:opacity-100" aria-label="Cerrar alerta">
+                        <x-lucide-x class="h-5 w-5" />
+                    </button>
                 </div>
             @endif
 
-            @if ($errors->any())
-                <div class="rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
-                    <p class="font-semibold">No se pudo registrar la venta:</p>
-                    <ul class="mt-1 list-inside list-disc">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
+            {{-- Errores de Alpine --}}
+            <p id="alert-alpine-error" x-cloak x-show="errorFormulario"
+                class="mb-4 flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-100 p-4 text-sm text-red-700"
+                role="alert">
+                <span x-text="errorFormulario"></span>
+
+                <button type="button" @click="errorFormulario = ''"
+                    class="shrink-0 opacity-70 transition-opacity hover:opacity-100" aria-label="Cerrar alerta">
+                    <x-lucide-x class="h-5 w-5" />
+                </button>
+            </p>
+
+            {{-- Error específico de detalles --}}
+            @error('detalles')
+                <div id="alert-detalles-error" role="alert"
+                    class="mb-4 flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-100 p-4 text-sm text-red-700">
+                    <span>{{ $message }}</span>
+
+                    <button type="button" onclick="this.parentElement.remove()"
+                        class="shrink-0 opacity-70 transition-opacity hover:opacity-100" aria-label="Cerrar alerta">
+                        <x-lucide-x class="h-5 w-5" />
+                    </button>
                 </div>
-            @endif
+            @enderror
 
             <div class="grid grid-cols-1 gap-4 md:grid-cols-2">
                 @include('ventas.partials._buscador-producto')
@@ -482,13 +588,6 @@
             </div>
             @include('ventas.partials._detalles')
             @include('ventas.partials._modal-pago')
-
-            <p x-cloak x-show="errorFormulario" x-text="errorFormulario"
-                class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700" role="alert"></p>
-
-            @error('detalles')
-                <p class="rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700">{{ $message }}</p>
-            @enderror
 
         </form>
     </div>

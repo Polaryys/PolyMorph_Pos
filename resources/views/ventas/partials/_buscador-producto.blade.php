@@ -32,6 +32,9 @@
                                 x-text="producto.marca ? `${producto.nombre} - ${producto.marca}` : producto.nombre"></span>
                             <span class="mt-1 block text-xs text-slate-500">
                                 SKU: <span x-text="producto.sku"></span>
+                                <template x-if="producto.ubicacion">
+                                    <span> · 📍 <span x-text="producto.ubicacion"></span></span>
+                                </template>
                             </span>
                         </span>
                     </span>

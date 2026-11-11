@@ -80,6 +80,8 @@ Route::middleware('auth')->group(function () {
     // Búsqueda, registro, consulta, anulación y pagos de ventas.
     Route::get('/ventas/create', [VentasController::class, 'create'])
         ->name('ventas.create');
+    Route::post('/ventas/carrito', [VentasController::class, 'guardarCarrito'])
+        ->name('ventas.carrito.guardar');
     Route::get('/ventas/buscar-productos', [VentasController::class, 'buscarProductos'])
         ->name('ventas.buscar-productos');
     Route::get('/ventas/buscar-clientes', [VentasController::class, 'buscarClientes'])

@@ -1,19 +1,10 @@
 <x-app-layout>
     <div class="space-y-8">
-        <section class="overflow-hidden rounded border border-slate-200 bg-white shadow-sm">
-            @if (session('success'))
-                <div class="m-5 rounded-lg border border-green-200 bg-green-100 p-4 text-sm text-green-700" role="status">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if ($errors->any())
-                <div class="m-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
-                    @foreach ($errors->all() as $error)
-                        <p>{{ $error }}</p>
-                    @endforeach
-                </div>
-            @endif
-            <div class="flex flex-col justify-between gap-4 border-b border-slate-100 p-5 sm:flex-row sm:items-start sm:p-6">
+        <section class="overflow-hidden bg-white shadow-sm">
+            <!-- MENSAJES -->
+            <x-alert-message />
+            <div
+                class="flex flex-col justify-between gap-4 border-b border-slate-100 px-5 py-3 sm:flex-row sm:items-start sm:px-6">
                 <div class="min-w-0">
                     <p class="mb-1 text-xs font-medium text-slate-500">Número de venta</p>
                     <h1 class="break-words text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
@@ -30,7 +21,7 @@
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-2 p-5 sm:grid-cols-2 xl:grid-cols-3 sm:p-6">
+            <div class="grid grid-cols-1 gap-2 px-5 sm:grid-cols-2 xl:grid-cols-3 sm:px-6">
                 <x-detail-field label="Tipo de operación">
                     {{ ucfirst(strtolower($venta->tipo_operacion)) }}
                 </x-detail-field>
@@ -46,12 +37,12 @@
                         {{ $venta->vendedor->apellidos }}
                     @endif
                     @if ($venta->vendedor?->username)
-                        <span class="block text-xs text-slate-500">{{ '@'.$venta->vendedor->username }}</span>
+                        <span class="block text-xs text-slate-500">{{ '@' . $venta->vendedor->username }}</span>
                     @endif
                 </x-detail-field>
                 <x-detail-field label="Cliente">
                     @if ($venta->cliente)
-                        {{ trim($venta->cliente->nombres.' '.$venta->cliente->apellidos) }}
+                        {{ trim($venta->cliente->nombres . ' ' . $venta->cliente->apellidos) }}
                         <span class="block text-xs text-slate-500">
                             NIT: {{ $venta->cliente->nit }}
                             @if ($venta->cliente->clasificacion)
@@ -73,7 +64,8 @@
                 </x-detail-field>
                 <x-detail-field label="Venta de referencia">
                     @if ($venta->ventaReferencia)
-                        <a href="{{ route('ventas.show', $venta->ventaReferencia) }}" class="font-medium text-indigo-700 hover:text-indigo-900">
+                        <a href="{{ route('ventas.show', $venta->ventaReferencia) }}"
+                            class="font-medium text-indigo-700 hover:text-indigo-900">
                             {{ $venta->ventaReferencia->numero_venta }}
                         </a>
                     @else
@@ -97,12 +89,44 @@
                 </x-slot:headers>
 
                 @forelse ($venta->detalles as $detalle)
-                    @php($signoDetalle = $detalle->tipo_movimiento === 'DEVOLUCION' ? -1 : 1)
+                    @php
+                        $signoDetalle = $detalle->tipo_movimiento === 'DEVOLUCION' ? -1 : 1;
+                        $nombreProducto = $detalle->presentacion?->nombre ?? 'Presentación no disponible';
+                        $marcaProducto = $detalle->presentacion?->inventario?->marca?->nombre;
+                        $nombreProductoCompleto = $marcaProducto
+                            ? "{$nombreProducto} - {$marcaProducto}"
+                            : $nombreProducto;
+                    @endphp
                     <tr class="transition-colors hover:bg-indigo-50/50">
                         <td class="px-4 py-3">
-                            <p class="font-semibold text-slate-900">
-                                {{ $detalle->presentacion?->nombre ?? 'Presentación no disponible' }}
-                            </p>
+                            <div x-data="{
+                                copiado: false,
+                                errorCopia: false,
+                                async copiar(texto) {
+                                    try {
+                                        await navigator.clipboard.writeText(texto);
+                                        this.copiado = true;
+                                    } catch (error) {
+                                        this.errorCopia = true;
+                                    }
+
+                                    setTimeout(() => {
+                                        this.copiado = false;
+                                        this.errorCopia = false;
+                                    }, 1500);
+                                }
+                            }" class="group inline-flex max-w-full flex-wrap items-center gap-1">
+                                <span class="font-semibold text-slate-900">{{ $nombreProductoCompleto }}</span>
+                                <button type="button" @click="copiar($el.dataset.copyText)"
+                                    data-copy-text="{{ $nombreProductoCompleto }}"
+                                    :aria-label="errorCopia ? 'No se pudo copiar' : copiado ? 'Copiado' : 'Copiar nombre y marca'"
+                                    :title="errorCopia ? 'No se pudo copiar' : copiado ? 'Copiado' : 'Copiar nombre y marca'"
+                                    class="inline-flex rounded p-1 text-slate-400 opacity-0 transition hover:bg-indigo-100 hover:text-indigo-700 focus:opacity-100 group-hover:opacity-100">
+                                    <x-lucide-copy x-show="!copiado && !errorCopia" class="h-4 w-4" />
+                                    <x-lucide-check x-show="copiado" class="h-4 w-4 text-green-600" />
+                                    <x-lucide-circle-alert x-show="errorCopia" class="h-4 w-4 text-red-600" />
+                                </button>
+                            </div>
                             <p class="mt-1 text-xs text-slate-500">
                                 {{ $detalle->tipo_item }}
                                 @if ($detalle->tipo_movimiento === 'DEVOLUCION')
@@ -114,10 +138,6 @@
                                 @endif
                                 <span class="mx-1">·</span>
                                 SKU: {{ $detalle->presentacion?->codigoSKU ?? '—' }}
-                                @if ($marca = $detalle->presentacion?->inventario?->marca?->nombre)
-                                    <span class="mx-1">·</span>
-                                    Marca: {{ $marca }}
-                                @endif
                             </p>
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">
@@ -137,7 +157,7 @@
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
                             {{ $detalle->subtotal_costo !== null
-                                ? 'Q '.number_format($signoDetalle * (float) $detalle->subtotal_costo, 2)
+                                ? 'Q ' . number_format($signoDetalle * (float) $detalle->subtotal_costo, 2)
                                 : '—' }}
                         </td>
                     </tr>
@@ -150,10 +170,9 @@
                 @endforelse
             </x-table>
             @if (
-                $venta->estado_venta === 'REGISTRADA'
-                && in_array($venta->tipo_operacion, ['CAMBIO', 'DEVOLUCION'], true)
-                && filled($venta->motivo_operacion)
-            )
+                $venta->estado_venta === 'REGISTRADA' &&
+                    in_array($venta->tipo_operacion, ['CAMBIO', 'DEVOLUCION'], true) &&
+                    filled($venta->motivo_operacion))
                 <div class="rounded border border-amber-200 bg-amber-50 p-4">
                     <p class="text-sm font-semibold text-amber-900">
                         {{ $venta->tipo_operacion === 'DEVOLUCION' ? 'Motivo de la devolución' : 'Motivo del cambio' }}
@@ -190,12 +209,10 @@
                             Q {{ number_format((float) $pago->monto, 2) }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
-                            {{ $pago->monto_recibido !== null
-                                ? 'Q '.number_format((float) $pago->monto_recibido, 2)
-                                : '—' }}
+                            {{ $pago->monto_recibido !== null ? 'Q ' . number_format((float) $pago->monto_recibido, 2) : '—' }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-right">
-                            {{ $pago->cambio !== null ? 'Q '.number_format((float) $pago->cambio, 2) : '—' }}
+                            {{ $pago->cambio !== null ? 'Q ' . number_format((float) $pago->cambio, 2) : '—' }}
                         </td>
                     </tr>
                 @empty
@@ -220,12 +237,11 @@
                     </x-slot:headers>
 
                     @foreach ($venta->operacionesRelacionadas as $operacion)
-                        @php($estadoPagoOperacion = $operacion->total < 0 && $operacion->estado_pago === 'PAGADO'
-                            ? 'REEMBOLSADO'
-                            : $operacion->estado_pago)
+                        @php($estadoPagoOperacion = $operacion->total < 0 && $operacion->estado_pago === 'PAGADO' ? 'REEMBOLSADO' : $operacion->estado_pago)
                         <tr class="transition-colors hover:bg-indigo-50/50">
                             <td class="px-4 py-3">
-                                <a href="{{ route('ventas.show', $operacion) }}" class="font-medium text-indigo-700 hover:text-indigo-900">
+                                <a href="{{ route('ventas.show', $operacion) }}"
+                                    class="font-medium text-indigo-700 hover:text-indigo-900">
                                     {{ $operacion->numero_venta }}
                                 </a>
                             </td>
@@ -233,9 +249,8 @@
                             <td class="px-4 py-3">
                                 {{ ucfirst(strtolower($operacion->estado_venta)) }}
                                 <span class="text-xs text-slate-500">
-                                    · {{ $estadoPagoOperacion
-                                        ? ucfirst(strtolower($estadoPagoOperacion))
-                                        : 'No aplica' }}
+                                    ·
+                                    {{ $estadoPagoOperacion ? ucfirst(strtolower($estadoPagoOperacion)) : 'No aplica' }}
                                 </span>
                             </td>
                             <td class="whitespace-nowrap px-4 py-3 text-right">
@@ -253,18 +268,18 @@
             errorPago: '',
             metodosPago: [],
             saldoPendiente: {{ json_encode($saldoPendiente) }},
-
+        
             async abrirModalPago() {
                 this.modalPagoAbierto = true;
                 this.cargandoMetodosPago = true;
                 this.errorPago = '';
-
+        
                 try {
                     const respuesta = await fetch('{{ route('ventas.metodos-pago') }}', {
                         headers: { Accept: 'application/json' },
                     });
                     if (!respuesta.ok) throw new Error('No se pudieron cargar los métodos de pago.');
-
+        
                     const metodos = await respuesta.json();
                     this.metodosPago = metodos.map(metodo => ({
                         ...metodo,
@@ -280,7 +295,7 @@
                     this.cargandoMetodosPago = false;
                 }
             },
-
+        
             activarMetodo(metodo) {
                 metodo.activo = true;
                 const montoDisponible = this.montoDisponiblePara(metodo);
@@ -290,77 +305,78 @@
                     metodo.monto = montoDisponible.toFixed(2);
                 }
             },
-
+        
             montoAplicado(metodo) {
                 let montoAsignado = 0;
                 const saldo = Math.abs(this.saldoPendiente);
-
+        
                 for (const pago of this.metodosPago.filter(item => item.activo)) {
-                    const montoIngresado = pago.permite_montos && this.saldoPendiente > 0
-                        ? Number(pago.monto_recibido) || 0
-                        : Number(pago.monto) || 0;
+                    const montoIngresado = pago.permite_montos && this.saldoPendiente > 0 ?
+                        Number(pago.monto_recibido) || 0 :
+                        Number(pago.monto) || 0;
                     const montoAplicado = Math.min(
                         montoIngresado,
                         Math.max(0, saldo - montoAsignado)
                     );
-
+        
                     if (pago === metodo) {
                         return this.saldoPendiente < 0 ? -montoAplicado : montoAplicado;
                     }
-
+        
                     montoAsignado += montoAplicado;
                 }
-
+        
                 return 0;
             },
-
+        
             montoDisponiblePara(metodoActual) {
                 let montoAsignado = 0;
                 const otrosPagos = this.metodosPago
                     .filter(metodo => metodo !== metodoActual && metodo.activo);
-
+        
                 for (const metodo of otrosPagos) {
-                    const montoIngresado = metodo.permite_montos && this.saldoPendiente > 0
-                        ? Number(metodo.monto_recibido) || 0
-                        : Number(metodo.monto) || 0;
+                    const montoIngresado = metodo.permite_montos && this.saldoPendiente > 0 ?
+                        Number(metodo.monto_recibido) || 0 :
+                        Number(metodo.monto) || 0;
                     montoAsignado += Math.min(
                         montoIngresado,
                         Math.max(0, Math.abs(this.saldoPendiente) - montoAsignado)
                     );
                 }
-
+        
                 return Math.max(0, Math.round((Math.abs(this.saldoPendiente) - montoAsignado) * 100) / 100);
             },
-
+        
             actualizarImporte(metodo, campo, event) {
                 const valor = event.target.value;
                 const [entero, ...decimales] = valor.replace(/[^\d.]/g, '').split('.');
-                const valorValidado = decimales.length
-                    ? `${entero}.${decimales.join('').slice(0, 2)}`
-                    : entero;
-
+                const valorValidado = decimales.length ?
+                    `${entero}.${decimales.join('').slice(0, 2)}` :
+                    entero;
+        
                 metodo[campo] = valorValidado;
                 event.target.value = valorValidado;
                 metodo.activo = true;
             },
-
+        
             pagosValidos() {
                 const pagos = this.metodosPago.filter(metodo => metodo.activo);
                 const total = pagos.reduce((suma, metodo) => suma + Math.abs(this.montoAplicado(metodo)), 0);
-
-                return pagos.length > 0
-                    && pagos.every(metodo => {
+        
+                return pagos.length > 0 &&
+                    pagos.every(metodo => {
                         const recibeEfectivo = metodo.permite_montos && this.saldoPendiente > 0;
                         const montoIngresado = recibeEfectivo ? metodo.monto_recibido : metodo.monto;
-                        return /^\d+(\.\d{1,2})?$/.test(String(montoIngresado || ''))
-                            && Math.abs(this.montoAplicado(metodo)) > 0
-                            && (recibeEfectivo
-                                || Number(montoIngresado) === Math.abs(this.montoAplicado(metodo)))
-                            && (!recibeEfectivo || Number(metodo.monto_recibido) >= Math.abs(this.montoAplicado(metodo)));
-                    })
-                    && Math.round(total * 100) <= Math.round(Math.abs(this.saldoPendiente) * 100);
+                        return /^\d+(\.\d{1,2})?$/.test(String(montoIngresado || '')) &&
+                            Math.abs(this.montoAplicado(metodo)) > 0 &&
+                            (recibeEfectivo ||
+                                Number(montoIngresado) === Math.abs(this.montoAplicado(metodo))) &&
+                            (!recibeEfectivo || Number(metodo.monto_recibido) >= Math.abs(this.montoAplicado(metodo)));
+                    }) &&
+                    Math.round(total * 100) <= Math.round(Math.abs(this.saldoPendiente) * 100);
             },
-        }" class="flex flex-col gap-2 rounded border border-slate-200 bg-white p-5 shadow-sm sm:ml-auto sm:w-96">
+        }"
+            class="flex flex-col gap-2 rounded border border-slate-200 bg-white p-5 shadow-sm sm:ml-auto sm:w-96">
             <div class="flex justify-between gap-4 text-sm text-slate-600">
                 <span>Total de productos</span>
                 <span>Q {{ number_format($totalProductos, 2) }}</span>
@@ -376,9 +392,7 @@
             <div class="flex justify-between gap-4 text-sm font-semibold text-slate-700">
                 <span>{{ match ($venta->tipo_operacion) {
                     'DEVOLUCION' => 'Reembolsado',
-                    'CAMBIO' => $venta->total < 0
-                        ? 'Reembolsado'
-                        : ($venta->total > 0 ? 'Cobrado' : 'Diferencia liquidada'),
+                    'CAMBIO' => $venta->total < 0 ? 'Reembolsado' : ($venta->total > 0 ? 'Cobrado' : 'Diferencia liquidada'),
                     default => 'Cobrado',
                 } }}</span>
                 <span>Q {{ number_format($montoPagado, 2) }}</span>
@@ -394,7 +408,10 @@
         </section>
 
         <div class="flex justify-end gap-3">
-            @if ($venta->tipo_operacion === 'VENTA' && $venta->estado_venta === 'REGISTRADA' && $venta->operacionesRelacionadas->isEmpty())
+            @if (
+                $venta->tipo_operacion === 'VENTA' &&
+                    $venta->estado_venta === 'REGISTRADA' &&
+                    $venta->operacionesRelacionadas->isEmpty())
                 @if ($puedeCambiarOAnular)
                     <form action="{{ route('ventas.anular', $venta) }}" method="POST"
                         onsubmit="return confirm('¿Anular esta venta? Se devolverá el stock de sus productos al inventario.');">

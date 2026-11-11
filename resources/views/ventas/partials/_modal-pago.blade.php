@@ -124,10 +124,6 @@
                 <p x-show="ventaCredito && totalPagadoModal() < totalVenta()" class="text-sm text-amber-700">
                     Saldo pendiente: Q <span x-text="Math.max(0, totalVenta() - totalPagadoModal()).toFixed(2)"></span>
                 </p>
-                <p x-show="!cargandoMetodosPago && !errorPago && !pagosValidos()" x-cloak
-                    class="text-sm text-red-600" role="alert">
-                    Registra el total de la venta o activa «Venta al crédito». El monto recibido debe cubrir su monto aplicado.
-                </p>
             </div>
 
             <div class="mt-4 flex flex-col-reverse gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">

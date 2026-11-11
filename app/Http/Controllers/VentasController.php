@@ -15,6 +15,7 @@ use App\Models\VentaDetalle;
 use App\Services\CrearVentaService;
 use App\Services\RegistrarPagoVentaService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +44,70 @@ class VentasController extends Controller
      */
     public function create()
     {
-        return view('ventas.create');
+        $carrito = session('ventas.carrito', ['cliente_id' => null, 'detalles' => []]);
+        $detallesGuardados = collect($carrito['detalles'] ?? []);
+        $presentaciones = Presentacion::query()
+            ->with([
+                'inventario:id,marca_id,cantidad,costoPromedioUnitario,tipo,estado',
+                'inventario.marca:id,nombre',
+                'imagen:id,nombre_archivo',
+            ])
+            ->whereIn('id', $detallesGuardados->pluck('presentacion_id')->filter()->unique())
+            ->get()
+            ->keyBy('id');
+
+        $detalles = $detallesGuardados
+            ->map(function (array $detalle) use ($presentaciones) {
+                $presentacion = $presentaciones->get($detalle['presentacion_id']);
+                if (! $presentacion) {
+                    return null;
+                }
+
+                return [
+                    ...$this->datosProducto($presentacion),
+                    'cantidad' => $detalle['cantidad'],
+                    'tipo_precio' => $detalle['tipo_precio'],
+                    'descuento' => (string) $detalle['descuento'],
+                ];
+            })
+            ->filter()
+            ->values()
+            ->all();
+
+        $cliente = ! empty($carrito['cliente_id'])
+            ? Cliente::query()->find($carrito['cliente_id'])
+            : null;
+        $clienteSeleccionado = $cliente
+            ? [
+                'id' => $cliente->id,
+                'nit' => $cliente->nit,
+                'nombre' => trim($cliente->nombres.' '.$cliente->apellidos),
+                'telefono' => $cliente->telefono,
+            ]
+            : null;
+
+        return view('ventas.create', compact('detalles', 'clienteSeleccionado'));
+    }
+
+    public function guardarCarrito(Request $request): JsonResponse
+    {
+        $datos = $request->validate([
+            'cliente_id' => ['nullable', 'integer', 'exists:clientes,id'],
+            'detalles' => ['present', 'array', 'max:100'],
+            'detalles.*.presentacion_id' => ['required', 'integer', 'distinct', 'exists:presentaciones,id'],
+            'detalles.*.cantidad' => ['present', 'nullable', 'numeric', 'decimal:0,2'],
+            'detalles.*.tipo_precio' => ['required', 'string', 'in:unitario,docena,ciento'],
+            'detalles.*.descuento' => ['present', 'nullable', 'string', 'max:30'],
+        ]);
+
+        $carrito = $this->datosCarrito($datos);
+        if ($carrito['cliente_id'] === null && $carrito['detalles'] === []) {
+            $request->session()->forget('ventas.carrito');
+        } else {
+            $request->session()->put('ventas.carrito', $carrito);
+        }
+
+        return response()->json(['guardado' => true]);
     }
 
     /**
@@ -64,6 +128,7 @@ class VentasController extends Controller
                 'inventario_id',
                 'nombre',
                 'codigoSKU',
+                'ubicacion',
                 'factor',
                 'precioUnitario',
                 'precioUnitarioDocena',
@@ -90,26 +155,7 @@ class VentasController extends Controller
             ->orderBy('nombre')
             ->limit(10)
             ->get()
-            ->map(fn (Presentacion $presentacion) => [
-                'presentacion_id' => $presentacion->id,
-                'nombre' => $presentacion->nombre,
-                'sku' => $presentacion->codigoSKU,
-                'marca' => $presentacion->inventario?->marca?->nombre,
-                'tipo_item' => $presentacion->inventario?->tipo,
-                'factor' => (int) $presentacion->factor,
-                'imagen' => $presentacion->imagen
-                    ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
-                    : null,
-                'cantidad_actual' => $presentacion->inventario?->cantidad,
-                'costo_promedio_actual' => (float) ($presentacion->inventario?->costoPromedioUnitario ?? 0),
-                'precio_unitario_actual' => (float) $presentacion->precioUnitario,
-                'precio_docena_actual' => $presentacion->precioUnitarioDocena === null
-                    ? null
-                    : (float) $presentacion->precioUnitarioDocena,
-                'precio_ciento_actual' => $presentacion->precioUnitarioCiento === null
-                    ? null
-                    : (float) $presentacion->precioUnitarioCiento,
-            ])
+            ->map(fn (Presentacion $presentacion) => $this->datosProducto($presentacion))
             ->values();
 
         return response()->json($presentaciones);
@@ -164,11 +210,63 @@ class VentasController extends Controller
     {
         $datos = $request->validated();
         $tipoOperacion = $datos['tipo_operacion'] ?? 'VENTA';
+        if ($tipoOperacion === 'VENTA') {
+            $request->session()->put('ventas.carrito', $this->datosCarrito($datos));
+        }
+
         $venta = $crearVentaService->crear($datos, (int) Auth::id());
+
+        if ($tipoOperacion === 'VENTA') {
+            $request->session()->forget('ventas.carrito');
+        }
 
         return $tipoOperacion === 'VENTA'
             ? redirect()->back()->with('success', "La operación {$venta->numero_venta} se registró correctamente.")
             : redirect()->route('ventas.show', $venta)->with('success', "La operación {$venta->numero_venta} se registró correctamente.");
+    }
+
+    private function datosProducto(Presentacion $presentacion): array
+    {
+        return [
+            'presentacion_id' => $presentacion->id,
+            'nombre' => $presentacion->nombre,
+            'sku' => $presentacion->codigoSKU,
+            'ubicacion' => $presentacion->ubicacion,
+            'marca' => $presentacion->inventario?->marca?->nombre,
+            'tipo_item' => $presentacion->inventario?->tipo,
+            'factor' => (int) $presentacion->factor,
+            'imagen' => $presentacion->imagen
+                ? asset('storage/imagenes/'.$presentacion->imagen->nombre_archivo)
+                : null,
+            'cantidad_actual' => $presentacion->inventario?->cantidad,
+            'costo_promedio_actual' => (float) ($presentacion->inventario?->costoPromedioUnitario ?? 0),
+            'precio_unitario_actual' => (float) $presentacion->precioUnitario,
+            'precio_docena_actual' => $presentacion->precioUnitarioDocena === null
+                ? null
+                : (float) $presentacion->precioUnitarioDocena,
+            'precio_ciento_actual' => $presentacion->precioUnitarioCiento === null
+                ? null
+                : (float) $presentacion->precioUnitarioCiento,
+        ];
+    }
+
+    private function datosCarrito(array $datos): array
+    {
+        return [
+            'cliente_id' => isset($datos['cliente_id']) && $datos['cliente_id'] !== ''
+                ? (int) $datos['cliente_id']
+                : null,
+            'detalles' => collect($datos['detalles'] ?? [])
+                ->filter(fn (array $detalle) => ! empty($detalle['presentacion_id']))
+                ->map(fn (array $detalle) => [
+                    'presentacion_id' => (int) $detalle['presentacion_id'],
+                    'cantidad' => $detalle['cantidad'] ?? '',
+                    'tipo_precio' => $detalle['tipo_precio'] ?? 'unitario',
+                    'descuento' => (string) ($detalle['descuento'] ?? ''),
+                ])
+                ->values()
+                ->all(),
+        ];
     }
 
     /**

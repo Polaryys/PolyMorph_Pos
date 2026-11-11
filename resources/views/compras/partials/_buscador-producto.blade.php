@@ -140,10 +140,7 @@
                     class="rounded-md shadow-sm focus:ring-indigo-500" />
             </div>
         </div>
-        <p class="mt-2 text-xs text-slate-500">
-            Para importes usa punto como separador decimal (por ejemplo, 12.50). Los precios por docena y ciento son opcionales.
-        </p>
-
+        
         <button type="button" @click="agregarDetalle()"
             :disabled="!Number.isInteger(Number(cantidad)) || Number(cantidad) < 1 || !decimalValido(costoUnitario, true, true) || !decimalValido(precioNuevo) || Number(precioNuevo) < 0 || !decimalValido(precioDocenaNuevo, false) || !decimalValido(precioCientoNuevo, false)"
             class="mt-4 inline-flex items-center justify-center rounded-xl bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">

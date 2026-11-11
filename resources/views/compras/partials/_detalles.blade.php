@@ -25,17 +25,10 @@
                 <template x-for="(detalle, indice) in detalles" :key="detalle.presentacion_id">
                     <tr class="align-middle">
                         <td class="px-4 py-3">
-                            <p class="font-semibold text-slate-900" x-text="detalle.nombre"></p>
+                            <p class="font-semibold text-slate-900"
+                                x-text="detalle.marca ? `${detalle.nombre} - ${detalle.marca}` : detalle.nombre"></p>
                             <p class="mt-1 text-xs text-slate-500">
                                 SKU: <span x-text="detalle.sku"></span>
-                                <span class="mx-1">·</span>
-                                <span x-text="detalle.marca"></span>
-                            </p>
-                            <p class="mt-1 text-xs text-slate-500">
-                                Costo promedio actual (referencia): Q <span x-text="Number(detalle.costo_promedio_actual).toFixed(2)"></span>
-                                <span class="mx-1">·</span>
-                                Precio actual: Q <span x-text="Number(detalle.precio_unitario_actual).toFixed(2)"></span>
-
                             </p>
                             <input type="hidden" :name="`detalles[${indice}][presentacion_id]`" :value="detalle.presentacion_id">
                             <input type="hidden" :name="`detalles[${indice}][cantidad]`" :value="detalle.cantidad">
@@ -47,31 +40,31 @@
                         <td class="px-4 py-3 text-center" x-text="detalle.cantidad_actual"></td>
                         <td class="px-4 py-3">
                             <x-text-input type="number" min="1" step="1" x-model.number="detalle.cantidad"
-                                class="w-24 rounded-md p-2 text-right focus:ring-indigo-500" />
+                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.costo_unitario"
                                 placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-28 rounded-md p-2 text-right focus:ring-indigo-500" />
+                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_unitario_nuevo"
                                 placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-28 rounded-md p-2 text-right focus:ring-indigo-500" />
+                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_docena_nuevo"
                                 placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-28 rounded-md p-2 text-right focus:ring-indigo-500" />
+                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_ciento_nuevo"
                                 placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-28 rounded-md p-2 text-right focus:ring-indigo-500" />
+                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3 text-right font-medium text-slate-900"
                             x-text="'Q ' + (Number(detalle.cantidad) * Number(detalle.costo_unitario)).toFixed(2)"></td>
