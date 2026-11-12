@@ -12,9 +12,9 @@
 
         <x-slot:headers>
             <th class="px-6 py-2.5 w-16 text-center">No.</th>
-            <th class="px-6 py-2.5 text-left">NIT</th>
+            <th class="px-6 py-2.5 text-left w-40">NIT</th>
             <th class="px-6 py-2.5">Nombres</th>
-            <th class="px-6 py-2.5">Teléfono</th>
+            <th class="px-6 py-2.5 w-16">Teléfono</th>
             <th class="px-6 py-2.5 w-16">Clasificación</th>
             <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
             <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Editado</th>
@@ -32,16 +32,22 @@
                     {{ $cliente->nit }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-normal text-slate-900">
                     {{ $cliente->nombres }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-normal text-slate-900">
                     {{ $cliente->telefono }}
                 </td>
 
-                <td class="px-6 py-3 w-16 font-medium text-slate-900">
-                    {{ $cliente->clasificacion }}
+                <td class="px-6 py-3 text-center">
+                    <span @class([
+                        'inline-flex items-center rounded-full text-xs p-1 font-semibold whitespace-nowrap',
+                        'bg-indigo-50 text-indigo-700' => $cliente->clasificacion === 'Mayorista',
+                        'bg-emerald-50 text-emerald-700' => $cliente->clasificacion === 'Minorista',
+                    ])>
+                        {{ $cliente->clasificacion }}
+                    </span>
                 </td>
 
                 <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">

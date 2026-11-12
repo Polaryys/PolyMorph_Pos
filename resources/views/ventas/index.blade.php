@@ -20,10 +20,10 @@
 
         @forelse ($ventas as $venta)
             <tr>
-                <td class="px-4 py-3 text-center whitespace-nowrap text-slate-700">
+                <td class="px-4 py-3 text-center whitespace-nowrap text-slate-500">
                     {{ $venta->created_at?->format('d/m/Y H:i') ?? '—' }}
                 </td>
-                <td class="px-4 py-3 whitespace-nowrap font-semibold text-indigo-700">
+                <td class="px-4 py-3 whitespace-nowrap font-semibold text-slate-900">
                     {{ $venta->numero_venta }}
                 </td>
                 <td class="px-4 py-3 whitespace-nowrap text-slate-900">

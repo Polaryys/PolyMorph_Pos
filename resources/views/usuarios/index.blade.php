@@ -60,11 +60,11 @@
                     {{ $usuario->username }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-normal text-slate-900">
                     {{ $usuario->nombres }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-normal text-slate-900">
                     {{ $usuario->apellidos }}
                 </td>
 

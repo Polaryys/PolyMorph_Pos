@@ -333,7 +333,7 @@ class VentasController extends Controller
         $puedeCambiarOAnular = $this->estaDentroDelPlazoDeOperacion($venta);
         $puedeCambiar = $puedeCambiarOAnular && $saldoPendiente <= 0;
         $razonBloqueoCambio = ! $puedeCambiarOAnular
-            ? 'El plazo de 5 días hábiles, excluyendo domingos, venció.'
+            ? 'El plazo de 5 días hábiles para realizar un cambio venció'
             : ($saldoPendiente > 0
                 ? 'No se puede cambiar o devolver una venta con saldo pendiente. Liquida el saldo primero.'
                 : '');

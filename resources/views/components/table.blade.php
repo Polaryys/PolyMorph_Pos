@@ -30,7 +30,7 @@
     {{-- Paginación --}}
     @if ($paginator && $paginator->hasPages())
         <div class="flex flex-col gap-3 border-t border-slate-200
-                    bg-slate-50/50 px-4 py-3 sm:px-6">
+                    bg-indigo-50/50 px-4 py-3 sm:px-6">
             {{ $paginator->links() }}
         </div>
     @endif

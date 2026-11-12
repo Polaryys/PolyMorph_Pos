@@ -113,21 +113,21 @@
                 <x-table>
                     <x-slot:headers>
                         <th class="px-4 py-3">Escala de precio</th>
-                        <th class="px-4 py-3">Cantidad de referencia</th>
+                        <th class="px-4 py-3">Precio aplicable apartir de</th>
                         <th class="px-4 py-3">Precio de venta</th>
                     </x-slot:headers>
 
                     <tr>
                         <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Unitario</td>
                         <td class="whitespace-nowrap px-4 py-3 text-slate-600">1 unidad</td>
-                        <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-indigo-700">
+                        <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900">
                             Q {{ number_format($presentacion?->precioUnitario ?? 0, 2) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Docena</td>
+                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Unitarios por docena</td>
                         <td class="whitespace-nowrap px-4 py-3 text-slate-600">12 unidades</td>
-                        <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-indigo-700">
+                        <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900">
                             @if ($presentacion?->precioUnitarioDocena !== null)
                                 Q {{ number_format($presentacion->precioUnitarioDocena, 2) }}
                             @else
@@ -136,9 +136,9 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Ciento</td>
+                        <td class="whitespace-nowrap px-4 py-3 font-medium text-slate-800">Unitario por Ciento</td>
                         <td class="whitespace-nowrap px-4 py-3 text-slate-600">100 unidades</td>
-                        <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-indigo-700">
+                        <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-slate-900">
                             @if ($presentacion?->precioUnitarioCiento !== null)
                                 Q {{ number_format($presentacion->precioUnitarioCiento, 2) }}
                             @else

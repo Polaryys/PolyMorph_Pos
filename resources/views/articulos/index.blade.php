@@ -42,14 +42,14 @@
     <x-table :paginator="$articulos">
 
         <x-slot:headers>
-            <th class="text-center whitespace-nowrap">Imagen</th>
+            <th class="text-center w-16 whitespace-nowrap">Imagen</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">SKU</th>
             <th class="px-2 py-3 text-left whitespace-nowrap">BARCODE</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">Nombre</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Marca</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Precio U.</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Cantidad</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Acciones</th>
+            <th class="px-4 py-3 w-16 text-center whitespace-nowrap">Cantidad</th>
+            <th class="px-4 py-3 w-16 text-center whitespace-nowrap">Acciones</th>
         </x-slot:headers>
 
         @forelse ($articulos as $articulo)
@@ -69,7 +69,7 @@
                 </td>
 
                 <!-- SKU -->
-                <td class="px-4 py-3 font-medium text-indigo-700 whitespace-nowrap">
+                <td class="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
                     {{ $articulo->presentaciones->first()?->codigoSKU }}
                 </td>
 

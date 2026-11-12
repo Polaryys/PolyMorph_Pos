@@ -15,15 +15,14 @@ class ImportarInventarioInicialCsv
     // Este contrato fija el encabezado del archivo exportado; las demás columnas se ignoran.
     private const COLUMNAS_REQUERIDAS = [
         'SKU',
-        'Nombre',
         'Tipo',
+        'Nombre',
         'Marca',
-        'Factor de conversión',
         'Existencias actuales',
         'Costo unitario',
         'Precio unitario',
-        'Precio docena',
-        'Precio ciento',
+        'Precio unitario por docena',
+        'Precio unitario por ciento',
         'Stock mínimo',
     ];
 
@@ -79,6 +78,7 @@ class ImportarInventarioInicialCsv
                 $inventario->presentaciones()->create([
                     'codigoSKU' => $fila['sku'],
                     'nombre' => $fila['nombre'],
+                    'ubicacion' => $fila['ubicacion'],
                     'factor' => 1,
                     'base' => true,
                     'precioUnitario' => $fila['precio_unitario'],
@@ -245,25 +245,38 @@ class ImportarInventarioInicialCsv
             $this->agregarError($errores, "Fila {$numeroFila}: Marca debe tener hasta 255 caracteres.");
         }
 
-        $factor = $this->entero($valorNumerico('Factor de conversión'), 'Factor de conversión', $numeroFila, $errores);
-        if ($factor !== null && $factor !== 1) {
-            $this->agregarError($errores, "Fila {$numeroFila}: una presentación base debe tener factor de conversión 1.");
+        $ubicacion = $this->normalizarEspacios($valor('Ubicación'));
+        if (mb_strlen($ubicacion, 'UTF-8') > 100) {
+            $this->agregarError($errores, "Fila {$numeroFila}: Ubicación debe tener hasta 100 caracteres.");
         }
 
-        $cantidad = $this->entero($valorNumerico('Existencias actuales'), 'Existencias actuales', $numeroFila, $errores);
-        $umbral = $this->entero($valorNumerico('Stock mínimo'), 'Stock mínimo', $numeroFila, $errores);
+        $permitirCero = $tipo === 'SERVICIO';
+        $cantidad = $this->entero(
+            $valorNumerico('Existencias actuales'),
+            'Existencias actuales',
+            $numeroFila,
+            $errores,
+            $permitirCero
+        );
+        $umbral = $this->entero(
+            $valorNumerico('Stock mínimo'),
+            'Stock mínimo',
+            $numeroFila,
+            $errores,
+            $permitirCero
+        );
         $costo = $this->decimal($valorNumerico('Costo unitario'), 'Costo unitario', $numeroFila, $errores);
         $precioUnitario = $this->decimal($valorNumerico('Precio unitario'), 'Precio unitario', $numeroFila, $errores);
         $precioDocena = $this->decimal(
-            $valorNumerico('Precio docena'),
-            'Precio docena',
+            $valorNumerico('Precio unitario por docena'),
+            'Precio unitario por docena',
             $numeroFila,
             $errores,
             true
         );
         $precioCiento = $this->decimal(
-            $valorNumerico('Precio ciento'),
-            'Precio ciento',
+            $valorNumerico('Precio unitario por ciento'),
+            'Precio unitario por ciento',
             $numeroFila,
             $errores,
             true
@@ -278,7 +291,7 @@ class ImportarInventarioInicialCsv
             'nombre' => $nombre,
             'tipo' => $tipo,
             'marca' => $marca,
-            'factor' => $factor,
+            'ubicacion' => $ubicacion === '' ? null : $ubicacion,
             'cantidad' => $cantidad,
             'costo_unitario' => $costo,
             'precio_unitario' => $precioUnitario,
@@ -288,17 +301,32 @@ class ImportarInventarioInicialCsv
         ];
     }
 
-    private function entero(string $valor, string $columna, int $fila, array &$errores): ?int
+    private function entero(
+        string $valor,
+        string $columna,
+        int $fila,
+        array &$errores,
+        bool $permitirCero = false
+    ): ?int
     {
         if (! preg_match('/^\d+$/D', $valor) || (float) $valor > 2147483647) {
-            $this->agregarError($errores, "Fila {$fila}: {$columna} debe ser un entero positivo sin espacios ni otros caracteres.");
+            $this->agregarError(
+                $errores,
+                "Fila {$fila}: {$columna} debe ser un entero "
+                    .($permitirCero ? 'no negativo' : 'positivo')
+                    .' sin espacios ni otros caracteres.'
+            );
 
             return null;
         }
 
         $entero = (int) $valor;
-        if ($entero < 1) {
-            $this->agregarError($errores, "Fila {$fila}: {$columna} debe ser mayor que cero.");
+        if ($entero < ($permitirCero ? 0 : 1)) {
+            $this->agregarError(
+                $errores,
+                "Fila {$fila}: {$columna} debe ser "
+                    .($permitirCero ? 'mayor o igual que cero.' : 'mayor que cero.')
+            );
 
             return null;
         }

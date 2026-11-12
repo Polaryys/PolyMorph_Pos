@@ -36,7 +36,7 @@
     <!-- TABLA DE COMPRAS -->
     <x-table :paginator="$compras">
         <x-slot:headers>
-            <th class="px-4 py-3 text-left whitespace-nowrap">No. de compra</th>
+            <th class="px-4 py-3 w-24 text-left whitespace-nowrap">No. de compra</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Fecha</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">Proveedor</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Cantidad</th>
@@ -47,7 +47,7 @@
 
         @forelse ($compras as $compra)
             <tr class="transition-colors hover:bg-indigo-50/50">
-                <td class="px-4 py-3 whitespace-nowrap font-semibold text-indigo-700">
+                <td class="px-4 py-3 whitespace-nowrap font-semibold text-slate-900">
                     <a href="{{ route('compras.show', $compra) }}" class="transition hover:text-indigo-900">
                     {{ $compra->numero_compra }}
                     </a>

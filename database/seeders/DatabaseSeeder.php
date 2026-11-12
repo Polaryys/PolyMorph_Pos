@@ -30,9 +30,5 @@ class DatabaseSeeder extends Seeder
         Cliente::factory()->count(40)->create();
         Proveedor::factory()->count(15)->create();
 
-        // Artículos y presentaciones
-        $this->call([
-            ArticuloSeeder::class,
-        ]);
     }
 }

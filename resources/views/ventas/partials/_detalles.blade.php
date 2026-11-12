@@ -1,4 +1,4 @@
-<section class="overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm">
+<section class="overflow-hidden bg-white shadow-sm">
     <x-table>
         <x-slot:headers>
             <th class="w-16 whitespace-nowrap px-2 py-2">Imagen</th>
@@ -109,7 +109,7 @@
         </template>
 
         <tr x-show="detalles.length === 0">
-            <td colspan="7" class="px-6 py-10 text-center text-sm text-slate-500">
+            <td colspan="7" class="px-6 py-10 text-center text-sm text-slate-500 bg-white">
                 Busca y agrega artículos para comenzar la venta.
             </td>
         </tr>
@@ -133,7 +133,6 @@
         </dl>
 
         <div class="flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
-            <x-secondary-link href="{{ route('ventas.index') }}">Cancelar</x-secondary-link>
             <button type="button" @click="limpiarCarrito()" :disabled="detalles.length === 0"
                 class="rounded-md border border-red-200 px-4 py-2.5 text-sm font-semibold text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-50">
                 Limpiar carrito

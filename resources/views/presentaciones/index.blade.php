@@ -31,13 +31,13 @@
     <x-table :paginator="$presentaciones">
 
         <x-slot:headers>
-            <th class="text-center whitespace-nowrap">Imagen</th>
+            <th class="text-center w-16 whitespace-nowrap">Imagen</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">SKU</th>
             <th class="px-2 py-3 text-left whitespace-nowrap">BARCODE</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">Presentación</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Factor</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Precio U.</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Disponibilidad</th>
+            <th class="px-4 w-16 py-3 text-center whitespace-nowrap">Disponibilidad</th>
             <th class="px-4 py-3 text-center whitespace-nowrap">Acciones</th>
         </x-slot:headers>
 
@@ -58,7 +58,7 @@
                 </td>
 
                 <!-- SKU -->
-                <td class="px-4 py-3 font-medium text-indigo-700 whitespace-nowrap">
+                <td class="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
                     {{ $presentacion->codigoSKU }}
                 </td>
 
@@ -68,22 +68,22 @@
                 </td>
 
                 <!-- NOMBRE DE LA PRESENTACIÓN -->
-                <td class="px-4 py-3 text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3 text-sm text-slate-900 whitespace-nowrap">
                     {{ $presentacion->nombre }}
                 </td>
 
                 <!-- FACTOR -->
-                <td class="px-4 py-3 text-center font-medium text-slate-700 whitespace-nowrap">
+                <td class="px-4 py-3 text-sm text-center font-medium text-slate-700 whitespace-nowrap">
                     {{ $presentacion->factor }}
                 </td>
 
                 <!-- PRECIO DE VENTA -->
-                <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3 text-sm text-center font-medium text-slate-900 whitespace-nowrap">
                     Q {{ number_format((float) ($presentacion->precioUnitario ?? 0), 2) }}
                 </td>
 
                 <!-- DISPONIBILIDAD EN PRESENTACIONES -->
-                <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3 text-sm text-center font-medium text-slate-900 whitespace-nowrap">
                     {{ intdiv(
                         max(0, (int) ($presentacion->inventario?->cantidad ?? 0)),
                         max(1, (int) ($presentacion->factor ?? 1)),

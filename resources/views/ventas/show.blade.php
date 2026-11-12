@@ -79,13 +79,16 @@
             <x-section-title>Artículos de la venta</x-section-title>
             <x-table>
                 <x-slot:headers>
-                    <th class="whitespace-nowrap px-4 py-3">Artículo</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-center">Cantidad</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Precio unitario</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Precio aplicado</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Descuento</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Subtotal</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Costo</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center">Tipo</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center">SKU</th>
+                    <th class="whitespace-nowrap px-3 py-3">Artículo</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center">Cantidad</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center">Precio unitario</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center">Descuento</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center">Subtotal</th>
+                    @if (auth()->user()->rol === 'Administrador')
+                        <th class="whitespace-nowrap px-3 py-3 text-center">Costo</th>
+                    @endif
                 </x-slot:headers>
 
                 @forelse ($venta->detalles as $detalle)
@@ -98,6 +101,12 @@
                             : $nombreProducto;
                     @endphp
                     <tr class="transition-colors hover:bg-indigo-50/50">
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
+                            {{ $detalle->tipo_item }}
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
+                            {{ $detalle->presentacion?->codigoSKU ?? '—' }}
+                        </td>
                         <td class="px-4 py-3">
                             <div x-data="{
                                 copiado: false,
@@ -116,7 +125,7 @@
                                     }, 1500);
                                 }
                             }" class="group inline-flex max-w-full flex-wrap items-center gap-1">
-                                <span class="font-semibold text-slate-900">{{ $nombreProductoCompleto }}</span>
+                                <span class="font-normal text-sm text-slate-900">{{ $nombreProductoCompleto }}</span>
                                 <button type="button" @click="copiar($el.dataset.copyText)"
                                     data-copy-text="{{ $nombreProductoCompleto }}"
                                     :aria-label="errorCopia ? 'No se pudo copiar' : copiado ? 'Copiado' : 'Copiar nombre y marca'"
@@ -128,7 +137,7 @@
                                 </button>
                             </div>
                             <p class="mt-1 text-xs text-slate-500">
-                                {{ $detalle->tipo_item }}
+                                
                                 @if ($detalle->tipo_movimiento === 'DEVOLUCION')
                                     <span class="mx-1">·</span>
                                     Devolución
@@ -136,34 +145,32 @@
                                     <span class="mx-1">·</span>
                                     Entrega de cambio
                                 @endif
-                                <span class="mx-1">·</span>
-                                SKU: {{ $detalle->presentacion?->codigoSKU ?? '—' }}
                             </p>
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">
                             {{ number_format($signoDetalle * (float) $detalle->cantidad, 2) }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
                             Q {{ number_format($signoDetalle * (float) $detalle->precio_unitario, 2) }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
-                            Q {{ number_format($signoDetalle * (float) $detalle->precio_aplicado, 2) }}
-                        </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
                             Q {{ number_format($signoDetalle * (float) $detalle->descuento, 2) }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right font-semibold text-slate-900">
+                        <td class="whitespace-nowrap px-4 py-3 text-center font-semibold text-slate-900">
                             Q {{ number_format($signoDetalle * (float) $detalle->subtotal, 2) }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
-                            {{ $detalle->subtotal_costo !== null
-                                ? 'Q ' . number_format($signoDetalle * (float) $detalle->subtotal_costo, 2)
-                                : '—' }}
-                        </td>
+                        @if (auth()->user()->rol === 'Administrador')
+                            <td class="whitespace-nowrap px-4 py-3 text-center">
+                                {{ $detalle->subtotal_costo !== null
+                                    ? 'Q ' . number_format($signoDetalle * (float) $detalle->subtotal_costo, 2)
+                                    : '—' }}
+                            </td>
+                        @endif
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="7" class="px-6 py-8 text-center text-slate-400">
+                        <td colspan="{{ auth()->user()->rol === 'Administrador' ? 8 : 7 }}"
+                            class="px-6 py-8 text-center text-slate-400">
                             Esta venta no tiene artículos registrados.
                         </td>
                     </tr>
@@ -188,30 +195,30 @@
             <x-section-title>Movimientos de pago</x-section-title>
             <x-table>
                 <x-slot:headers>
-                    <th class="whitespace-nowrap px-4 py-3">Método de pago</th>
-                    <th class="whitespace-nowrap px-4 py-3">Fecha</th>
+                    <th class="whitespace-nowrap px-4 py-3 text-center w-24">Método de pago</th>
+                    <th class="whitespace-nowrap px-4 py-3 text-center">Fecha</th>
                     <th class="whitespace-nowrap px-4 py-3">Referencia</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Monto aplicado</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Monto recibido</th>
-                    <th class="whitespace-nowrap px-4 py-3 text-right">Cambio</th>
+                    <th class="whitespace-nowrap px-4 py-3 text-center">Monto aplicado</th>
+                    <th class="whitespace-nowrap px-4 py-3 text-center">Monto recibido</th>
+                    <th class="whitespace-nowrap px-4 py-3 text-center">Cambio</th>
                 </x-slot:headers>
 
                 @forelse ($venta->detallesPago as $pago)
                     <tr class="transition-colors hover:bg-indigo-50/50">
-                        <td class="px-4 py-3 font-medium text-slate-900">
+                        <td class="px-4 py-3 font-medium text-slate-900 text-center">
                             {{ $pago->metodoPago?->nombre ?? 'Método no disponible' }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3">
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
                             {{ $pago->fecha_pago?->format('d/m/Y H:i') ?? '—' }}
                         </td>
                         <td class="px-4 py-3">{{ $pago->referencia ?: '—' }}</td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
                             Q {{ number_format((float) $pago->monto, 2) }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
                             {{ $pago->monto_recibido !== null ? 'Q ' . number_format((float) $pago->monto_recibido, 2) : '—' }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right">
+                        <td class="whitespace-nowrap px-4 py-3 text-center">
                             {{ $pago->cambio !== null ? 'Q ' . number_format((float) $pago->cambio, 2) : '—' }}
                         </td>
                     </tr>
@@ -420,7 +427,7 @@
                     </form>
                 @else
                     <x-danger-button type="button" disabled class="cursor-not-allowed opacity-50"
-                        title="El plazo de 5 días hábiles, excluyendo domingos, venció.">
+                        title="La venta no puede anularse tras 5 días hábiles de su registro">
                         Anular venta
                     </x-danger-button>
                 @endif
