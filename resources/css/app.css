@@ -2,6 +2,10 @@
 
 @import 'tailwindcss' layer(utilities);
 
+@theme {
+    --font-sans: "Figtree", sans-serif;
+}
+
 @theme inline {
   --color-indigo-50: color-mix(in srgb, var(--accent-color) 5%, white);
   --color-indigo-100: color-mix(in srgb, var(--accent-color) 10%, white);
