@@ -2,7 +2,7 @@
     <div x-cloak x-show="modalPagoAbierto" x-transition.opacity
         @click.self="cerrarModalPago()" @keydown.escape.window="if (modalPagoAbierto) cerrarModalPago()"
         @keydown.enter.prevent="enviarConEnter()"
-        class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/40 p-4"
+        class="fixed inset-0 z-100 flex items-center justify-center overflow-y-auto bg-black/40 p-4"
         role="dialog" aria-modal="true" aria-labelledby="titulo-modal-pago">
         <div x-show="modalPagoAbierto" x-transition
             class="my-auto w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-xl"

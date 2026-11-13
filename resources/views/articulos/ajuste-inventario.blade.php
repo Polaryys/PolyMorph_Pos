@@ -63,7 +63,7 @@
                     <input type="number" name="cantidad" min="0" max="4294967295" step="1" required
                         x-model="cantidadFinal" x-bind:disabled="!producto" placeholder="Cantidad final"
                         aria-label="Inventario final"
-                        class="mx-auto block w-full max-w-[9rem] rounded-lg border border-slate-300 px-3 py-2 text-center text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        class="mx-auto block w-full max-w-36 rounded-lg border border-slate-300 px-3 py-2 text-center text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
                 </td>
                 <td class="px-4 py-3 text-center">
                     <input id="motivo" type="text" name="motivo" maxlength="500" required

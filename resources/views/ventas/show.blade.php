@@ -7,7 +7,7 @@
                 class="flex flex-col justify-between gap-4 border-b border-slate-100 px-5 py-3 sm:flex-row sm:items-start sm:px-6">
                 <div class="min-w-0">
                     <p class="mb-1 text-xs font-medium text-slate-500">Número de venta</p>
-                    <h1 class="break-words text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                    <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                         {{ $venta->numero_venta }}
                     </h1>
                 </div>

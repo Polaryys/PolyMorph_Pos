@@ -1,6 +1,6 @@
 <template x-teleport="body">
     <div x-cloak x-show="modalCargaAbierto" x-transition.opacity
-        class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+        class="fixed inset-0 z-100 flex items-center justify-center bg-black/40 p-4"
         @click.self="cerrarModalCarga()">
         <div x-show="modalCargaAbierto" x-transition
             class="relative w-full max-w-md overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-xl"

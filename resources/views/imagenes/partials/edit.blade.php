@@ -58,7 +58,7 @@
 
                             <div class="min-w-0">
                                 <p class="text-xs font-medium text-gray-500">Nombre actual</p>
-                                <p class="mt-1 break-words text-sm font-semibold text-gray-900" x-text="imagen.nombre">
+                                <p class="mt-1 wrap-break-word text-sm font-semibold text-gray-900" x-text="imagen.nombre">
                                 </p>
                             </div>
 

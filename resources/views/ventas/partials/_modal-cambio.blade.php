@@ -602,7 +602,7 @@
                 <template x-teleport="body">
                 <div x-cloak x-show="modalPagoCambioAbierto" x-transition.opacity
                     @click.self="modalPagoCambioAbierto = false" @keydown.escape.window="modalPagoCambioAbierto = false"
-                    class="fixed inset-0 z-[100] flex items-center justify-center overflow-y-auto bg-black/40 p-4"
+                    class="fixed inset-0 z-100 flex items-center justify-center overflow-y-auto bg-black/40 p-4"
                     role="dialog" aria-modal="true" aria-labelledby="titulo-modal-pago-cambio">
                     <div class="my-auto w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-xl"
                         @click.stop>

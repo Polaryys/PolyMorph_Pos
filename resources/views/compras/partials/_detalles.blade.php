@@ -40,31 +40,31 @@
                         <td class="px-4 py-3 text-center" x-text="detalle.cantidad_actual"></td>
                         <td class="px-4 py-3">
                             <x-text-input type="number" min="1" step="1" x-model.number="detalle.cantidad"
-                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
+                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.costo_unitario"
                                 placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
+                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_unitario_nuevo"
                                 placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
+                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_docena_nuevo"
                                 placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
+                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3">
                             <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
                                 maxlength="15" x-model="detalle.precio_ciento_nuevo"
                                 placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="!w-16 !mx-auto rounded-md p-2 text-center focus:ring-indigo-500" />
+                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
                         </td>
                         <td class="px-4 py-3 text-right font-medium text-slate-900"
                             x-text="'Q ' + (Number(detalle.cantidad) * Number(detalle.costo_unitario)).toFixed(2)"></td>

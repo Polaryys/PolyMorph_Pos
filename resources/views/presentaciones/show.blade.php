@@ -34,7 +34,7 @@
                             class="flex flex-col justify-between gap-4 border-b border-slate-100 pb-4 lg:flex-row lg:items-start">
                             <div class="min-w-0">
                                 <p class="mb-1 text-xs font-medium text-slate-500">Nombre y marca</p>
-                                <h1 class="break-words text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                                <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
                                     {{ $nombrePresentacion }}
                                 </h1>
                             </div>

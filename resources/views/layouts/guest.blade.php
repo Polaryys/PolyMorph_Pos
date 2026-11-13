@@ -23,7 +23,7 @@
 
         <!-- Luz difusa -->
         <div
-            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-gradient-to-br from-[#CCE2F6] to-[#9BADDC] rounded-full blur-[120px] opacity-70 pointer-events-none">
+            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-linear-to-br from-[#CCE2F6] to-[#9BADDC] rounded-full blur-[120px] opacity-70 pointer-events-none">
         </div>
 
         <!-- Contenido de Login o Register -->

@@ -152,7 +152,7 @@
 
     <template x-teleport="body">
         <div x-cloak x-show="modalImportacionAbierto" x-transition.opacity
-            class="fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 p-4"
+            class="fixed inset-0 z-100 flex items-center justify-center bg-slate-900/60 p-4"
             @click.self="cerrarModalImportacion()">
             <div x-show="modalImportacionAbierto" x-transition
                 class="w-full max-w-lg overflow-hidden rounded-xl bg-white p-6 shadow-2xl"
@@ -210,7 +210,7 @@
         </div>
 
         <div x-cloak x-show="importandoInventario" x-transition.opacity
-            class="fixed inset-0 z-[110] flex items-center justify-center bg-slate-900/70 p-4"
+            class="fixed inset-0 z-110 flex items-center justify-center bg-slate-900/70 p-4"
             role="status" aria-live="polite">
             <div class="w-full max-w-sm rounded-xl bg-white p-6 text-center shadow-2xl">
                 <svg class="mx-auto h-12 w-12 animate-spin text-indigo-600" xmlns="http://www.w3.org/2000/svg"

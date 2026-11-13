@@ -95,7 +95,7 @@
         <!-- MODAL CREAR / EDITAR -->
         <template x-teleport="body">
             <div x-cloak x-show="abierto" x-cloak x-transition.opacity
-                class="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 p-4"
+                class="fixed inset-0 z-100 flex items-center justify-center bg-black/40 p-4"
                 @click.self="abierto = false">
                 <div x-show="abierto" x-transition
                     class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl" role="dialog"
