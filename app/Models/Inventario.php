@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\hasOne;
 
 class Inventario extends Model
 {
@@ -48,6 +49,12 @@ class Inventario extends Model
     public function movimientos(): HasMany
     {
         return $this->hasMany(Movimiento::class);
+    }
+
+    public function presentacionBase(): HasOne
+    {
+        return $this->hasOne(Presentacion::class, 'inventario_id')
+            ->where('base', true);
     }
 }
 

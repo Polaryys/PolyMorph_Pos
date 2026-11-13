@@ -7,6 +7,7 @@
         request()->routeIs('clientes.*') => 'clientes',
         request()->routeIs('proveedores.*') => 'proveedores',
         request()->routeIs('profile.*') => 'profile',
+        request()->routeIs('reportes.*') => 'reportes',
         request()->routeIs('usuarios.*') => 'usuarios',
         request()->routeIs('imagenes.*') => 'medios',
         request()->routeIs('configuracion.*', 'metodos-pago.*','configuracion.*') => 'configuracion',
@@ -32,6 +33,7 @@
         'clientes' => [['label' => 'Clientes', 'route' => 'clientes.index', 'active' => 'clientes.*']],
         'proveedores' => [['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']],
         'usuarios' => [['label' => 'Colaboradores', 'route' => 'usuarios.index', 'active' => 'usuarios.*']],
+        'reportes' => [['label' => 'Reportes', 'route' => 'reportes.inventario', 'active' => 'reportes.*']],
         'medios' => [['label' => 'Medios', 'route' => 'imagenes.index', 'active' => 'imagenes.*']],
         'configuracion' => [
             ['label' => 'Metodos de Pago', 'route' => 'metodos-pago.index', 'active' => 'metodos-pago.*'],

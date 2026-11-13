@@ -12,6 +12,7 @@ use App\Http\Controllers\InventarioController;
 use App\Http\Controllers\PresentacionController;
 use App\Http\Controllers\ComprasController;
 use App\Http\Controllers\VentasController;
+use App\Http\Controllers\Reportes\ReporteInventarioController;
 use Illuminate\Support\Facades\Route;
 
 // Entrada pública y acceso al panel; el dashboard requiere sesión verificada.
@@ -121,6 +122,11 @@ Route::middleware('auth')->group(function () {
         ->name('compras.edit');
     Route::get('/compras/{compra}', [ComprasController::class, 'show'])
         ->name('compras.show');
+
+    Route::get('/reportes/inventario', [
+        ReporteInventarioController::class,
+        'inventarioReporte'
+    ])->name('reportes.inventario');
 
 });
 
