@@ -52,7 +52,7 @@
             : null;
 @endphp
 
-<nav class="bg-white">
+<nav>
     <div class="max-w-7xl px-6 mb-3 mt-3 lg:px-8">
         <div class="flex items-center h-12 gap-2 text-2xl">
 

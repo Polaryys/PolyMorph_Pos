@@ -9,7 +9,7 @@
         request()->routeIs('profile.*') => 'profile',
         request()->routeIs('usuarios.*') => 'usuarios',
         request()->routeIs('imagenes.*') => 'medios',
-        request()->routeIs('configuracion.*', 'metodos-pago.*') => 'configuracion',
+        request()->routeIs('configuracion.*', 'metodos-pago.*','configuracion.*') => 'configuracion',
         default => 'inventario',
     };
 
@@ -35,6 +35,7 @@
         'medios' => [['label' => 'Medios', 'route' => 'imagenes.index', 'active' => 'imagenes.*']],
         'configuracion' => [
             ['label' => 'Metodos de Pago', 'route' => 'metodos-pago.index', 'active' => 'metodos-pago.*'],
+            ['label' => 'Temas', 'route' => 'configuracion', 'active' => 'configuracion.*'],
         ],
     ];
 @endphp

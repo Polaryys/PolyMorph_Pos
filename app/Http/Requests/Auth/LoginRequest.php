@@ -28,10 +28,12 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt(
-            $this->only('username', 'password'),
-            $this->boolean('remember')
-        )) {
+        if (
+            !Auth::attempt(
+                $this->only('username', 'password'),
+                $this->boolean('remember')
+            )
+        ) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
@@ -42,7 +44,7 @@ class LoginRequest extends FormRequest
         RateLimiter::clear($this->throttleKey());
 
         // Verificar si la cuenta está habilitada
-        if (! $this->user()->estado) {
+        if (!$this->user()->estado) {
             Auth::logout();
 
             throw ValidationException::withMessages([
@@ -53,7 +55,7 @@ class LoginRequest extends FormRequest
 
     public function ensureIsNotRateLimited(): void
     {
-        if (! RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
+        if (!RateLimiter::tooManyAttempts($this->throttleKey(), 5)) {
             return;
         }
 
@@ -74,5 +76,15 @@ class LoginRequest extends FormRequest
         return Str::transliterate(
             Str::lower($this->string('username')) . '|' . $this->ip()
         );
+    }
+
+    public function messages(): array
+    {
+        return [
+            'username.required' => 'El usuario es obligatorio.',
+            'username.max' => 'El usuario no puede superar los 50 caracteres.',
+
+            'password.required' => 'La contraseña es obligatoria.',
+        ];
     }
 }

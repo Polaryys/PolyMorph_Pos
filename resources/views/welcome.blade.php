@@ -26,17 +26,17 @@
             
             <!-- Imagen / Logo Centrado -->
             <div class="flex justify-center">
-                <img src="{{ asset('icon_sistema.png') }}" alt="Logo Sistema" class="h-24 w-auto object-contain drop-shadow-md">
+                <x-icon-sistema class="h-24 w-auto text-indigo-600"/>
             </div>
 
             <!-- Botones de Acción -->
             <div class="flex flex-col space-y-3">
                 @if (Route::has('login'))
-                    <a href="{{ route('login') }}" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-sm">
+                    <a href="{{ route('login') }}" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-sm">
                         Iniciar Sesión
                     </a>
                 @else
-                    <a href="/login" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-sm">
+                    <a href="/login" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-xl transition duration-200 shadow-sm">
                         Iniciar Sesión
                     </a>
                 @endif

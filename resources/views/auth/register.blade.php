@@ -4,7 +4,7 @@
 
         <!-- Logo -->
         <div class="flex justify-center mb-4">
-            <img src="{{ asset('icon_sistema.png') }}" alt="Logo Sistema" class="h-24 w-auto object-contain">
+            <x-icon-sistema class="h-24 w-auto text-indigo-600"/>
         </div>
 
         <!-- Encabezado -->
@@ -173,12 +173,12 @@
             <!-- Botón de registro -->
             <div class="pt-1 space-y-4">
                 <button type="submit"
-                    class="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base">
+                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-base">
                     Registrar
                 </button>
 
                 <div class="text-center">
-                    <a class="text-sm font-medium text-blue-600 hover:text-blue-700 hover:underline transition duration-150"
+                    <a class="text-sm font-medium text-indigo-600 hover:text-indigo-700 hover:underline transition duration-150"
                         href="{{ route('login') }}">
                         ¿Ya posees una cuenta?
                     </a>
