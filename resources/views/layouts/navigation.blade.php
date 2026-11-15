@@ -1,47 +1,3 @@
-@php
-    $compraPendiente = \App\Models\Compra::query()->where('estado', 'PENDIENTE')->exists();
-
-    $module = match (true) {
-        request()->routeIs('pos.*', 'ventas.*') => 'pos',
-        request()->routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*') => 'inventario',
-        request()->routeIs('clientes.*') => 'clientes',
-        request()->routeIs('proveedores.*') => 'proveedores',
-        request()->routeIs('profile.*') => 'profile',
-        request()->routeIs('reportes.*') => 'reportes',
-        request()->routeIs('usuarios.*') => 'usuarios',
-        request()->routeIs('imagenes.*') => 'medios',
-        request()->routeIs('configuracion.*', 'metodos-pago.*','configuracion.*') => 'configuracion',
-        default => 'inventario',
-    };
-
-    $menus = [
-        'pos' => [
-            ['label' => 'Punto de venta', 'route' => 'ventas.create', 'active' => 'ventas.create'],
-            ['label' => 'Ventas registradas', 'route' => 'ventas.index', 'active' => 'ventas.index'],
-        ],
-        'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
-        'profile' => [['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*']],
-        'inventario' => [
-            ['label' => 'Artículos', 'route' => 'articulos.index', 'active' => 'articulos.*'],
-            ['label' => 'Presentaciones', 'route' => 'presentaciones.index', 'active' => 'presentaciones.*'],
-            ['label' => 'Categorías', 'route' => 'categorias.index', 'active' => 'categorias.*'],
-            ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],
-            ['label' => 'Compras', 'route' => 'compras.index', 'active' => 'compras.*'],
-            ['label' => 'Ajuste', 'route' => 'inventario.ajuste', 'active' => 'inventario.ajuste'],
-            ['label' => 'Movimientos', 'route' => 'inventario.movimientos', 'active' => 'inventario.movimientos'],
-        ],
-        'clientes' => [['label' => 'Clientes', 'route' => 'clientes.index', 'active' => 'clientes.*']],
-        'proveedores' => [['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']],
-        'usuarios' => [['label' => 'Colaboradores', 'route' => 'usuarios.index', 'active' => 'usuarios.*']],
-        'reportes' => [['label' => 'Reportes', 'route' => 'reportes.inventario', 'active' => 'reportes.*']],
-        'medios' => [['label' => 'Medios', 'route' => 'imagenes.index', 'active' => 'imagenes.*']],
-        'configuracion' => [
-            ['label' => 'Metodos de Pago', 'route' => 'metodos-pago.index', 'active' => 'metodos-pago.*'],
-            ['label' => 'Temas', 'route' => 'configuracion', 'active' => 'configuracion.*'],
-        ],
-    ];
-@endphp
-
 <div class="fixed top-0 left-0 right-0 md:left-56 z-20 bg-white border-b border-gray-200">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-14">
@@ -67,7 +23,7 @@
                 </div>
 
                 <div class="flex items-center gap-3 ms-2 sm:ms-4 whitespace-nowrap overflow-x-auto no-scrollbar">
-                    @foreach ($menus[$module] ?? [] as $item)
+                    @foreach ($navMenus as $item)
                         @if ($item['disabled'] ?? false)
                             <span
                                 class="inline-flex px-1 pt-1 pb-3 text-sm font-medium text-gray-900 cursor-not-allowed select-none">

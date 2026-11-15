@@ -1,0 +1,66 @@
+<?php
+
+namespace App\Http\ViewComposers;
+
+use Illuminate\Contracts\View\View;
+use Illuminate\Support\Facades\Request;
+
+class NavigationComposer
+{
+    public function compose(View $view): void
+    {
+        $module = $this->resolveModule();
+        $menus = $this->resolveMenus();
+
+        $view->with([
+            'navModule' => $module,
+            'navMenus' => $menus[$module] ?? [],
+        ]);
+    }
+
+    private function resolveModule(): string
+    {
+        return match (true) {
+            Request::routeIs('pos.*', 'ventas.*') => 'pos',
+            Request::routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*') => 'inventario',
+            Request::routeIs('clientes.*') => 'clientes',
+            Request::routeIs('proveedores.*') => 'proveedores',
+            Request::routeIs('profile.*') => 'profile',
+            Request::routeIs('reportes.*') => 'reportes',
+            Request::routeIs('usuarios.*') => 'usuarios',
+            Request::routeIs('imagenes.*') => 'medios',
+            Request::routeIs('configuracion.*', 'metodos-pago.*') => 'configuracion',
+            default => 'inventario',
+        };
+    }
+
+    private function resolveMenus(): array
+    {
+        return [
+            'pos' => [
+                ['label' => 'Punto de venta', 'route' => 'ventas.create', 'active' => 'ventas.create'],
+                ['label' => 'Ventas registradas', 'route' => 'ventas.index', 'active' => 'ventas.index'],
+            ],
+            'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
+            'profile' => [['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*']],
+            'inventario' => [
+                ['label' => 'Artículos', 'route' => 'articulos.index', 'active' => 'articulos.*'],
+                ['label' => 'Presentaciones', 'route' => 'presentaciones.index', 'active' => 'presentaciones.*'],
+                ['label' => 'Categorías', 'route' => 'categorias.index', 'active' => 'categorias.*'],
+                ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],
+                ['label' => 'Compras', 'route' => 'compras.index', 'active' => 'compras.*'],
+                ['label' => 'Ajuste', 'route' => 'inventario.ajuste', 'active' => 'inventario.ajuste'],
+                ['label' => 'Movimientos', 'route' => 'inventario.movimientos', 'active' => 'inventario.movimientos'],
+            ],
+            'clientes' => [['label' => 'Clientes', 'route' => 'clientes.index', 'active' => 'clientes.*']],
+            'proveedores' => [['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']],
+            'usuarios' => [['label' => 'Colaboradores', 'route' => 'usuarios.index', 'active' => 'usuarios.*']],
+            'reportes' => [['label' => 'Reportes', 'route' => 'reportes.inventario', 'active' => 'reportes.*']],
+            'medios' => [['label' => 'Medios', 'route' => 'imagenes.index', 'active' => 'imagenes.*']],
+            'configuracion' => [
+                ['label' => 'Metodos de Pago', 'route' => 'metodos-pago.index', 'active' => 'metodos-pago.*'],
+                ['label' => 'Temas', 'route' => 'configuracion', 'active' => 'configuracion.*'],
+            ],
+        ];
+    }
+}
