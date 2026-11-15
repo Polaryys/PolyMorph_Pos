@@ -1,0 +1,134 @@
+/* ============================================================
+   SYSTEM COLORS - MultiServicios Eben-Ezer POS
+   Tokens de color semánticos en inglés para componentes y vistas.
+   Se importan en app.css y se exponen a Tailwind vía @theme inline.
+   ============================================================ */
+
+/* --- APARIENCIA CLARA (LIGHT) --- */
+:root {
+  /* ÉXITO / DINERO - Solo acciones de cobro y éxito financiero */
+  --success-color: 15 80 36;           /* green-700 */
+  --success-hover: 14 53 25;           /* green-800 */
+  --success-active: 10 43 19;          /* green-900 */
+  --success-light: f0 fdf4;            /* green-50 */
+  --success-lighter: dcfce7;           /* green-100 */
+  --success-border: bb f7 d0;          /* green-200 */
+  --success-text: 14 53 25;            /* green-800 */
+  --success-focus-ring: 86 ef ac;      /* green-300 */
+  
+
+  /* PELIGRO / ERROR - Eliminar, anular, mensajes de error */
+  --danger-color: dc 26 26;            /* red-600 */
+  --danger-hover: b9 1c 1c;            /* red-700 */
+  --danger-active: 99 1b 1b;           /* red-800 */
+  --danger-light: ff fa fa;            /* red-50 */
+  --danger-lighter: fee2 e2;           /* red-100 */
+  --danger-border: feca 5a;            /* red-200 */
+  --danger-text: 7f 1d 1d;             /* red-900 */
+  --danger-focus-ring: fca 5a 5a;      /* red-300 */
+
+  /* ADVERTENCIA - Saldo pendiente, avisos, campos opcionales */
+  --warning-color: d9 77 06;           /* amber-600 */
+  --warning-hover: b4 53 09;           /* amber-700 */
+  --warning-light: ff fb eb;           /* amber-50 */
+  --warning-lighter: fef3 c7;          /* amber-100 */
+  --warning-border: fd e6 8a;          /* amber-200 */
+  --warning-text: 78 35 0f;            /* amber-900 */
+  --warning-focus-ring: fd ba 74;      /* amber-300 */
+
+  /* INFORMACIÓN - Avisos neutrales, estados de carga, breadcrumbs */
+  --info-color: 25 63 eb;              /* blue-600 */
+  --info-light: ef f6 ff;              /* blue-50 */
+  --info-lighter: dbeafe;              /* blue-100 */
+  --info-border: bf db fe;             /* blue-200 */
+  --info-text: 1e 3a 8a;               /* blue-900 */
+
+  /* TEXTO */
+  --text-primary: 15 23 42;            /* slate-900 */
+  --text-primary: 15 23 42;
+  --text-secondary: 71 85 105;         /* slate-600 */
+  --text-muted: 148 163 184;           /* slate-400 */
+  --text-module: 100 116 139;          /* slate-500: gris medio, no negro del todo */
+  --text-module-hover: 71 85 105;      /* slate-600 */
+  --text-module-active: 255 255 255;   /* blanco para active/focus */
+  --text-on-primary: 255 255 255;      /* white */
+  --text-on-success: 255 255 255;      /* white */
+  --text-on-danger: 255 255 255;       /* white */
+
+  /* BORDES Y DIVISORES */
+  --border: 226 232 240;               /* slate-200 */
+  --border-hover: 203 213 225;         /* slate-300 */
+  --border-focus: 79 70 229;           /* indigo-500 */
+  --border-error: 254 202 202;         /* red-200 */
+  --border-success: 187 247 208;       /* green-200 */
+
+  /* SUPERFICIES Y FONDOS */
+  --background: 243 244 246;           /* gray-100 */
+  --surface: 255 255 255;              /* white */
+  --surface-hover: 249 250 251;        /* gray-50 */
+  --surface-alt: 243 244 246;          /* gray-100 */
+  --inverse: 15 23 42;                 /* slate-900 */
+
+  /* SOMBRAS */
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+}
+
+/* --- APARIENCIA OSCURA (DARK) --- */
+:root[data-theme="dark"] {
+  --success-color: 86 ef ac;
+  --success-hover: 4ade 80;
+  --success-active: 22c55e;
+  --success-light: 14 53 25;
+  --success-lighter: 14 53 25;
+  --success-border: 14 53 25;
+  --success-text: 14 53 25;
+  --success-focus-ring: 15 80 36;
+
+  --danger-color: fca 5a 5a;
+  --danger-hover: f87171;
+  --danger-active: ef4444;
+  --danger-light: 7f 1d 1d;
+  --danger-lighter: 7f 1d 1d;
+  --danger-border: 7f 1d 1d;
+  --danger-text: 7f 1d 1d;
+  --danger-focus-ring: dc 26 26;
+
+  --warning-color: fd ba 74;
+  --warning-hover: f97316;
+  --warning-light: 78 35 0f;
+  --warning-lighter: 78 35 0f;
+  --warning-border: 78 35 0f;
+  --warning-text: 78 35 0f;
+  --warning-focus-ring: d9 77 06;
+
+  --info-color: 60 a5 fa;
+  --info-light: 1e3a8a;
+  --info-lighter: 1e3a8a;
+  --info-border: 1e3a8a;
+  --info-text: 1e3a8a;
+
+  --text-primary: 226 232 240;
+  --text-secondary: 148 163 184;
+  --text-muted: 94 112 134;
+  --text-module: 148 163 184;          /* slate-400: gris claro sobre fondo oscuro */
+  --text-module-hover: 226 232 240;    /* slate-200 */
+  --text-module-active: 255 255 255;   /* blanco */
+  --text-on-primary: 255 255 255;
+  --text-on-success: 255 255 255;
+  --text-on-danger: 255 255 255;
+
+  --border: 51 65 85;
+  --border-hover: 71 85 105;
+  --border-focus: 99 91 f7;
+  --border-error: 7f 1d 1d;
+  --border-success: 14 53 25;
+
+  --background: 15 23 42;
+  --surface: 30 41 59;
+  --surface-hover: 51 65 85;
+  --surface-alt: 30 41 59;
+  --inverse: 226 232 240;
+}

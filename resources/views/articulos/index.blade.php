@@ -54,11 +54,12 @@
 
         @forelse ($articulos as $articulo)
             <tr class="hover:bg-indigo-50/50 transition-colors">
+                @php $presentacionBase = $articulo->presentaciones->first() ?? null; @endphp
                 <!-- IMAGEN -->
                 <td class="px-2 py-2 text-center">
-                    @if ($articulo->presentaciones->first()?->imagen)
-                        <img src="{{ asset('storage/imagenes/' . $articulo->presentaciones->first()->imagen->nombre_archivo) }}"
-                            alt="{{ $articulo->presentaciones->first()->nombre }}"
+                    @if ($presentacionBase?->imagen)
+                        <img src="{{ asset('storage/imagenes/' . $presentacionBase?->imagen->nombre_archivo) }}"
+                            alt="{{ $presentacionBase?->nombre }}"
                             class="w-16 h-16 object-cover rounded border border-slate-200 mx-auto">
                     @else
                         <div
@@ -70,17 +71,17 @@
 
                 <!-- SKU -->
                 <td class="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
-                    {{ $articulo->presentaciones->first()?->codigoSKU }}
+                    {{ $presentacionBase?->codigoSKU }}
                 </td>
 
                 <!-- CÓDIGO DE BARRAS -->
                 <td class="text-slate-500 text-sm whitespace-nowrap">
-                    {{ $articulo->presentaciones->first()?->codigoBarras }}
+                    {{ $presentacionBase?->codigoBarras }}
                 </td>
 
                 <!-- NOMBRE -->
                 <td class="px-4 py-3 text-slate-900 whitespace-nowrap">
-                    {{ $articulo->presentaciones->first()?->nombre }}
+                    {{ $presentacionBase?->nombre }}
                 </td>
 
                 <!-- MARCA -->

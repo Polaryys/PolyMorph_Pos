@@ -174,6 +174,9 @@ class InventarioController extends Controller
                     'imagen_id'
                 )->where('base', true);
             },
+            'presentaciones.imagen' => function ($query) {
+                $query->select('id', 'nombre_archivo');
+            },
         ])
             ->when($buscar !== '', function ($query) use ($buscar) {
                 $query->where(function ($query) use ($buscar) {

@@ -21,7 +21,7 @@
 <body class="font-sans antialiased bg-gray-100">
     <div x-data="{ open: false }" class="h-screen flex flex-col overflow-hidden">
 
-        @include('layouts.sidebar')
+        @include('layouts.sidebar-prueba')
         @include('layouts.navigation')
 
         <div class="flex-1 flex flex-col min-h-0 bg-white">
