@@ -14,13 +14,6 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
-    
-
-    <script>
-        const accent = localStorage.getItem('accent') || 'indigo';
-
-        document.documentElement.dataset.accent = accent;
-    </script>
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -33,7 +26,7 @@
 
         <div class="flex-1 flex flex-col min-h-0 bg-white">
 
-            <div class="flex-1 min-h-0 md:ml-56 bg-white">
+            <div class="flex-1 min-h-0 md:ml-56 bg-[#FOFOFO">
                 <main class="h-full min-h-0 overflow-y-auto px-5 py-2 mt-6 pb-10 text-gray-900">
                     @include('layouts.top_bar')
                     {{ $slot }}

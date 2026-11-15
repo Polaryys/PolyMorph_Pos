@@ -15,18 +15,6 @@
 
         @csrf
 
-        <div class="flex items-center justify-left gap-3 ">
-
-            <x-secondary-link href="{{ route('usuarios.index') }}" wire:navigate>
-                Volver
-            </x-secondary-link>
-
-            <x-primary-button>
-                Crear Usuario
-            </x-primary-button>
-
-        </div>
-
         <div class="space-y-6">
 
             <!-- imagen -->
@@ -69,7 +57,7 @@
                 Información del usuario
             </x-section-title>
 
-            <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
+            <div class="grid grid-cols-1 gap-y-4 gap-x-4 sm:grid-cols-6">
 
                 <!-- NOMBRES -->
                 <div class="sm:col-span-3">
@@ -78,9 +66,8 @@
                         <span class="text-red-500">*</span>
                     </x-input-label>
 
-                    <x-text-input type="text" id="nombres" name="nombres" maxlength="100"
-                        :value="old('nombres')" required autocomplete="given-name"
-                        :error="$errors->has('nombres')" class="mt-1" />
+                    <x-text-input type="text" id="nombres" name="nombres" maxlength="100" :value="old('nombres')"
+                        required autocomplete="given-name" :error="$errors->has('nombres')" class="mt-1" />
 
                     <x-input-error :messages="$errors->get('nombres')" />
                 </div>
@@ -92,9 +79,8 @@
                         <span class="text-red-500">*</span>
                     </x-input-label>
 
-                    <x-text-input type="text" id="apellidos" name="apellidos" maxlength="100"
-                        :value="old('apellidos')" required autocomplete="family-name"
-                        :error="$errors->has('apellidos')" class="mt-1" />
+                    <x-text-input type="text" id="apellidos" name="apellidos" maxlength="100" :value="old('apellidos')"
+                        required autocomplete="family-name" :error="$errors->has('apellidos')" class="mt-1" />
 
                     <x-input-error :messages="$errors->get('apellidos')" />
                 </div>
@@ -106,9 +92,8 @@
                         <span class="text-red-500">*</span>
                     </x-input-label>
 
-                    <x-text-input type="text" id="username" name="username" maxlength="50"
-                        :value="old('username')" required autocomplete="username"
-                        :error="$errors->has('username')" class="mt-1" />
+                    <x-text-input type="text" id="username" name="username" maxlength="50" :value="old('username')"
+                        required autocomplete="username" :error="$errors->has('username')" class="mt-1" />
 
                     <x-input-error :messages="$errors->get('username')" />
                 </div>
@@ -120,22 +105,17 @@
                         <span class="text-red-500">*</span>
                     </x-input-label>
 
-                    <select id="rol" name="rol" required
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                               focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
-                               @error('rol') border-red-500 @enderror">
-
+                    <x-select-input id="rol" name="rol" required class="mt-1" :error="$errors->has('rol')">
                         <option value="">Selecciona un rol</option>
 
-                        <option value="Vendedor" {{ old('rol') === 'Vendedor' ? 'selected' : '' }}>
+                        <option value="Vendedor" @selected(old('rol') === 'Vendedor')>
                             Vendedor
                         </option>
 
-                        <option value="Administrador" {{ old('rol') === 'Administrador' ? 'selected' : '' }}>
+                        <option value="Administrador" @selected(old('rol') === 'Administrador')>
                             Administrador
                         </option>
-
-                    </select>
+                    </x-select-input>
 
                     <x-input-error :messages="$errors->get('rol')" />
                 </div>
@@ -146,9 +126,8 @@
                         {{ __('Teléfono') }}
                     </x-input-label>
 
-                    <x-text-input type="text" id="telefono" name="telefono" maxlength="20"
-                        :value="old('telefono')" autocomplete="tel"
-                        :error="$errors->has('telefono')" class="mt-1" />
+                    <x-text-input type="text" id="telefono" name="telefono" maxlength="20" :value="old('telefono')"
+                        autocomplete="tel" :error="$errors->has('telefono')" class="mt-1" />
 
                     <x-input-error :messages="$errors->get('telefono')" />
                 </div>
@@ -159,9 +138,8 @@
                         {{ __('Correo electrónico') }}
                     </x-input-label>
 
-                    <x-text-input type="email" id="email" name="email" maxlength="255"
-                        :value="old('email')" autocomplete="email"
-                        :error="$errors->has('email')" class="mt-1" />
+                    <x-text-input type="email" id="email" name="email" maxlength="255" :value="old('email')"
+                        autocomplete="email" :error="$errors->has('email')" class="mt-1" />
 
                     <x-input-error :messages="$errors->get('email')" />
                 </div>
@@ -193,6 +171,17 @@
                 </div>
 
             </div>
+
+        </div>
+        <div class="flex items-center justify-end mt-4 gap-3 ">
+
+            <x-secondary-link href="{{ route('usuarios.index') }}" wire:navigate>
+                Volver
+            </x-secondary-link>
+
+            <x-primary-button>
+                Crear Usuario
+            </x-primary-button>
 
         </div>
 

@@ -70,7 +70,7 @@
                                         :value="metodo.monto_recibido"
                                         @focus="activarMetodo(metodo)"
                                         @input="actualizarImporte(metodo, 'monto_recibido', $event)"
-                                        class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                        class="w-full rounded-md pd-2 border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
                                     <input type="hidden" :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                         :value="montoAplicado(metodo).toFixed(2)">
                                 </div>

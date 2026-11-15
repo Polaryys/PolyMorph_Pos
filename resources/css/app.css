@@ -1,51 +1,120 @@
-@import 'tailwindcss';
 
-@import 'tailwindcss' layer(utilities);
+@import 'tailwindcss';
 
 @theme {
     --font-sans: "Figtree", sans-serif;
 }
 
 @theme inline {
-  --color-indigo-50: color-mix(in srgb, var(--accent-color) 5%, white);
-  --color-indigo-100: color-mix(in srgb, var(--accent-color) 10%, white);
-  --color-indigo-200: color-mix(in srgb, var(--accent-color) 20%, white);
-  --color-indigo-300: color-mix(in srgb, var(--accent-color) 35%, white);
-  --color-indigo-400: color-mix(in srgb, var(--accent-color) 65%, white);
-  --color-indigo-500: var(--accent-color);
-  --color-indigo-600: color-mix(in srgb, var(--accent-color) 90%, black);
-  --color-indigo-700: color-mix(in srgb, var(--accent-color) 80%, black);
-  --color-indigo-800: color-mix(in srgb, var(--accent-color) 70%, black);
-  --color-indigo-900: color-mix(in srgb, var(--accent-color) 60%, black);
-  --color-indigo-950: color-mix(in srgb, var(--accent-color) 45%, black);
+    --color-primary: var(--primary-color);
+    --color-primary-hover: var(--primary-hover);
+    --color-primary-light: var(--primary-light);
+    --color-primary-focus: var(--primary-focus);
+
+    --color-app-bg: var(--app-bg);
+    --color-app-surface: var(--app-surface);
+    --color-app-text: var(--app-text);
+    --color-app-border: var(--app-border);
+    --color-primary-header: var(--primary-header);
+
+}
+
+/* APARIENCIA CLARA */
+:root {
+    color-scheme: light;
+
+    --app-bg: #f5f5f5;
+    --app-surface: #ffffff;
+    --app-text: #18181b;
+    --app-border: #e4e4e7;
+
+    --primary-header: #e0e7ff;
+    --primary-color: #4f46e5;
+    --primary-hover: #4338ca;
+    --primary-light: #eef2ff;
+    --primary-focus: #6366f1;
+}
+
+/* APARIENCIA OSCURA */
+:root[data-theme="dark"] {
+    color-scheme: dark;
+    --primary-header: #3730a3;
+
+    --app-bg: #18181b;
+    --app-surface: #27272a;
+    --app-text: #f4f4f5;
+    --app-border: #3f3f46;
+
+    --primary-color: #6366f1;
+    --primary-hover: #818cf8;
+    --primary-light: #312e81;
+    --primary-focus: #818cf8;
+}
+
+/* COLOR PRINCIPAL: AZUL */
+:root[data-accent="blue"] {
+    --primary-header: #bfdbfe;
+    --primary-color: #2563eb;
+    --primary-hover: #1d4ed8;
+    --primary-light: #dbeafe;
+    --primary-focus: #3b82f6;
+}
+
+:root[data-theme="dark"][data-accent="blue"] {
+    --primary-header: #1e40af;
+    --primary-color: #60a5fa;
+    --primary-hover: #93c5fd;
+    --primary-light: #1e3a8a;
+    --primary-focus: #60a5fa;
+}
+
+/* COLOR PRINCIPAL: NEGRO */
+:root[data-accent="black"] {
+    --primary-header: #e4e4e7;
+    --primary-color: #18181b;
+    --primary-hover: #27272a;
+    --primary-light: #f4f4f5;
+    --primary-focus: #52525b;
+}
+
+:root[data-theme="dark"][data-accent="black"] {
+    --primary-header: #52525b;
+    --primary-color: #d4d4d8;
+    --primary-hover: #e4e4e7;
+    --primary-light: #3f3f46;
+    --primary-focus: #d4d4d8;
+}
+
+/* COLOR PRINCIPAL: BLANCO (SOLO MODO OSCURO) */
+:root[data-theme="dark"][data-accent="white"] {
+    --primary-header: #52525b;
+    --primary-color: #ffffff;
+    --primary-hover: #e4e4e7;
+    --primary-light: #3f3f46;
+    --primary-focus: #ffffff;
+}
+
+/* ENFOQUE GLOBAL */
+@layer base {
+    input:focus,
+    select:focus,
+    textarea:focus,
+    a:focus,
+    button:focus,
+    input:focus-visible,
+    select:focus-visible,
+    textarea:focus-visible,
+    a:focus-visible,
+    button:focus-visible {
+        @apply outline-none ring-1;
+
+        border-color: var(--primary-focus);
+        --tw-ring-color: var(--primary-focus);
+    }
 }
 
 @layer utilities {
-  [x-cloak] {
-    display: none !important;
-  }
-
-  /* Color principal seleccionado */
-  :root {
-    --accent-color: #4f46e5;
-  }
-
-  /* Paletas disponibles */
-  :root[data-accent='blue'] {
-    --accent-color: #2563eb;
-  }
-
-  :root[data-accent='green'] {
-    --accent-color: #16a34a;
-  }
-
-  :root[data-accent='violet'] {
-    --accent-color: #7c3aed;
-  }
-
-  :root[data-accent='rose'] {
-    --accent-color: #e11d48;
-  }
-
-  /* Reemplazar la paleta indigo de Tailwind */
+    [x-cloak] {
+        display: none !important;
+    }
 }

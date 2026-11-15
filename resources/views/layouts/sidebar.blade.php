@@ -65,7 +65,7 @@
                 Proveedores
             </x-sidebar-link>
 
-            <x-sidebar-link :href="route('reportes.inventario')" :active="request()->routeIs('inventario.*')" wire:navigate>
+            <x-sidebar-link :href="route('reportes.inventario')" :active="request()->routeIs('reportes.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-file-text class="h-5 w-5" />
                 </x-slot:icon>

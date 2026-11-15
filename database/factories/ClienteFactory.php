@@ -28,7 +28,7 @@ class ClienteFactory extends Factory
                 : null,
 
             'clasificacion' => fake()->randomElement([
-                'Maroyista',
+                'Mayorista',
                 'Minorista',
             ]),
 

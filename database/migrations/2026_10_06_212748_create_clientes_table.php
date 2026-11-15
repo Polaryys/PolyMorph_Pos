@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('nombres', 100);
             $table->string('apellidos', 100)->nullable();
             $table->string('telefono', 15)->nullable();
-            $table->enum('clasificacion', ['Maroyista', 'Minorista']);
+            $table->enum('clasificacion', ['Mayorista', 'Minorista']);
             $table->string('notas', 255)->nullable();
             $table->string('correo', 100)->unique()->nullable();
             $table->timestamps();

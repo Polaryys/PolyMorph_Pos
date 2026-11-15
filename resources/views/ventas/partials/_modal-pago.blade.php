@@ -72,7 +72,8 @@
                                             :value="metodo.monto_recibido"
                                             @focus="activarMetodo(metodo)"
                                             @input="actualizarImporte(metodo, 'monto_recibido', $event)"
-                                            class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            class="w-full rounded-md border border-app-border bg-app-bg px-3 py-2 text-right text-sm font-medium text-app-text shadow-none outline-none transition-colors
+                                            focus:border-primary-focus focus:ring-1 focus:ring-primary-focus">
                                         <input type="hidden" form="formulario-venta"
                                             :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                             :value="montoAplicado(metodo).toFixed(2)">
