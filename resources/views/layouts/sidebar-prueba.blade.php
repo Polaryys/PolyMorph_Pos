@@ -1,35 +1,36 @@
+
 <aside
     class="fixed inset-y-0 left-0 z-40 flex w-56 flex-col
-           overflow-y-auto border-r border-border bg-surface
+           overflow-y-auto border-r border-app-border bg-app-surface
            transform transition-transform duration-300 ease-in-out
            -translate-x-full md:translate-x-0"
     :class="{ 'translate-x-0': open, '-translate-x-full': !open }">
 
     {{-- Encabezado --}}
     <div class="flex h-32 shrink-0 flex-col items-center justify-center
-                 border-border px-4">
+                 px-4">
 
-        <x-icon-sistema class="h-24 w-auto shrink-0 text-primary drop-shadow-sm" />
+        <x-icon-sistema class="h-24 w-auto shrink-0 text-app-primary-600 drop-shadow-sm" />
 
-        <p class="text-sm font-semibold tracking-wide text-text-primary">
+        <p class="text-sm font-semibold tracking-wide text-app-text-primary">
             MultiServicios Eben-Ezer
         </p>
 
     </div>
+
     {{-- Separador --}}
-    <div class="py-">
-        <hr class="border-border mx-4">
+    <div class="py-1">
+        <hr class="mx-4 border-app-border">
     </div>
 
     {{-- Navegación --}}
     <div class="flex min-h-0 flex-1 flex-col px-4 py-4">
 
-
         <nav class="flex-1 space-y-2 overflow-y-auto">
 
             {{-- Sección principal --}}
-            <p class="px-3 mb-2 text-xs font-semibold
-                      tracking-wider text-text-primary uppercase">
+            <p class="mb-2 px-3 text-xs font-semibold
+                      tracking-wider text-app-text-muted uppercase">
                 General
             </p>
 
@@ -79,11 +80,12 @@
 
             {{-- Separador --}}
             <div class="py-2">
-                <hr class="border-border">
+                <hr class="border-app-border">
             </div>
 
-            <p class="px-3 mb-3 text-xs font-semibold
-                      tracking-wider text-text-primary uppercase">
+            {{-- Sección de administración --}}
+            <p class="mb-3 px-3 text-xs font-semibold
+                      tracking-wider text-app-text-muted uppercase">
                 Administración
             </p>
 
@@ -126,7 +128,7 @@
         </nav>
 
         {{-- Zona inferior --}}
-        <div class="shrink-0 space-y-2 border-t border-border pt-2 mt-2">
+        <div class="mt-2 shrink-0 space-y-2 border-t border-app-border pt-2">
 
             @php
                 $usuarioActual = Auth::user();
@@ -135,18 +137,19 @@
 
             {{-- Perfil --}}
             <a href="{{ route('profile.show') }}" wire:navigate @class([
-                'flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors',
-                'bg-primary text-text-on-primary' => $perfilActivo,
-                'text-text-secondary hover:bg-surface-hover hover:text-text-primary' => !$perfilActivo,
+                'flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors duration-200',
+                'bg-app-primary-600 text-white' => $perfilActivo,
+                'text-app-text-secondary hover:bg-app-surface-hover hover:text-app-text-primary' => !$perfilActivo,
             ])>
 
                 <div class="shrink-0">
                     @if ($usuarioActual->imagen_id && $usuarioActual->imagen)
                         <img src="{{ asset('storage/imagenes/' . $usuarioActual->imagen->nombre_archivo) }}"
-                            alt="Foto de perfil" class="h-9 w-9 rounded-full border border-border object-cover">
+                            alt="Foto de perfil"
+                            class="h-9 w-9 rounded-full border border-app-border object-cover">
                     @else
                         <div
-                            class="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-semibold text-white shadow-sm">
+                            class="flex h-9 w-9 items-center justify-center rounded-full bg-app-primary-600 text-xs font-semibold text-white shadow-sm">
                             {{ strtoupper(substr($usuarioActual->nombres, 0, 1) . substr($usuarioActual->apellidos, 0, 1)) }}
                         </div>
                     @endif
@@ -159,8 +162,8 @@
 
                     <p @class([
                         'mt-0.5 truncate text-xs',
-                        'text-text-on-primary/80' => $perfilActivo,
-                        'text-text-muted' => !$perfilActivo,
+                        'text-white/80' => $perfilActivo,
+                        'text-app-text-muted' => !$perfilActivo,
                     ])>
                         {{ $usuarioActual->rol }}
                     </p>
@@ -177,10 +180,11 @@
                 <button type="submit"
                     class="flex w-full items-center gap-3 rounded-lg
                            px-3 py-2.5 text-sm font-medium
-                           text-red-500 transition-colors
-                           hover:bg-red-500/80 hover:text-white
+                           text-app-text-secondary transition-colors duration-200
+                           hover:bg-red-500/10 hover:text-red-500
+                           active:bg-red-500/20 active:text-red-600
                            focus-visible:outline-none
-                           focus-visible:ring-2 focus-visible:ring-red-500">
+                           focus-visible:ring-2 focus-visible:ring-red-500/50">
 
                     <x-lucide-log-out class="h-5 w-5 shrink-0" />
 
@@ -197,6 +201,6 @@
 
 {{-- Fondo oscuro en móvil --}}
 <div x-cloak x-show="open" @click="open = false" x-transition.opacity
-    class="fixed inset-0 z-30 bg-inverse/60
+    class="fixed inset-0 z-30 bg-slate-950/60
            backdrop-blur-sm md:hidden">
 </div>

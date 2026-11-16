@@ -1,7 +1,7 @@
 <div class="relative">
-    <label for="buscar-producto" class="mb-1 block text-sm font-medium text-slate-700">
+    <x-input-label for="buscar-producto" class="mb-2">
         Buscar productos
-    </label>
+    </x-input-label>
     <div class="flex items-center gap-2">
             <x-lucide-search class="h-5 w-5 shrink-0 text-slate-400" />
             <x-text-input id="buscar-producto" x-ref="buscadorProductos" type="search" x-model="buscar"

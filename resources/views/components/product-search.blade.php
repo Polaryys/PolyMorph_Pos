@@ -95,7 +95,7 @@
             placeholder="{{ $placeholder }}" class="w-96" />
 
         <div x-show="cargando" x-cloak>
-            <x-lucide-loader-circle class="w-5 h-5 animate-spin text-indigo-600" />
+            <x-lucide-loader-circle class="w-5 h-5 animate-spin text-app-primary-600" />
         </div>
 
     </div>

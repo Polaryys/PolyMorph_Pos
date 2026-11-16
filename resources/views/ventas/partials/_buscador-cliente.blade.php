@@ -1,10 +1,10 @@
 <div class="relative">
-    <label for="buscar-cliente" class="mb-1 block text-sm font-medium text-slate-700">
-        Cliente registrado <span class="font-normal text-slate-500">(opcional)</span>
-    </label>
+    <x-input-label for="buscar-producto" class="mb-2">
+        Agregar Cliente </x-input-label>
 
     <template x-if="clienteSeleccionado">
-        <div class="flex min-h-10 items-center justify-between gap-3 rounded-md border border-indigo-200 bg-indigo-50 px-3 py-2">
+        <div
+            class="flex min-h-10 items-center justify-between gap-3 rounded-md border border-indigo-200 bg-indigo-50 px-3 py-2">
             <span class="min-w-0">
                 <span class="block truncate text-sm font-semibold text-slate-900"
                     x-text="clienteSeleccionado.nombre"></span>

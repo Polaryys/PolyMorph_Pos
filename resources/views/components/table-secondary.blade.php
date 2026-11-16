@@ -6,7 +6,7 @@
         <table class="min-w-full border-collapse text-left text-sm">
 
             {{-- Encabezado --}}
-            <thead class="bg-app-bg text-xs font-semibold uppercase tracking-wider text-app-text">
+            <thead class="bg-app-surface-alt text-xs font-semibold uppercase tracking-wider text-app-text-primary">
                 <tr>
                     {{ $headers }}
                 </tr>
@@ -14,10 +14,10 @@
 
             {{-- Contenido --}}
             <tbody
-                class="divide-y divide-app-border text-app-text
+                class="divide-y divide-app-border text-app-text-secondary
                 [&>tr:nth-child(odd)]:bg-app-surface
-                [&>tr:nth-child(even)]:bg-app-bg/50
-                [&>tr:hover]:bg-primary-light/40
+                [&>tr:nth-child(even)]:bg-app-surface-alt/40
+                [&>tr:hover]:bg-app-surface-hover
                 [&>tr]:transition-colors [&>tr]:duration-150">
 
                 {{ $slot }}
@@ -30,7 +30,7 @@
     {{-- Paginación --}}
     @if ($paginator && $paginator->hasPages())
         <div class="flex flex-col gap-3 border-t border-app-border
-                    bg-app-bg px-4 py-3 sm:px-6">
+                    bg-app-surface-alt/50 px-4 py-3 sm:px-6">
             {{ $paginator->links() }}
         </div>
     @endif

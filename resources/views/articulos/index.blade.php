@@ -60,7 +60,7 @@
                     @if ($presentacionBase?->imagen)
                         <img src="{{ asset('storage/imagenes/' . $presentacionBase?->imagen->nombre_archivo) }}"
                             alt="{{ $presentacionBase?->nombre }}"
-                            class="w-16 h-16 object-cover rounded border border-slate-200 mx-auto">
+                            class="w-16 h-16 object-cover rounded border border-app-border mx-auto">
                     @else
                         <div
                             class="w-16 h-16 mx-auto flex items-center justify-center bg-slate-100 rounded text-slate-400">
@@ -70,27 +70,27 @@
                 </td>
 
                 <!-- SKU -->
-                <td class="px-4 py-3 font-medium text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3 font-medium  whitespace-nowrap">
                     {{ $presentacionBase?->codigoSKU }}
                 </td>
 
                 <!-- CÓDIGO DE BARRAS -->
-                <td class="text-slate-500 text-sm whitespace-nowrap">
+                <td class=" text-sm whitespace-nowrap">
                     {{ $presentacionBase?->codigoBarras }}
                 </td>
 
                 <!-- NOMBRE -->
-                <td class="px-4 py-3 text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3 whitespace-nowrap">
                     {{ $presentacionBase?->nombre }}
                 </td>
 
                 <!-- MARCA -->
-                <td class="px-4 py-3 text-center font-medium text-slate-700 whitespace-nowrap">
+                <td class="px-4 py-3 text-center font-medium  whitespace-nowrap">
                     {{ $articulo->marca?->nombre }}
                 </td>
 
                 <!-- PRECIO DE VENTA -->
-                <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
+                <td class="px-4 py-3 text-center font-medium whitespace-nowrap">
                     Q {{ number_format((float) ($articulo->presentaciones->first()?->precioUnitario ?? 0), 2) }}
                 </td>
 

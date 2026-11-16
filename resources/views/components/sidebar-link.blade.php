@@ -5,12 +5,12 @@
     $classes = $active
         ? 'group flex items-center gap-3 px-3 py-2
            rounded-lg text-[15px] font-medium
-           bg-primary text-text-on-primary shadow-sm'
+           bg-app-primary-600 text-white shadow-sm'
         : 'group flex items-center gap-3 px-3 py-2
-           rounded-lg text-[15px] font-medium
-           text-text-secondary
-           transition-colors duration-200
-           hover:bg-surface-alt hover:text-text-primary';
+            rounded-lg text-[15px] font-medium
+            text-app-text-secondary
+            transition-colors duration-200
+            hover:bg-app-primary-500/10 hover:text-app-primary-500/90';
 @endphp
 
 <a {{ $attributes->merge(['class' => $classes]) }}>

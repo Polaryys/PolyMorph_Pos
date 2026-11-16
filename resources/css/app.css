@@ -2,166 +2,45 @@
 @import 'tailwindcss';
 @import 'system-colors.css';
 
+
 @theme {
     --font-sans: "Figtree", sans-serif;
 }
 
 @theme inline {
-    --color-primary: var(--primary-color);
-    --color-primary-hover: var(--primary-hover);
-    --color-primary-light: var(--primary-light);
-    --color-primary-focus: var(--primary-focus);
+    /* PALETA PRINCIPAL */
+    --color-app-primary-100: var(--app-primary-100);
+    --color-app-primary-200: var(--app-primary-200);
+    --color-app-primary-300: var(--app-primary-300);
+    --color-app-primary-400: var(--app-primary-400);
+    --color-app-primary-500: var(--app-primary-500);
+    --color-app-primary-600: var(--app-primary-600);
+    --color-app-primary-700: var(--app-primary-700);
+    --color-app-primary-800: var(--app-primary-800);
+    --color-app-primary-900: var(--app-primary-900);
 
-    --color-app-bg: var(--app-bg);
+
+    /* Superficies */
+    --color-app-background: var(--app-background);
     --color-app-surface: var(--app-surface);
-    --color-app-text: var(--app-text);
-    --color-app-border: var(--app-border);
-    --color-primary-header: var(--primary-header);
+    --color-app-surface-alt: var(--app-surface-alt);
+    --color-app-surface-hover: var(--app-surface-hover);
+    --color-app-surface-elevated: var(--app-surface-elevated);
 
-    --color-text-module: var(--text-module);
-    --color-text-module-hover: var(--text-module-hover);
-    --color-text-module-active: var(--text-module-active);  
-
-    /* Éxito / Dinero */
-    --color-success: var(--success-color);
-    --color-success-hover: var(--success-hover);
-    --color-success-active: var(--success-active);
-    --color-success-light: var(--success-light);
-    --color-success-lighter: var(--success-lighter);
-    --color-success-border: var(--success-border);
-    --color-success-text: var(--success-text);
-    --color-success-focus-ring: var(--success-focus-ring);
-
-    /* Peligro / Error */
-    --color-danger: var(--danger-color);
-    --color-danger-hover: var(--danger-hover);
-    --color-danger-active: var(--danger-active);
-    --color-danger-light: var(--danger-light);
-    --color-danger-lighter: var(--danger-lighter);
-    --color-danger-border: var(--danger-border);
-    --color-danger-text: var(--danger-text);
-    --color-danger-focus-ring: var(--danger-focus-ring);
-
-    /* Advertencia */
-    --color-warning: var(--warning-color);
-    --color-warning-hover: var(--warning-hover);
-    --color-warning-light: var(--warning-light);
-    --color-warning-lighter: var(--warning-lighter);
-    --color-warning-border: var(--warning-border);
-    --color-warning-text: var(--warning-text);
-    --color-warning-focus-ring: var(--warning-focus-ring);
-
-    /* Información */
-    --color-info: var(--info-color);
-    --color-info-light: var(--info-light);
-    --color-info-lighter: var(--info-lighter);
-    --color-info-border: var(--info-border);
-    --color-info-text: var(--info-text);
-
-    /* Texto */
-    --color-text-primary: rgb(var(--text-primary));
-    --color-text-secondary: rgb(var(--text-secondary));
-    --color-text-muted: rgb(var(--text-muted));
-    --color-text-on-primary: rgb(var(--text-on-primary));
-    --color-text-on-success: rgb(var(--text-on-success));
-    --color-text-on-danger: rgb(var(--text-on-danger));
+    /* Textos */
+    --color-app-text-primary: var(--app-text-primary);
+    --color-app-text-secondary: var(--app-text-secondary);
+    --color-app-text-muted: var(--app-text-muted);
+    --color-app-text-inverse: var(--app-text-inverse);
+    --color-app-nav-active-text: var(--app-nav-active-text);
 
     /* Bordes */
-    --color-border: rgb(var(--border));
-    --color-border-hover: rgb(var(--border-hover));
-    --color-border-focus: rgb(var(--border-focus));
-    --color-border-error: rgb(var(--border-error));
-    --color-border-success: rgb(var(--border-success));
-
-    /* Superficies y fondos */
-    --color-background: rgb(var(--background));
-    --color-surface: rgb(var(--surface));
-    --color-surface-hover: rgb(var(--surface-hover));
-    --color-surface-alt: rgb(var(--surface-alt));
-    --color-inverse: rgb(var(--inverse));
-
-    /* Sombras */
-    --shadow-sm: var(--shadow-sm);
-    --shadow-md: var(--shadow-md);
-    --shadow-lg: var(--shadow-lg);
-    --shadow-xl: var(--shadow-xl);
-
+    --color-app-border: var(--app-border);
+    --color-app-border-strong: var(--app-border-strong);
+    --color-app-border-hover: var(--app-border-hover);
+    --color-app-border-focus: var(--app-border-focus);
 }
 
-/* APARIENCIA CLARA */
-:root {
-    color-scheme: light;
-
-    --app-bg: #f5f5f5;
-    --app-surface: #ffffff;
-    --app-text: #18181b;
-    --app-border: #e4e4e7;
-
-    --primary-header: #e0e7ff;
-    --primary-color: #4f46e5;
-    --primary-hover: #4338ca;
-    --primary-light: #eef2ff;
-    --primary-focus: #6366f1;
-}
-
-/* APARIENCIA OSCURA */
-:root[data-theme="dark"] {
-    color-scheme: dark;
-    --primary-header: #3730a3;
-
-    --app-bg: #18181b;
-    --app-surface: #27272a;
-    --app-text: #f4f4f5;
-    --app-border: #3f3f46;
-
-    --primary-color: #6366f1;
-    --primary-hover: #818cf8;
-    --primary-light: #312e81;
-    --primary-focus: #818cf8;
-}
-
-/* COLOR PRINCIPAL: AZUL */
-:root[data-accent="blue"] {
-    --primary-header: #bfdbfe;
-    --primary-color: #2563eb;
-    --primary-hover: #1d4ed8;
-    --primary-light: #dbeafe;
-    --primary-focus: #3b82f6;
-}
-
-:root[data-theme="dark"][data-accent="blue"] {
-    --primary-header: #1e40af;
-    --primary-color: #60a5fa;
-    --primary-hover: #93c5fd;
-    --primary-light: #1e3a8a;
-    --primary-focus: #60a5fa;
-}
-
-/* COLOR PRINCIPAL: NEGRO */
-:root[data-accent="black"] {
-    --primary-header: #e4e4e7;
-    --primary-color: #18181b;
-    --primary-hover: #27272a;
-    --primary-light: #f4f4f5;
-    --primary-focus: #52525b;
-}
-
-:root[data-theme="dark"][data-accent="black"] {
-    --primary-header: #52525b;
-    --primary-color: #d4d4d8;
-    --primary-hover: #e4e4e7;
-    --primary-light: #3f3f46;
-    --primary-focus: #d4d4d8;
-}
-
-/* COLOR PRINCIPAL: BLANCO (SOLO MODO OSCURO) */
-:root[data-theme="dark"][data-accent="white"] {
-    --primary-header: #52525b;
-    --primary-color: #ffffff;
-    --primary-hover: #e4e4e7;
-    --primary-light: #3f3f46;
-    --primary-focus: #ffffff;
-}
 
 /* ENFOQUE GLOBAL */
 @layer base {

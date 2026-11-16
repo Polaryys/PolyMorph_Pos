@@ -16,18 +16,27 @@
     <!-- Scripts -->
 
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <script>
+    (() => {
+        const theme = localStorage.getItem('app-theme') || 'light';
+        const accent = localStorage.getItem('app-accent') || 'indigo';
+
+        document.documentElement.dataset.theme = theme;
+        document.documentElement.dataset.accent = accent;
+    })();
+</script>
 </head>
 
-<body class="font-sans antialiased bg-gray-100">
+<body class="font-sans antialiased bg-app-background">
     <div x-data="{ open: false }" class="h-screen flex flex-col overflow-hidden">
 
         @include('layouts.sidebar-prueba')
         @include('layouts.navigation')
 
-        <div class="flex-1 flex flex-col min-h-0 bg-white">
+        <div class="flex-1 flex flex-col min-h-0 bg-app-surface">
 
-            <div class="flex-1 min-h-0 md:ml-56 bg-[#FOFOFO">
-                <main class="h-full min-h-0 overflow-y-auto px-5 py-2 mt-6 pb-10 text-gray-900">
+            <div class="flex-1 min-h-0 md:ml-56 bg-app-surface">
+                <main class="h-full min-h-0 overflow-y-auto px-5 py-2 mt-6 pb-10 text-app-text-primary">
                     @include('layouts.top_bar')
                     {{ $slot }}
                 </main>
