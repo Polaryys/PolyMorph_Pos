@@ -3,11 +3,11 @@
     <form action="{{ route('clientes.store') }}" method="POST">
         @csrf
 
-        <div class="space-y-8 divide-y divide-gray-200">
+        <div class="space-y-8">
 
             <!-- datos del cliente -->
             <div class="space-y-4">
-                <h3 class="text-lg font-semibold leading-6 text-indigo-900 flex items-center gap-2">
+                <h3 class="text-lg font-medium leading-6 text-app-primary-500 flex items-center gap-2">
                     Datos del Cliente
                 </h3>
 
@@ -30,7 +30,7 @@
                         </x-input-label>
 
                         <select id="clasificacion" name="clasificacion"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                            class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
                             focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
                             @error('clasificacion') border-red-500 @enderror">
                             <option value="Mayorista"
@@ -72,8 +72,8 @@
 
 
             <!-- info contacto -->
-            <div class="pt-4 space-y-4">
-                <h3 class="text-lg font-semibold leading-6 text-indigo-700 flex items-center gap-2">
+            <div class="pt-4 space-y-4 border-t border-app-border-strong mt-2">
+                <h3 class="text-lg font-medium leading-6 text-app-primary-500 flex items-center gap-2">
                     Información de Contacto
                 </h3>
 
@@ -108,7 +108,7 @@
                         </x-input-label>
 
                         <textarea id="notas" name="notas" maxlength="255" rows="3"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
+                            class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
                            focus-visible:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
                            @error('notas') border-red-500 @enderror">{{ old('notas') }}</textarea>
 
@@ -121,7 +121,7 @@
         </div>
 
         <!-- Botones de Acción -->
-        <div class="mt-6 flex justify-end gap-3 border-t border-slate-200 pt-5 pb-6">
+        <div class="mt-6 flex justify-end gap-3 border-t border-app-border-strong pt-5 pb-6">
             <x-secondary-link href="{{ route('clientes.index') }}">
                 Volver
             </x-secondary-link>

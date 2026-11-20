@@ -1,4 +1,3 @@
-
 @if ($paginator->hasPages())
     <nav role="navigation" aria-label="{{ __('Pagination Navigation') }}">
 
@@ -145,27 +144,28 @@
                         @endif
                     @endforeach
 
+                
                     {{-- Siguiente --}}
                     @if ($paginator->hasMorePages())
                         <a href="{{ $paginator->nextPageUrl() }}" rel="next"
                             aria-label="{{ __('pagination.next') }}"
                             class="inline-flex items-center justify-center rounded-lg
-                                   border border-app-border bg-app-surface p-2 text-app-text-secondary
-                                   transition hover:border-app-primary-500/40
-                                   hover:bg-app-primary-500/10 hover:text-app-primary-700
-                                   focus:outline-none focus:ring-2 focus:ring-app-primary-500
-                                   focus:ring-offset-2 focus:ring-offset-app-surface">
+                            border border-app-border bg-app-surface p-2 text-app-text-secondary
+                            transition hover:border-app-primary-500/40
+                            hover:bg-app-primary-500/10 hover:text-app-primary-700
+                            focus:outline-none focus:ring-2 focus:ring-app-primary-500
+                            focus:ring-offset-2 focus:ring-offset-app-surface">
                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
-                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 01-1.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 010-1.414z"
+                                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414z"
                                     clip-rule="evenodd" />
                             </svg>
                         </a>
                     @else
                         <span aria-disabled="true"
                             class="inline-flex items-center justify-center rounded-lg
-                                   border border-app-border bg-app-surface-alt p-2
-                                   text-app-text-muted cursor-not-allowed">
+                            border border-app-border bg-app-surface-alt p-2
+                            text-app-text-muted cursor-not-allowed">
                             <svg class="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                                 <path fill-rule="evenodd"
                                     d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414z"
