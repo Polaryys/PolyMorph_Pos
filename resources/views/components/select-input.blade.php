@@ -3,7 +3,7 @@
 <select
     @disabled($disabled)
     {{ $attributes->merge([
-        'class' => 'block w-full rounded-md border p-2 text-sm shadow-sm
+        'class' => 'block rounded-md border p-2 text-sm shadow-sm 
             bg-app-background border-app-border-strong text-app-text-primary
             focus:outline-none focus:ring-1
             focus:border-app-app-primary-500 focus:ring-app-primary-500

@@ -2,8 +2,6 @@
     <form action="{{ route('articulos.store') }}" method="POST">
         @csrf
 
-
-
         <div class=" mt-2 space-y-6" id="formulario-articulo">
 
             <!-- imagen y datos inciales -->
@@ -30,11 +28,13 @@
                     </x-input-label>
 
                     <textarea id="detalle" name="detalle" rows="3" placeholder="Agrega características o información adicional..."
-                        class="mt-1 block w-full rounded-md border border-gray-300
-                p-2 text-sm shadow-sm focus:border-indigo-500
-                focus:border-indigo-500
-                focus:ring-indigo-500
-                focus:ring-indigo-500 @error('detalle') border-red-500 @enderror">{{ old('detalle') }}</textarea>
+                        class="mt-1 block w-full rounded-md border border-app-border-strong
+                p-2 text-sm shadow-sm focus:borderapp-primary-500
+                focus:borderapp-primary-500
+                focus:ring-app-primary-500
+                focus-visible:borderapp-primary-500
+                focus-visible:ring-app-primary-500
+                focus:ringapp-primary-500 @error('detalle') border-red-500 @enderror">{{ old('detalle') }}</textarea>
 
                     <x-input-error :messages="$errors->get('detalle')" />
                 </div>

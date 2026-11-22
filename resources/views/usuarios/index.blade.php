@@ -40,15 +40,10 @@
                 if ($usuario->solicitudes_idempotencia_count > 0) {
                     $razonesBloqueoEliminacion[] = 'tiene operaciones de venta registradas';
                 }
-                if (
-                    $usuario->rol === 'Administrador'
-                    && $usuario->estado
-                    && $administradoresActivos === 1
-                ) {
+                if ($usuario->rol === 'Administrador' && $usuario->estado && $administradoresActivos === 1) {
                     $razonesBloqueoEliminacion[] = 'es el único administrador activo';
                 }
-                $mensajeBloqueoEliminacion = 'No se puede eliminar: '
-                    . implode('; ', $razonesBloqueoEliminacion) . '.';
+                $mensajeBloqueoEliminacion = 'No se puede eliminar: ' . implode('; ', $razonesBloqueoEliminacion) . '.';
             @endphp
             <tr class="hover:bg-slate-50 transition-colors">
 
@@ -73,14 +68,15 @@
                 </td>
 
                 <td class="px-6 py-3 text-center">
-    <span @class([
-        'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
-        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' => $usuario->estado,
-        'bg-red-500/10 text-red-600 dark:text-red-400' => !$usuario->estado,
-    ])>
-        {{ $usuario->estado ? 'Activo' : 'Inactivo' }}
-    </span>
-</td>
+                    <span @class([
+                        'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
+                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
+                            $usuario->estado,
+                        'bg-red-500/10 text-red-600 dark:text-red-400' => !$usuario->estado,
+                    ])>
+                        {{ $usuario->estado ? 'Activo' : 'Inactivo' }}
+                    </span>
+                </td>
                 <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
                     {{ $usuario->created_at->format('d/m/Y H:i') }}
                 </td>
@@ -109,8 +105,8 @@
                             </form>
                         @else
                             <span title="{{ $mensajeBloqueoEliminacion }}" class="inline-flex cursor-not-allowed">
-                                <x-action-icon type="button" :title="$mensajeBloqueoEliminacion" color="red"
-                                    disabled class="cursor-not-allowed opacity-40">
+                                <x-action-icon type="button" :title="$mensajeBloqueoEliminacion" color="red" disabled
+                                    class="cursor-not-allowed opacity-40">
                                     <x-lucide-trash-2 class="h-5 w-5" />
                                 </x-action-icon>
                             </span>

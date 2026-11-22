@@ -7,11 +7,11 @@
                 ? asset('storage/imagenes/' . $imagenSeleccionada->nombre_archivo)
                 : '' }}"
             alt="Imagen del artículo"
-            class="{{ $imagenSeleccionada ? '' : 'hidden' }} h-56 w-56 rounded border-2 border-indigo-100
-                   bg-gray-50 object-cover shadow-sm">
+            class="{{ $imagenSeleccionada ? '' : 'hidden' }} h-56 w-56 rounded border-2 border-app-primary-100
+                   bg-app-background object-cover shadow-sm">
 
         <div id="imagen-placeholder"
-            class="{{ $imagenSeleccionada ? 'hidden' : 'flex' }} h-56 w-56 items-center justify-center rounded border-2 border-indigo-100 bg-slate-100 text-slate-400 shadow-sm">
+            class="{{ $imagenSeleccionada ? 'hidden' : 'flex' }} h-56 w-56 items-center justify-center rounded border-2 border-app-border bg-app-background text-slate-700 shadow-sm">
             <x-lucide-image class="h-16 w-16" />
         </div>
 
@@ -20,9 +20,9 @@
             onclick="window.dispatchEvent(new CustomEvent('abrir-selector-imagen'))"
             title="Seleccionar imagen"
             aria-label="Seleccionar imagen"
-            class="absolute bottom-2 right-2 rounded-full bg-indigo-600
+            class="absolute bottom-2 right-2 rounded-full bg-app-primary-600
                    p-2.5 text-white shadow-md transition
-                   hover:bg-indigo-700">
+                   hover:bg-app-primary-700">
 
             <x-lucide-camera class="h-4 w-4" />
         </button>
