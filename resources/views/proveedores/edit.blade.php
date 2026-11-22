@@ -4,7 +4,7 @@
         @csrf
         @method('PUT')
 
-        <div class="space-y-8 divide-y divide-gray-200">
+        <div class="space-y-8">
 
             <!-- proveedor datos -->
             <div class="space-y-4">
@@ -116,8 +116,8 @@
                         </x-input-label>
 
                         <textarea id="notas" name="notas" maxlength="255" rows="3"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                            focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                            class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
+                            focus:border-app-primary-500 focus:ring-app-primary-500 sm:text-sm p-2 border
                             @error('notas') border-red-500 @enderror">{{ old('notas', $proveedor->notas) }}</textarea>
                         <x-input-error :messages="$errors->get('notas')" />
 

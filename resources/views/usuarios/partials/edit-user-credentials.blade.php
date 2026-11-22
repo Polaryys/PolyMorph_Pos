@@ -1,11 +1,11 @@
 <section class="space-y-4" x-data="{ mostrarCredenciales: false }">
 
-    <x-section-title class="border-t border-gray-200 pt-2">
+    <x-section-title class="border-t border-app-border-strong pt-3">
 
         Credenciales y acceso del usuario
 
         <button type="button" @click="mostrarCredenciales = !mostrarCredenciales"
-            class="text-gray-500 hover:text-indigo-600 transition-colors"
+            class="text-gray-500 hover:text-app-primary-600 transition-colors"
             :title="mostrarCredenciales ? 'Ocultar opciones' : 'Mostrar opciones'" :aria-expanded="mostrarCredenciales">
             <svg class="h-4 w-4 transition-transform duration-200" :class="mostrarCredenciales ? 'rotate-180' : ''"
                 xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"
@@ -16,7 +16,7 @@
 
     </x-section-title>
 
-    <div x-show="mostrarCredenciales" x-cloak class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
+    <div x-show="mostrarCredenciales" x-cloak class="grid grid-cols-1 gap-x-4  md:grid-cols-3">
 
         <!-- CONTRASEÑA -->
         <div>
@@ -59,15 +59,15 @@
             </x-input-label>
 
             <select id="estado" name="estado" required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
+                       focus:border-app-primary-500 focus:ring-app-primary-500 sm:text-sm p-2 border
                        @error('estado') border-red-500 @enderror">
 
-                <option value="1" {{ old('estado', $usuario->estado) == 1 ? 'selected' : '' }}>
+                <option value="1" class="bg-app-background"{{ old('estado', $usuario->estado) == 1 ? 'selected' : '' }}>
                     Activo
                 </option>
 
-                <option value="0" {{ old('estado', $usuario->estado) == 0 ? 'selected' : '' }}
+                <option value="0" class="bg-app-background"{{ old('estado', $usuario->estado) == 0 ? 'selected' : '' }}
                     @disabled($esUltimoAdministradorActivo)>
                     Inactivo
                 </option>

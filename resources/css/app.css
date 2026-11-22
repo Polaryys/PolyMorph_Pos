@@ -1,7 +1,7 @@
-
 @import 'tailwindcss';
 @import 'system-colors.css';
 
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
 @theme {
     --font-sans: "Figtree", sans-serif;

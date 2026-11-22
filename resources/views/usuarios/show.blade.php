@@ -1,21 +1,27 @@
 <x-app-layout>
 
-    <div class="space-y-6">
+    <div class="space-y-6 text-sm">
 
         <!-- FOTO DEL USUARIO -->
         <section class="space-y-4">
 
             <div class="flex flex-col items-center justify-center space-y-3 pt-2">
 
-                <div class="relative h-28 w-28">
+                <div class="relative h-32 w-32">
 
-                    <img src="{{ $usuario->imagen_id && $usuario->imagen
-                        ? asset('storage/imagenes/' . $usuario->imagen->nombre_archivo)
-                        : ($usuario->foto
-                            ? asset('storage/' . $usuario->foto)
-                            : asset('images/default-avatar.png')) }}"
-                        alt="Foto de perfil"
-                        class="h-28 w-28 rounded-full border-2 border-indigo-100 object-cover shadow-sm">
+                    @if ($usuario->imagen_id && $usuario->imagen)
+                        <img src="{{ asset('storage/imagenes/' . $usuario->imagen->nombre_archivo) }}"
+                            alt="Foto de perfil"
+                            class="h-32 w-32 rounded-full border-2 border-app-border-strong object-cover shadow-sm">
+                    @elseif ($usuario->foto)
+                        <img src="{{ asset('storage/' . $usuario->foto) }}" alt="Foto de perfil"
+                            class="h-32 w-32 rounded-full border-2 border-app-border-strong object-cover shadow-sm">
+                    @else
+                        <div
+                            class="flex h-32 w-32 items-center justify-center rounded-full border-2 border-app-border-strong bg-app-background text-app-text-muted">
+                            <x-lucide-user-round class="h-16 w-16" />
+                        </div>
+                    @endif
 
                 </div>
 
@@ -26,7 +32,7 @@
         <!-- INFORMACIÓN DEL USUARIO -->
         <section class="space-y-4">
 
-            <x-section-title class="border-t border-gray-200 pt-2">
+            <x-section-title class="border-b border-app-border-strong pt-2">
                 Información del usuario
             </x-section-title>
 
@@ -38,9 +44,7 @@
                         {{ __('Nombres') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->nombres }}
                     </div>
                 </div>
@@ -51,9 +55,7 @@
                         {{ __('Apellidos') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->apellidos }}
                     </div>
                 </div>
@@ -64,9 +66,7 @@
                         {{ __('Usuario') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->username }}
                     </div>
                 </div>
@@ -77,9 +77,7 @@
                         {{ __('Rol') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->rol }}
                     </div>
                 </div>
@@ -90,9 +88,7 @@
                         {{ __('Teléfono') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->telefono ?: 'No registrado' }}
                     </div>
                 </div>
@@ -103,9 +99,7 @@
                         {{ __('Correo electrónico') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->email ?: 'No registrado' }}
                     </div>
                 </div>
@@ -116,9 +110,7 @@
                         {{ __('Estado') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->estado ? 'Activo' : 'Inactivo' }}
                     </div>
                 </div>
@@ -129,9 +121,7 @@
                         {{ __('Fecha de creación') }}
                     </x-input-label>
 
-                    <div
-                        class="mt-1 block w-full rounded-md border border-gray-300 bg-gray-50
-                                p-2 text-sm text-gray-700 shadow-sm">
+                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
                         {{ $usuario->created_at->format('d/m/Y H:i') }}
                     </div>
                 </div>
@@ -139,18 +129,16 @@
             </div>
 
         </section>
-                <!-- BOTONES DE ACCIÓN -->
-        <div class="flex items-center justify-end gap-3 border-t border-gray-200 pt-5 pb-6">
+        <!-- BOTONES DE ACCIÓN -->
+        <div class="flex items-center justify-end gap-3 border-t border-app-border-strong pt-5 pb-6">
 
             <x-secondary-link href="{{ route('usuarios.index') }}" wire:navigate>
                 Volver
             </x-secondary-link>
 
-            <a href="{{ route('usuarios.edit', $usuario) }}" wire:navigate
-                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium
-                       text-white shadow-sm transition hover:bg-indigo-700">
-                Editar Usuario
-            </a>
+            <x-primary-link href="{{ route('usuarios.edit', $usuario) }}" wire:navigate class="">
+                Editar usuario
+            </x-primary-link>
 
         </div>
 

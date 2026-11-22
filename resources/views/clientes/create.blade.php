@@ -33,12 +33,12 @@
                             class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
                             focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
                             @error('clasificacion') border-red-500 @enderror">
-                            <option value="Mayorista"
+                            <option value="Mayorista"  class="bg-app-background"
                                 {{ old('clasificacion', 'Minorista') == 'Mayorista' ? 'selected' : '' }}>
                                 Mayorista
                             </option>
 
-                            <option value="Minorista"
+                            <option value="Minorista" class="bg-app-background"
                                 {{ old('clasificacion', 'Minorista') == 'Minorista' ? 'selected' : '' }}>
                                 Minorista
                             </option>
@@ -109,7 +109,8 @@
 
                         <textarea id="notas" name="notas" maxlength="255" rows="3"
                             class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
-                           focus-visible:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                            focus:border-app-primary-500 focus:ring-app-primary-500
+                            focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500 sm:text-sm p-2 border
                            @error('notas') border-red-500 @enderror">{{ old('notas') }}</textarea>
 
                         <x-input-error :messages="$errors->get('notas')" />

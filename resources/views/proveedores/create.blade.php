@@ -3,7 +3,7 @@
     <form action="{{ route('proveedores.store') }}" method="POST">
         @csrf
 
-        <div class="space-y-8 divide-y divide-gray-200">
+        <div class="space-y-8">
 
             <!-- datos de proveedor -->
             <div class="space-y-4">
@@ -18,8 +18,8 @@
                         <x-input-label for="nit">
                             NIT <span class="text-red-500">*</span>
                         </x-input-label>
-                        <x-text-input type="text" id="nit" name="nit" maxlength="15" placeholder="NIT o CF"
-                            :value="old('nit')" :error="$errors->has('nit')" class="mt-1" />
+                        <x-text-input type="text" autocomplete="off" id="nit" name="nit" maxlength="15"
+                            placeholder="NIT o CF" :value="old('nit')" :error="$errors->has('nit')" class="mt-1" />
                         <x-input-error :messages="$errors->get('nit')" />
                     </div>
 
@@ -101,8 +101,9 @@
                         </x-input-label>
 
                         <textarea id="notas" name="notas" maxlength="255" rows="3"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                                   focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                                    class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
+                                    focus:border-app-primary-500 focus:ring-app-primary-500
+                                    focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500 sm:text-sm p-2 border
                                    @error('notas') border-red-500 @enderror">{{ old('notas') }}</textarea>
                         <x-input-error :messages="$errors->get('notas')" />
                     </div>
@@ -111,18 +112,18 @@
 
                 </div>
             </div>
-            <div class="mt-4 flex justify-end gap-3 border-t border-slate-200 pt-4 pb-6">
-            <x-secondary-link href="{{ route('proveedores.index') }}">
-                Volver
-            </x-secondary-link>
+            <div class="mt-4 flex justify-end gap-3 pb-6">
+                <x-secondary-link href="{{ route('proveedores.index') }}">
+                    Volver
+                </x-secondary-link>
 
-            <x-primary-button>
-                Guardar Proveedor
-            </x-primary-button>
+                <x-primary-button>
+                    Guardar Proveedor
+                </x-primary-button>
+            </div>
+
         </div>
 
-        </div>
-        
 
     </form>
 

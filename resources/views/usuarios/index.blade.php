@@ -1,10 +1,10 @@
 <x-app-layout>
     <!-- Encabezado y Acción -->
-    <div class="flex items-center justify-between mb-3">
-        <a href="{{ route('usuarios.create') }}" wire:navigate
-            class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
-            + Agregar Usuario
-        </a>
+    <div class="flex items-center justify-start mb-3">
+
+        <x-primary-link href="{{ route('usuarios.create') }}" wire:navigate class="justify-start">
+            + Agregar usuario
+        </x-primary-link>
     </div>
 
     <!-- MENSAJES -->
@@ -52,19 +52,19 @@
             @endphp
             <tr class="hover:bg-slate-50 transition-colors">
 
-                <td class="px-6 py-3 w-24 text-center font-mono text-slate-500">
+                <td class="px-6 py-3 w-24 text-center font-mono">
                     {{ ($usuarios->currentPage() - 1) * $usuarios->perPage() + $loop->iteration }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-medium">
                     {{ $usuario->username }}
                 </td>
 
-                <td class="px-6 py-3 font-normal text-slate-900">
+                <td class="px-6 py-3 font-normal">
                     {{ $usuario->nombres }}
                 </td>
 
-                <td class="px-6 py-3 font-normal text-slate-900">
+                <td class="px-6 py-3 font-normal">
                     {{ $usuario->apellidos }}
                 </td>
 
@@ -73,19 +73,14 @@
                 </td>
 
                 <td class="px-6 py-3 text-center">
-                    @if ($usuario->estado)
-                        <span
-                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700">
-                            Activo
-                        </span>
-                    @else
-                        <span
-                            class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-red-100 text-red-700">
-                            Inactivo
-                        </span>
-                    @endif
-                </td>
-
+    <span @class([
+        'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
+        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' => $usuario->estado,
+        'bg-red-500/10 text-red-600 dark:text-red-400' => !$usuario->estado,
+    ])>
+        {{ $usuario->estado ? 'Activo' : 'Inactivo' }}
+    </span>
+</td>
                 <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
                     {{ $usuario->created_at->format('d/m/Y H:i') }}
                 </td>

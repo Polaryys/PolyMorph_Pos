@@ -4,13 +4,13 @@
         @csrf
         @method('PUT')
 
-        <div class="space-y-8 divide-y divide-gray-200">
+        <div class="space-y-8">
 
             <!-- datos del cliente -->
             <div class="space-y-4">
-                <h3 class="text-lg font-semibold leading-6 text-indigo-black flex items-center gap-2">
+                <x-section-title>
                     Datos del Cliente
-                </h3>
+                </x-section-title>
 
                 <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
                     <!-- NIT -->
@@ -25,21 +25,21 @@
 
                     <!-- CLASIFICACIÓN -->
                     <div class="sm:col-span-3">
-                        <label for="clasificacion" class="block text-sm font-medium text-gray-700">
+                        <x-input-label for="clasificacion">
                             Clasificación <span class="text-red-500">*</span>
-                        </label>
+                        </x-input-label>
 
                         <select id="clasificacion" name="clasificacion"
-                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                            class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
+                       focus:border-app-primary-500 focus:ring-app-primary-500 sm:text-sm p-2 border
                        @error('clasificacion') border-red-500 @enderror">
 
-                            <option value="Mayorista"
+                            <option value="Mayorista" class="bg-app-background"
                                 {{ old('clasificacion', $cliente->clasificacion) == 'Mayorista' ? 'selected' : '' }}>
                                 Mayorista
                             </option>
 
-                            <option value="Minorista"
+                            <option value="Minorista" class="bg-app-background"
                                 {{ old('clasificacion', $cliente->clasificacion) == 'Minorista' ? 'selected' : '' }}>
                                 Minorista
                             </option>
@@ -75,9 +75,9 @@
 
             <!-- info contacto -->
             <div class="pt-4 space-y-4">
-                <h3 class="text-lg font-semibold leading-6 text-black flex items-center gap-2">
-                    Información de Contacto
-                </h3>
+                <x-section-title>
+                    Información de Contaacto
+                </x-section-title>
 
                 <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
 
@@ -107,8 +107,8 @@
                             Notas
                         </x-input-label>
                         <textarea id="notas" name="notas" maxlength="255" rows="3"
-                            class="mt-1 block w-full rounded-md border border-slate-300 p-2
-                text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500
+                            class="mt-1 block w-full rounded-md border border-app-border-strong p-2
+                text-sm shadow-sm focus:ring-app-primary-500 focus:border-app-primary-400
                 @error('notas') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">{{ old('notas', $cliente->notas) }}</textarea>
                         <x-input-error :messages="$errors->get('notas')" />
                     </div>

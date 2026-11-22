@@ -1,6 +1,6 @@
 <section class="space-y-4">
 
-    <x-section-title class="border-t border-gray-200 pt-2">
+    <x-section-title class="border-b border-app-border-strong pt-2">
         Información del usuario
     </x-section-title>
 
@@ -57,18 +57,18 @@
             </x-input-label>
 
             <select id="rol" name="rol" required
-                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm
-                       focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border
+                class="mt-1 block w-full rounded-md border-app-border-strong shadow-sm
+                       focus:border-app-primary-500 focus:ring-app-primary-500 sm:text-sm p-2 border
                        @error('rol') border-red-500 @enderror">
 
-                <option value="">Selecciona un rol</option>
+                <option value="" class="bg-app-background">Selecciona un rol</option>
 
-                <option value="Vendedor" {{ old('rol', $usuario->rol) === 'Vendedor' ? 'selected' : '' }}
+                <option value="Vendedor" class="bg-app-background"{{ old('rol', $usuario->rol) === 'Vendedor' ? 'selected' : '' }}
                     @disabled($esUltimoAdministradorActivo)>
                     Vendedor
                 </option>
 
-                <option value="Administrador"
+                <option value="Administrador" class="bg-app-background"
                     {{ old('rol', $usuario->rol) === 'Administrador' ? 'selected' : '' }}>
                     Administrador
                 </option>

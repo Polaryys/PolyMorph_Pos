@@ -11,8 +11,8 @@
                 <div class="flex items-center justify-between">
                     <button type="submit"
                         class="inline-flex justify-center rounded-md border border-transparent
-                           bg-indigo-600 py-2 px-4 text-sm font-medium text-white
-                           shadow-sm hover:bg-indigo-700 transition">
+                           bg-app-primary-600 py-2 px-4 text-sm font-medium text-white
+                           shadow-sm hover:bg-app-primary-600 transition">
                         {{ __('Guardar Cambios') }}
                     </button>
                 </div>
@@ -30,10 +30,10 @@
                         <img id="avatar-preview"
                             src="{{ $user->foto ? asset('storage/' . $user->foto) : asset('images/default-avatar.png') }}"
                             alt="Foto de perfil"
-                            class="w-28 h-28 rounded-full object-cover border-2 border-indigo-100 shadow-sm" />
+                            class="w-28 h-28 rounded-full object-cover border-2 border-app-primary-100 shadow-sm" />
 
                         <label for="foto"
-                            class="absolute bottom-0 right-0 p-2 bg-indigo-600 text-white rounded-full hover:bg-indigo-700 cursor-pointer shadow-md transition">
+                            class="absolute bottom-0 right-0 p-2 bg-app-primary-500 text-white rounded-full hover:bg-app-primary-700 cursor-pointer shadow-md transition">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
@@ -46,7 +46,7 @@
                     </div>
 
                     <label for="foto"
-                        class="text-sm font-semibold text-indigo-600 hover:text-indigo-700 cursor-pointer">
+                        class="text-sm font-semibold text-app-primary-500 hover:text-app-primary-700 cursor-pointer">
                         {{ __('Cambiar Foto') }}
                     </label>
 

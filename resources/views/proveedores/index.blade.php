@@ -16,7 +16,7 @@
 
         <x-slot:headers>
             <th class="px-6 py-2.5 w-16 text-center">No.</th>
-            <th class="px-6 py-2.5 w-40 text-center">NIT</th>
+            <th class="px-6 py-2.5 w-40 text-left">NIT</th>
             <th class="px-6 py-2.5">Nombre</th>
             <th class="px-6 py-2.5">Teléfono</th>
             <th class="px-6 py-2.5">Correo</th>
@@ -27,27 +27,27 @@
         @forelse ($proveedores as $proveedor)
             <tr class="hover:bg-slate-50 transition-colors">
 
-                <td class="px-6 py-3 text-center font-mono text-slate-500">
+                <td class="px-6 py-3 text-center font-mono ">
                     {{ ($proveedores->currentPage() - 1) * $proveedores->perPage() + $loop->iteration }}
                 </td>
 
-                <td class="px-6 py-3 font-medium text-slate-900">
+                <td class="px-6 py-3 font-medium">
                     {{ $proveedor->nit }}
                 </td>
 
-                <td class="px-6 py-3 font-normal text-slate-900">
+                <td class="px-6 py-3 font-normal">
                     {{ $proveedor->nombre }}
                 </td>
 
-                <td class="px-6 py-3 font-normal text-slate-900">
+                <td class="px-6 py-3 font-normal">
                     {{ $proveedor->telefono }}
                 </td>
 
-                <td class="px-6 py-3 font-normal text-slate-900">
+                <td class="px-6 py-3 font-normal">
                     {{ $proveedor->correo ?: '—' }}
                 </td>
 
-                <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                <td class="px-6 py-3 w-40 text-center whitespace-nowrap italic">
                     {{ $proveedor->created_at->format('d/m/Y H:i') }}
                 </td>
 
@@ -78,7 +78,7 @@
 
         @empty
             <tr>
-                <td colspan="7" class="px-6 py-8 text-center text-slate-400">
+                <td colspan="7" class="px-6 py-8 text-center">
                     No hay proveedores registrados.
                 </td>
             </tr>

@@ -43,9 +43,9 @@
                 <td class="px-6 py-3 text-center">
                     <span @class([
                         'inline-flex items-center rounded-full text-xs p-1 font-semibold whitespace-nowrap',
-                        'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400' =>
+                        'bg-indigo-500/10 text-indigo-600 dark:text-indigo-400 px-2' =>
                             $cliente->clasificacion === 'Mayorista',
-                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
+                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 px-2' =>
                             $cliente->clasificacion === 'Minorista',
                     ])>
                         {{ $cliente->clasificacion }}

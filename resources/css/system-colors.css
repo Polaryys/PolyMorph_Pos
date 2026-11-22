@@ -70,7 +70,7 @@
     --app-surface-elevated: var(--color-zinc-700);
 
     /* TEXTOS */
-    --app-text-primary: var(--color-zinc-100);
+    --app-text-primary: var(--color-zinc-50);
     --app-text-secondary: var(--color-zinc-300);
     --app-text-muted: var(--color-zinc-400);
     --app-text-inverse: var(--color-zinc-900);

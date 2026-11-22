@@ -13,7 +13,7 @@
         <x-icon-sistema class="h-20 w-auto shrink-0 text-indigo-500 drop-shadow-sm" />
 
         <p class="text-sm font-bold tracking-wide text-slate-700">
-            MultiServicios Eben-Ezer
+            EBEN-EZER
         </p>
 
     </div>

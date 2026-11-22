@@ -36,7 +36,7 @@
         <div class="flex-1 flex flex-col min-h-0 bg-app-surface">
 
             <div class="flex-1 min-h-0 md:ml-56 bg-app-surface">
-                <main class="h-full min-h-0 overflow-y-auto px-5 py-2 mt-6 pb-10 text-app-text-primary">
+                <main class="h-full min-h-0 overflow-y-auto px-5 py-2 mt-6 pb-10 text-app-text-primary text-[15px]">
                     @include('layouts.top_bar')
                     {{ $slot }}
                 </main>
