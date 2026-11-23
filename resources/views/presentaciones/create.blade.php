@@ -15,15 +15,15 @@
                 placeholder="Buscar por nombre, SKU o código de barras..." />
 
             <div x-cloak x-show="productoSeleccionadoData"
-                class="mt-3 grid grid-cols-1 gap-3 rounded-lg border border-slate-200 bg-slate-50 p-3 text-sm sm:grid-cols-2">
-                <p class="text-slate-600">
+                class="mt-3 grid grid-cols-1 gap-3 rounded-lg border border-app-border bg-app-background p-3 text-sm sm:grid-cols-2">
+                <p class="text-app-text-secondary">
                     Precio unitario:
-                    <strong class="text-slate-800"
+                    <strong class="text-app-text-primary"
                         x-text="'Q ' + Number(productoSeleccionadoData?.precioUnitario ?? 0).toFixed(2)"></strong>
                 </p>
-                <p class="text-slate-600">
+                <p class="text-app-text-secondary">
                     Costo promedio unitario:
-                    <strong class="text-slate-800"
+                    <strong class="text-app-text-primary"
                         x-text="'Q ' + Number(productoSeleccionadoData?.costoPromedioUnitario ?? 0).toFixed(2)"></strong>
                 </p>
             </div>

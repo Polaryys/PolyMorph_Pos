@@ -1,5 +1,5 @@
 <div class="relative">
-    <label for="buscar-producto" class="mb-1 block text-sm font-medium text-slate-700">
+    <label for="buscar-producto" class="mb-1 block text-sm font-medium text-app-nav-active-text">
         Producto base <span class="text-red-500">*</span>
     </label>
 
@@ -12,7 +12,7 @@
             :disabled="seleccionado !== null"
             placeholder="Buscar por nombre, SKU o código de barras..."
             autocomplete="off" :required="seleccionado === null"
-            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-slate-700 outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500">
+            class="w-full rounded-xl border border-slate-300 bg-white px-4 py-2.5 pr-10 text-sm text-app-nav-active-text outline-none transition focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/20 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-500">
 
         <div class="absolute inset-y-0 right-3 flex items-center">
             <svg x-show="cargando" class="h-4 w-4 animate-spin text-indigo-600" xmlns="http://www.w3.org/2000/svg"
@@ -25,22 +25,22 @@
     </div>
 
     <div x-cloak x-show="buscar.trim().length > 0 && !seleccionado"
-        class="absolute z-50 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-lg">
-        <div x-show="cargando && resultados.length === 0" class="px-4 py-3 text-sm text-slate-500">
+        class="absolute z-50 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border border-app-border bg-app-background shadow-lg">
+        <div x-show="cargando && resultados.length === 0" class="px-4 py-3 text-sm text-app-text-muted">
             Buscando productos...
         </div>
 
         <template x-for="producto in resultados" :key="producto.inventario_id">
             <button type="button" @click="seleccionar(producto)"
-                class="flex w-full items-center gap-3 border-b border-slate-100 px-3 py-3 text-left transition hover:bg-indigo-50">
+                class="flex w-full items-center gap-3 border-b border-app-border px-3 py-3 text-left transition hover:bg-indigo-50">
                 <div
-                    class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-slate-200 bg-slate-50">
+                    class="flex h-12 w-12 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-app-border">
                     <template x-if="producto.imagen">
                         <img :src="producto.imagen" :alt="producto.nombre" class="h-full w-full object-cover">
                     </template>
 
                     <template x-if="!producto.imagen">
-                        <svg class="h-6 w-6 text-slate-400" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        <svg class="h-6 w-6 text-app-text-muted" xmlns="http://www.w3.org/2000/svg" fill="none"
                             viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M3 7.5A1.5 1.5 0 014.5 6h15A1.5 1.5 0 0121 7.5v9a1.5 1.5 0 01-1.5 1.5h-15A1.5 1.5 0 013 16.5v-9z" />
@@ -50,9 +50,9 @@
                 </div>
 
                 <div class="min-w-0 flex-1">
-                    <p class="truncate text-sm font-semibold text-slate-800" x-text="producto.nombre"></p>
-                    <p class="mt-1 text-xs text-slate-500">SKU: <span x-text="producto.sku"></span></p>
-                    <p class="mt-1 text-xs text-slate-500">
+                    <p class="truncate text-sm font-semibold text-app-text-primary" x-text="producto.nombre"></p>
+                    <p class="mt-1 text-sm text-app-text-muted">SKU: <span x-text="producto.sku"></span></p>
+                    <p class="mt-1 text-sm text-app-text-muted">
                         Existencias:
                         <span class="font-semibold"
                             :class="producto.cantidad > 0 ? 'text-emerald-700' : 'text-red-600'"

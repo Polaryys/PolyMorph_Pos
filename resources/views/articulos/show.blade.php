@@ -18,7 +18,7 @@
                                 class="h-48 w-48 rounded-xl border border-app-border-strong bg-app-background object-cover shadow-sm">
                         @else
                             <div
-                                class="flex h-48 w-48 items-center justify-center rounded-xl border bborder-app-border-strong bg-app-background shadow-sm">
+                                class="flex h-48 w-48 items-center justify-center rounded-xl border border-app-border-strong bg-app-background shadow-sm">
                                 <x-lucide-image class="h-16 w-16" />
                             </div>
                         @endif

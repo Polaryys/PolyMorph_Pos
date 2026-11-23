@@ -11,7 +11,7 @@
                    bg-app-background object-cover shadow-sm">
 
         <div id="imagen-placeholder"
-            class="{{ $imagenSeleccionada ? 'hidden' : 'flex' }} h-56 w-56 items-center justify-center rounded border-2 border-app-border bg-app-background text-slate-700 shadow-sm">
+            class="{{ $imagenSeleccionada ? 'hidden' : 'flex' }} h-56 w-56 items-center justify-center rounded border-2 border-app-border bg-app-background text-app-border-strong shadow-sm">
             <x-lucide-image class="h-16 w-16" />
         </div>
 
