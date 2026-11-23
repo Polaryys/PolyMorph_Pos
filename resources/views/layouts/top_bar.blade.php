@@ -13,10 +13,11 @@
         'Clientes registrados' => ['clientes.*'],
 
         'Proveedores' => ['proveedores.*', 'proveedor.*'],
-        'Reportes' => ['reportes.*'],
+        'Visión general de Inventario' => ['reportes.inventario'],
         'Usuarios' => ['usuarios.*'],
         'Imagenes' => ['imagenes.*'],
-        'Configuración' => ['metodos-pago.*', 'configuracion.*'],
+        'Apariencia del Sistema' => ['configuracion'],
+        'Métodos de pago' => ['metodos-pago.*'],
         'Mi perfil' => ['profile.*'],
     ];
 

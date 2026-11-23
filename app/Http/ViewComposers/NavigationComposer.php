@@ -29,7 +29,7 @@ class NavigationComposer
             Request::routeIs('reportes.*') => 'reportes',
             Request::routeIs('usuarios.*') => 'usuarios',
             Request::routeIs('imagenes.*') => 'medios',
-            Request::routeIs('configuracion.*', 'metodos-pago.*') => 'configuracion',
+            Request::routeIs('configuracion', 'configuracion.*', 'metodos-pago.*') => 'configuracion',
             default => 'inventario',
         };
     }
@@ -83,11 +83,15 @@ class NavigationComposer
             'clientes' => [['label' => 'Clientes', 'route' => 'clientes.index', 'active' => 'clientes.*']],
             'proveedores' => [['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']],
             'usuarios' => [['label' => 'Colaboradores', 'route' => 'usuarios.index', 'active' => 'usuarios.*']],
-            'reportes' => [['label' => 'Reportes', 'route' => 'reportes.inventario', 'active' => 'reportes.*']],
+            'reportes' => [
+                ['label' => 'Resumen general', 'route' => null, 'active' => '', 'disabled' => true],
+                ['label' => 'Inventario', 'route' => 'reportes.inventario', 'active' => 'reportes.inventario'],
+                ['label' => 'Pagos', 'route' => null, 'active' => '', 'disabled' => true],
+            ],
             'medios' => [['label' => 'Medios', 'route' => 'imagenes.index', 'active' => 'imagenes.*']],
             'configuracion' => [
                 ['label' => 'Metodos de Pago', 'route' => 'metodos-pago.index', 'active' => 'metodos-pago.*'],
-                ['label' => 'Temas', 'route' => 'configuracion', 'active' => 'configuracion.*'],
+                ['label' => 'Temas', 'route' => 'configuracion', 'active' => 'configuracion'],
             ],
         ];
     }

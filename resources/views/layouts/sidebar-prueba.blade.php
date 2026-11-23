@@ -116,15 +116,13 @@
                 Medios
             </x-sidebar-link>
 
-            <x-sidebar-link :href="route('metodos-pago.index')" :active="request()->routeIs('metodos-pago.*', 'configuracion.*')" wire:navigate>
-
+            <x-sidebar-link :href="route('metodos-pago.index')" :active="request()->routeIs('metodos-pago.*', 'configuracion', 'configuracion.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-settings class="h-5 w-5" />
                 </x-slot:icon>
 
                 Configuración
             </x-sidebar-link>
-
         </nav>
 
         {{-- Zona inferior --}}

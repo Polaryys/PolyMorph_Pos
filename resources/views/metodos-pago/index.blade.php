@@ -22,7 +22,7 @@
                     editar = false;
                     abierto = true
                 "
-                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700">
+                class="rounded-md bg-app-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-app-primary-800">
                 + Nuevo Método de Pago
             </button>
         </div>
@@ -43,16 +43,16 @@
             </x-slot:headers>
 
             @forelse ($metodosPago as $metodoPago)
-                <tr class="transition-colors hover:bg-slate-50">
-                    <td class="w-24 px-6 py-3 text-center font-mono text-slate-500">
+                <tr class="transition-colors ">
+                    <td class="w-24 px-6 py-3 text-center font-mono text-app-text-muted">
                         {{ ($metodosPago->currentPage() - 1) * $metodosPago->perPage() + $loop->iteration }}
                     </td>
 
-                    <td class="px-6 py-3 font-medium text-slate-900">
+                    <td class="px-6 py-3 font-medium ">
                         {{ $metodoPago->nombre }}
                     </td>
 
-                    <td class="max-w-sm px-6 py-3 text-slate-500">
+                    <td class="max-w-sm px-6 py-3 ">
                         <span class="block truncate" title="{{ $metodoPago->descripcion }}">
                             {{ $metodoPago->descripcion ?: 'Sin descripción' }}
                         </span>
@@ -64,19 +64,19 @@
 
                     <td class="px-6 py-3 text-center">
                         <span @class([
-                            'inline-flex rounded-full px-2.5 py-1 text-xs font-medium',
-                            'bg-green-100 text-green-700' => $metodoPago->estado,
-                            'bg-slate-100 text-slate-600' => !$metodoPago->estado,
+                            'inline-flex rounded-full px-2.5 py-1 text-sm font-medium',
+                            'bg-green-500/10 text-green-600' => $metodoPago->estado,
+                            'bg-slate-500/10 text-slate-600' => !$metodoPago->estado,
                         ])>
                             {{ $metodoPago->estado ? 'Activo' : 'Inactivo' }}
                         </span>
                     </td>
 
-                    <td class="w-40 whitespace-nowrap px-6 py-3 text-center italic text-slate-400">
+                    <td class="w-40 whitespace-nowrap px-6 py-3 text-center italic">
                         {{ $metodoPago->created_at->format('d/m/Y H:i') }}
                     </td>
 
-                    <td class="w-40 whitespace-nowrap px-6 py-3 text-center italic text-slate-400">
+                    <td class="w-40 whitespace-nowrap px-6 py-3 text-center italic">
                         {{ $metodoPago->updated_at->format('d/m/Y H:i') }}
                     </td>
 
@@ -111,23 +111,24 @@
                 </tr>
             @empty
                 <tr>
-                    <td colspan="8" class="px-6 py-8 text-center text-slate-400">
+                    <td colspan="8" class="px-6 py-8 text-center">
                         No se encontraron métodos de pago registrados.
                     </td>
                 </tr>
             @endforelse
         </x-table>
 
+
         <template x-teleport="body">
             <div x-cloak x-show="abierto" x-transition.opacity
                 class="fixed inset-0 z-100 flex items-center justify-center bg-black/40 p-4"
                 @click.self="abierto = false">
                 <div x-show="abierto" x-transition
-                    class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl" role="dialog"
-                    aria-modal="true" aria-labelledby="titulo-modal-metodo-pago" @click.stop>
+                    class="w-full max-w-md rounded-lg border border-app-border bg-app-surface p-6 shadow-xl"
+                    role="dialog" aria-modal="true" aria-labelledby="titulo-modal-metodo-pago" @click.stop>
 
                     <h2 id="titulo-modal-metodo-pago"
-                        class="mb-5 border-b border-gray-200 pb-3 text-lg font-semibold text-indigo-600"
+                        class="mb-5 border-b border-app-border pb-3 text-lg font-semibold text-app-primary-500"
                         x-text="modo === 'editar' ? 'Editar Método de Pago' : 'Registrar Nuevo Método de Pago'">
                     </h2>
 
@@ -143,68 +144,68 @@
                         </template>
 
                         <div>
-                            <label for="nombre" class="mb-1 block text-sm font-medium text-gray-700">
+                            <label for="nombre" class="mb-1 block text-sm font-medium text-app-text-secondary">
                                 Nombre del método de pago
                                 <span class="text-red-500">*</span>
                             </label>
                             <input type="text" id="nombre" name="nombre" x-model="nombre" maxlength="50" required
                                 x-effect="if (abierto) $nextTick(() => $el.focus())"
-                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('nombre')
-border-red-500
-@enderror">
+                                class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm placeholder:text-app-text-muted focus:border-app-primary-500 focus:ring-app-primary-500 @error('nombre')
+                                border-red-500
+                                @enderror">
                             @error('nombre')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="descripcion" class="mb-1 block text-sm font-medium text-gray-700">
+                            <label for="descripcion" class="mb-1 block text-sm font-medium text-app-text-secondary">
                                 Descripción
                             </label>
                             <textarea id="descripcion" name="descripcion" x-model="descripcion" rows="3" maxlength="255"
-                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('descripcion') border-red-500 @enderror"></textarea>
+                                class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm placeholder:text-app-text-muted focus:border-app-primary-500 focus:ring-app-primary-500 @error('descripcion') border-red-500 @enderror"></textarea>
                             @error('descripcion')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="tipo_captura" class="mb-1 block text-sm font-medium text-gray-700">
+                            <label for="tipo_captura" class="mb-1 block text-sm font-medium text-app-text-secondary">
                                 Captura del pago
                                 <span class="text-red-500">*</span>
                             </label>
                             <select id="tipo_captura" name="tipo_captura" x-model="tipoCaptura" required
-                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('tipo_captura') border-red-500 @enderror">
+                                class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500 @error('tipo_captura') border-red-500 @enderror">
                                 <option value="PERMITIR MONTOS">PERMITIR MONTOS (recibido y cambio)</option>
                                 <option value="PERMITIR REFERENCIA">PERMITIR REFERENCIA</option>
                             </select>
                             @error('tipo_captura')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
                         <div>
-                            <label for="estado" class="mb-1 block text-sm font-medium text-gray-700">
+                            <label for="estado" class="mb-1 block text-sm font-medium text-app-text-secondary">
                                 Estado
                                 <span class="text-red-500">*</span>
                             </label>
                             <select id="estado" name="estado" x-model="estado" required
-                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500 @error('estado') border-red-500 @enderror">
+                                class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500 @error('estado') border-red-500 @enderror">
                                 <option value="1">Activo</option>
                                 <option value="0">Inactivo</option>
                             </select>
                             @error('estado')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror
                         </div>
 
-                        <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
-                            <button type="button" @click="abierto = false"
-                                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                        <div class="flex items-center justify-end gap-3 border-t border-app-border pt-4">
+                            <button type="button" @clic&#x6B;*="abierto* *=* fals&#x65;*"*
+                                class="rounded-md border border-app-border-strong bg-app-surface px-4 py-2 text-sm font-medium text-app-text-secondary transition hover:bg-app-surface-hover">
                                 Cancelar
                             </button>
                             <button type="submit"
-                                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700"
+                                class="rounded-md bg-app-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-app-primary-700"
                                 x-text="modo === 'editar' ? 'Guardar cambios' : 'Guardar Método de Pago'">
                             </button>
                         </div>
@@ -212,5 +213,6 @@ border-red-500
                 </div>
             </div>
         </template>
+
     </div>
 </x-app-layout>
