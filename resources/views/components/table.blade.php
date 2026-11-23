@@ -1,8 +1,9 @@
+
 @props(['headers', 'paginator' => null])
 
 <div class="overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-sm">
 
-    <div class="overflow-x-auto">
+    <div class="overflow-x-auto scrollbar-app">
         <table class="min-w-full border-collapse text-left text-sm">
 
             {{-- Encabezado --}}

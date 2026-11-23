@@ -13,17 +13,7 @@
     </div>
 
     <!-- MENSAJES -->
-    @if (session('success'))
-        <div id="success-message" class="mb-4 rounded-lg border border-green-200 bg-green-100 p-4 text-sm text-green-700">
-            {{ session('success') }}
-        </div>
-
-        <script>
-            setTimeout(() => {
-                document.getElementById('success-message')?.remove();
-            }, 3000);
-        </script>
-    @endif
+    @include('components.alert-message')
 
     @if ($errors->any())
         <div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700" role="alert">
@@ -46,52 +36,54 @@
         </x-slot:headers>
 
         @forelse ($compras as $compra)
-            <tr class="transition-colors hover:bg-indigo-50/50">
-                <td class="px-4 py-3 whitespace-nowrap font-semibold text-slate-900">
-                    <a href="{{ route('compras.show', $compra) }}" class="transition hover:text-indigo-900">
-                    {{ $compra->numero_compra }}
+            <tr>
+                <td class="px-4 py-3 whitespace-nowrap font-semibold ">
+                    <a href="{{ route('compras.show', $compra) }}" class="transition hover:text-app-primary-600">
+                        {{ $compra->numero_compra }}
                     </a>
                 </td>
 
-                <td class="px-4 py-3 text-center whitespace-nowrap text-slate-700">
+                <td class="px-4 py-3 text-center whitespace-nowrap">
                     {{ $compra->fecha_compra?->format('d/m/Y') }}
                 </td>
 
-                <td class="px-4 py-3 whitespace-nowrap text-slate-900">
+                <td class="px-4 py-3 whitespace-nowrap">
                     {{ $compra->proveedor?->nombre ?? 'Sin proveedor' }}
                 </td>
 
-                <td class="px-4 py-3 text-center whitespace-nowrap font-medium text-slate-700">
+                <td class="px-4 py-3 text-center whitespace-nowrap font-medium">
                     {{ number_format((int) $compra->cantidad_total) }}
                 </td>
 
-                <td class="px-4 py-3 text-right whitespace-nowrap font-medium text-slate-900">
+                <td class="px-4 py-3 text-right whitespace-nowrap font-medium">
                     Q {{ number_format((float) $compra->costo_total, 2) }}
                 </td>
+
 
                 <td class="px-4 py-3 text-center whitespace-nowrap">
                     @if ($compra->estado === 'PENDIENTE')
                         <span
-                            class="inline-flex rounded-full bg-amber-100 px-2.5 py-1 text-xs font-semibold text-amber-700">
+                            class="inline-flex rounded-full bg-amber-500/10 px-2.5 py-1 font-normal text-amber-600">
                             Pendiente
                         </span>
                     @elseif ($compra->estado === 'REGISTRADA')
                         <span
-                            class="inline-flex rounded-full bg-green-100 px-2.5 py-1 text-xs font-semibold text-green-700">
+                            class="inline-flex rounded-full bg-emerald-500/10 px-2.5 py-1 font-normal text-emerald-600">
                             Registrada
                         </span>
                     @else
                         <span
-                            class="inline-flex rounded-full bg-red-100 px-2.5 py-1 text-xs font-semibold text-red-700">
+                            class="inline-flex rounded-full bg-red-500/10 px-2.5 py-1 font-normal text-red-600">
                             Reversada
                         </span>
                     @endif
                 </td>
 
+
                 <td class="px-4 py-3 whitespace-nowrap">
                     <div class="flex items-center justify-center gap-3">
                         <a href="{{ route('compras.show', $compra) }}" title="Ver compra" aria-label="Ver compra"
-                            class="text-slate-500 transition hover:text-indigo-600">
+                            class="text-app-text-muted transition hover:text-app-primary-600">
                             <x-lucide-eye class="h-5 w-5" />
                         </a>
                     </div>

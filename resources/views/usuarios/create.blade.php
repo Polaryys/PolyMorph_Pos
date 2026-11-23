@@ -112,7 +112,7 @@
                     <span class="text-red-500">*</span>
                 </x-input-label>
 
-                <x-select-input id="rol" name="rol" required class="mt-1" :error="$errors->has('rol')">
+                <x-select-input id="rol" name="rol" required class="mt-1 w-full" :error="$errors->has('rol')">
                     <option value="">Selecciona un rol</option>
 
                     <option value="Vendedor" @selected(old('rol') === 'Vendedor')>

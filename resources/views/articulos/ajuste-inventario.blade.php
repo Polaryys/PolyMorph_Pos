@@ -43,18 +43,19 @@
                 <th class="w-1/4 px-4 py-3 text-center">Cantidad</th>
                 <th class="w-1/4 px-4 py-3 text-center">Diferencia</th>
                 <th class="w-1/4 px-4 py-3 text-center">Inventario final</th>
-                <th class="w-1/4 px-4 py-3 text-center">Motivo de ajuste <span class="text-red-500">*</span></th>
+                <th class="w-1/4 px-4 py-3 text-center">Motivo de ajuste <span class="text-red-500"> *</span></th>
             </x-slot:headers>
 
             <tr x-show="producto !== null" x-cloak class="bg-indigo-50/50">
-                <td class="px-4 py-3 text-center tabular-nums text-slate-700" x-text="producto?.cantidad"></td>
+                <td class="px-4 py-3 text-center tabular-nums text-app-text-secondary" x-text="producto?.cantidad"></td>
                 <td class="px-4 py-3 text-center font-semibold tabular-nums"
                     :class="{
                         'text-red-600': producto && cantidadEsValida() && Number(cantidadFinal) < Number(producto
                             .cantidad),
                         'text-blue-600': producto && cantidadEsValida() && Number(cantidadFinal) > Number(producto
                             .cantidad),
-                        'text-slate-500': !producto || !cantidadEsValida() || Number(cantidadFinal) === Number(producto
+                        'text-app-text-secondary': !producto || !cantidadEsValida() || Number(cantidadFinal) === Number(
+                            producto
                             .cantidad)
                     }"
                     x-text="producto && cantidadEsValida() ? Number(cantidadFinal) - Number(producto.cantidad) : 0">
@@ -63,18 +64,22 @@
                     <input type="number" name="cantidad" min="0" max="4294967295" step="1" required
                         x-model="cantidadFinal" x-bind:disabled="!producto" placeholder="Cantidad final"
                         aria-label="Inventario final"
-                        class="mx-auto block w-full max-w-36 rounded-lg border border-slate-300 px-3 py-2 text-center text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                        class="mx-auto block w-full max-w-36 rounded-lg border border-app-border-strong px-3 py-2
+                        text-center text-sm shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500
+                        [appearance:textfield]
+                        [&::-webkit-inner-spin-button]:appearance-none
+                        [&::-webkit-outer-spin-button]:appearance-none">
                 </td>
                 <td class="px-4 py-3 text-center">
-                    <input id="motivo" type="text" name="motivo" maxlength="500" required
-                        x-model="motivo" x-bind:disabled="!producto"
-                        aria-label="Motivo de ajuste"
-                        class="mx-auto block w-full max-w-[20rem] rounded-lg border border-slate-300 px-3 py-2 text-center text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                    <input id="motivo" type="text" name="motivo" maxlength="500" required x-model="motivo"
+                        x-bind:disabled="!producto" aria-label="Motivo de ajuste"
+                        class="mx-auto block w-full max-w-[20rem] rounded-lg border border-app-border-strong 
+                        px-3 py-2 text-center text-sm shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500">
                 </td>
             </tr>
         </x-table>
 
-        <p x-show="producto" x-cloak class="text-sm text-slate-500">
+        <p x-show="producto" x-cloak class="text-sm text-app-text-muted">
             Solo puedes ajustar un producto a la vez. Para elegir otro, usa el buscador.
         </p>
 

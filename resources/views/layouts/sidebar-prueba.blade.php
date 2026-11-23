@@ -1,4 +1,3 @@
-
 <aside
     class="fixed inset-y-0 left-0 z-40 flex w-56 flex-col
            overflow-y-auto border-r border-app-border bg-app-surface
@@ -29,7 +28,8 @@
         <nav class="flex-1 space-y-2 overflow-y-auto">
 
             {{-- Sección principal --}}
-            <p class="mb-2 px-3 text-xs font-semibold
+            <p
+                class="mb-2 px-3 text-xs font-semibold
                       tracking-wider text-app-text-muted uppercase">
                 General
             </p>
@@ -49,8 +49,7 @@
                 'categorias.*',
                 'marcas.*',
                 'compras.*',
-                'ajuste.*',
-                'movimientos.*',
+                'inventario.*',
             )" wire:navigate>
 
                 <x-slot:icon>
@@ -84,7 +83,8 @@
             </div>
 
             {{-- Sección de administración --}}
-            <p class="mb-3 px-3 text-xs font-semibold
+            <p
+                class="mb-3 px-3 text-xs font-semibold
                       tracking-wider text-app-text-muted uppercase">
                 Administración
             </p>
@@ -145,8 +145,7 @@
                 <div class="shrink-0">
                     @if ($usuarioActual->imagen_id && $usuarioActual->imagen)
                         <img src="{{ asset('storage/imagenes/' . $usuarioActual->imagen->nombre_archivo) }}"
-                            alt="Foto de perfil"
-                            class="h-9 w-9 rounded-full border border-app-border object-cover">
+                            alt="Foto de perfil" class="h-9 w-9 rounded-full border border-app-border object-cover">
                     @else
                         <div
                             class="flex h-9 w-9 items-center justify-center rounded-full bg-app-primary-600 text-xs font-semibold text-white shadow-sm">

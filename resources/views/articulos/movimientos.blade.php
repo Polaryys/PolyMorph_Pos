@@ -18,16 +18,16 @@
         </x-slot:headers>
 
         @forelse ($movimientos as $movimiento)
-            <tr class="transition-colors hover:bg-indigo-50/50">
-                <td class="px-4 py-3 whitespace-nowrap font-semibold text-indigo-700">
+            <tr class="transition-colors">
+                <td class="px-4 py-3 whitespace-nowrap font-semibold text-app-primary-700">
                     {{ $movimiento->id }}
                 </td>
 
-                <td class="px-4 py-3 whitespace-nowrap text-slate-900">
+                <td class="px-4 py-3 whitespace-nowrap">
                     {{ trim($movimiento->usuario?->nombres ?? '') ?: 'Usuario eliminado' }}
                 </td>
 
-                <td class="px-4 py-3 whitespace-nowrap text-slate-900">
+                <td class="px-4 py-3 whitespace-nowrap">
                     {{ $movimiento->inventario?->presentaciones->first()?->nombre ?? '—' }}
                 </td>
 
@@ -45,7 +45,7 @@
                         $movimiento->cantidad_posterior > $movimiento->cantidad_anterior,
                     'text-red-600' =>
                         $movimiento->cantidad_posterior < $movimiento->cantidad_anterior,
-                    'text-slate-600' =>
+                    'text-app-text-secondary' =>
                         $movimiento->cantidad_posterior == $movimiento->cantidad_anterior,
                 ])>
                     {{ number_format($movimiento->cantidad) }}
@@ -55,17 +55,17 @@
                     {{ number_format($movimiento->cantidad_posterior) }}
                 </td>
 
-                <td class="px-4 py-3 min-w-56 text-slate-700">
+                <td class="px-4 py-3 min-w-56">
                     {{ $movimiento->motivo ?: '—' }}
                 </td>
 
-                <td class="px-4 py-3 text-center whitespace-nowrap text-slate-700">
+                <td class="px-4 py-3 text-center whitespace-nowrap">
                     {{ $movimiento->created_at?->format('d/m/Y H:i') ?? '—' }}
                 </td>
             </tr>
         @empty
             <tr>
-                <td colspan="9" class="px-6 py-8 text-center text-slate-400">
+                <td colspan="9" class="px-6 py-8 text-center">
                     No se encontraron movimientos de inventario.
                 </td>
             </tr>

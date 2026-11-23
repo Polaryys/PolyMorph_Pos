@@ -1,11 +1,12 @@
-<section class="rounded-xl border border-slate-200 bg-white shadow-sm">
-    <div class="flex flex-col gap-1 border-b border-slate-200 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
+<section class="rounded-xl border border-app-border bg-app-surface shadow-sm">
+    <div
+        class="flex flex-col gap-1 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <div>
-            <h2 class="text-base font-semibold text-slate-900">Productos de la compra</h2>
+            <h2 class="text-base font-semibold text-app-text-primary">Productos de la compra</h2>
 
         </div>
-        <p class="text-sm text-slate-600">
-            Total: <strong class="text-slate-900" x-text="'Q ' + totalCompra().toFixed(2)"></strong>
+        <p class="text-sm text-app-text-secondary">
+            Total: <strong class="text-app-text-primary" x-text="'Q ' + totalCompra().toFixed(2)"></strong>
         </p>
     </div>
 
@@ -22,65 +23,69 @@
             <th class="px-4 py-3 text-center">Accion</th>
         </x-slot:headers>
 
-                <template x-for="(detalle, indice) in detalles" :key="detalle.presentacion_id">
-                    <tr class="align-middle">
-                        <td class="px-4 py-3">
-                            <p class="font-semibold text-slate-900"
-                                x-text="detalle.marca ? `${detalle.nombre} - ${detalle.marca}` : detalle.nombre"></p>
-                            <p class="mt-1 text-xs text-slate-500">
-                                SKU: <span x-text="detalle.sku"></span>
-                            </p>
-                            <input type="hidden" :name="`detalles[${indice}][presentacion_id]`" :value="detalle.presentacion_id">
-                            <input type="hidden" :name="`detalles[${indice}][cantidad]`" :value="detalle.cantidad">
-                            <input type="hidden" :name="`detalles[${indice}][costo_unitario]`" :value="detalle.costo_unitario">
-                            <input type="hidden" :name="`detalles[${indice}][precio_unitario_nuevo]`" :value="detalle.precio_unitario_nuevo">
-                            <input type="hidden" :name="`detalles[${indice}][precio_docena_nuevo]`" :value="detalle.precio_docena_nuevo ?? ''">
-                            <input type="hidden" :name="`detalles[${indice}][precio_ciento_nuevo]`" :value="detalle.precio_ciento_nuevo ?? ''">
-                        </td>
-                        <td class="px-4 py-3 text-center" x-text="detalle.cantidad_actual"></td>
-                        <td class="px-4 py-3">
-                            <x-text-input type="number" min="1" step="1" x-model.number="detalle.cantidad"
-                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
-                        </td>
-                        <td class="px-4 py-3">
-                            <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
-                                maxlength="15" x-model="detalle.costo_unitario"
-                                placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
-                        </td>
-                        <td class="px-4 py-3">
-                            <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
-                                maxlength="15" x-model="detalle.precio_unitario_nuevo"
-                                placeholder="0.00" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
-                        </td>
-                        <td class="px-4 py-3">
-                            <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
-                                maxlength="15" x-model="detalle.precio_docena_nuevo"
-                                placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
-                        </td>
-                        <td class="px-4 py-3">
-                            <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?"
-                                maxlength="15" x-model="detalle.precio_ciento_nuevo"
-                                placeholder="Opcional" title="Usa punto como separador decimal, por ejemplo 12.50"
-                                class="w-16! mx-auto! rounded-md p-2 text-center focus:ring-indigo-500" />
-                        </td>
-                        <td class="px-4 py-3 text-right font-medium text-slate-900"
-                            x-text="'Q ' + (Number(detalle.cantidad) * Number(detalle.costo_unitario)).toFixed(2)"></td>
-                        <td class="px-4 py-3 text-center">
-                            <button type="button" @click="quitarDetalle(indice)" title="Quitar producto"
-                                class="font-medium text-red-600 transition hover:text-red-800">
-                                Quitar
-                            </button>
-                        </td>
-                    </tr>
-                </template>
+        <template x-for="(detalle, indice) in detalles" :key="detalle.presentacion_id">
+            <tr class="align-middle">
+                <td class="px-4 py-3">
+                    <p class="font-semibold text-app-text-primary"
+                        x-text="detalle.marca ? `${detalle.nombre} - ${detalle.marca}` : detalle.nombre"></p>
+                    <p class="mt-1 text-xs text-app-text-muted">
+                        SKU: <span x-text="detalle.sku"></span>
+                    </p>
+                    <input type="hidden" :name="`detalles[${indice}][presentacion_id]`"
+                        :value="detalle.presentacion_id">
+                    <input type="hidden" :name="`detalles[${indice}][cantidad]`" :value="detalle.cantidad">
+                    <input type="hidden" :name="`detalles[${indice}][costo_unitario]`" :value="detalle.costo_unitario">
+                    <input type="hidden" :name="`detalles[${indice}][precio_unitario_nuevo]`"
+                        :value="detalle.precio_unitario_nuevo">
+                    <input type="hidden" :name="`detalles[${indice}][precio_docena_nuevo]`"
+                        :value="detalle.precio_docena_nuevo ?? ''">
+                    <input type="hidden" :name="`detalles[${indice}][precio_ciento_nuevo]`"
+                        :value="detalle.precio_ciento_nuevo ?? ''">
+                </td>
+                <td class="px-4 py-3 text-center text-app-text-secondary" x-text="detalle.cantidad_actual"></td>
+                <td class="px-4 py-3">
+                    <x-text-input type="number" min="1" step="1" x-model.number="detalle.cantidad"
+                        class="w-16! mx-auto! rounded-md border-app-border-strong bg-app-background p-2 text-center text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500" />
+                </td>
+                <td class="px-4 py-3">
+                    <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
+                        x-model="detalle.costo_unitario" placeholder="0.00"
+                        title="Usa punto como separador decimal, por ejemplo 12.50"
+                        class="w-16! mx-auto! rounded-md border-app-border-strong bg-app-background p-2 text-center text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500" />
+                </td>
+                <td class="px-4 py-3">
+                    <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
+                        x-model="detalle.precio_unitario_nuevo" placeholder="0.00"
+                        title="Usa punto como separador decimal, por ejemplo 12.50"
+                        class="w-16! mx-auto! rounded-md border-app-border-strong bg-app-background p-2 text-center text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500" />
+                </td>
+                <td class="px-4 py-3">
+                    <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
+                        x-model="detalle.precio_docena_nuevo" placeholder="Opcional"
+                        title="Usa punto como separador decimal, por ejemplo 12.50"
+                        class="w-16! mx-auto! rounded-md border-app-border-strong bg-app-background p-2 text-center text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500" />
+                </td>
+                <td class="px-4 py-3">
+                    <x-text-input type="text" inputmode="decimal" pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
+                        x-model="detalle.precio_ciento_nuevo" placeholder="Opcional"
+                        title="Usa punto como separador decimal, por ejemplo 12.50"
+                        class="w-16! mx-auto! rounded-md border-app-border-strong bg-app-background p-2 text-center text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500" />
+                </td>
+                <td class="px-4 py-3 text-right font-medium text-app-text-primary"
+                    x-text="'Q ' + (Number(detalle.cantidad) * Number(detalle.costo_unitario)).toFixed(2)"></td>
+                <td class="px-4 py-3 text-center">
+                    <button type="button" @clic&#x6B;*="quitarDetalle(indice)"* title="Quitar producto"
+                        class="font-medium text-red-600 transition hover:text-red-800">
+                        Quitar
+                    </button>
+                </td>
+            </tr>
+        </template>
 
-                <tr x-show="detalles.length === 0">
-                    <td colspan="9" class="px-6 py-8 text-center text-slate-400">
-                        Busca y agrega un producto base para comenzar la compra.
-                    </td>
-                </tr>
+        <tr x-show="detalles.length === 0">
+            <td colspan="9" class="px-6 py-8 text-center text-app-text-muted">
+                Busca y agrega un producto base para comenzar la compra.
+            </td>
+        </tr>
     </x-table>
 </section>

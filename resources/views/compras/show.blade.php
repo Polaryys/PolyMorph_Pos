@@ -1,32 +1,35 @@
 <x-app-layout>
     <div class="space-y-8">
+
         <section class="space-y-3">
-            <div class="overflow-hidden  bg-white shadow-sm">
-                <div class="flex flex-col justify-between gap-4 border-b border-slate-100 px-5 sm:flex-row sm:items-start sm:px-6">
+            <div class="overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-sm">
+                <div
+                    class="flex flex-col justify-between gap-4  px-5 py-5 sm:flex-row sm:items-start sm:px-6">
                     <div class="min-w-0">
-                        <p class="mb-1 text-xs font-medium text-slate-500">Numero de compra</p>
-                        <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                        <p class="mb-1 text-xs font-medium text-app-text-muted">Numero de compra</p>
+                        <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-app-text-primary sm:text-3xl">
                             {{ $compra->numero_compra }}
                         </h1>
                     </div>
 
                     <div class="grid shrink-0 grid-cols-2 gap-3 text-sm lg:min-w-[280px]">
-                        <x-detail-field label="Creada en" class="bg-slate-50">
+                        <x-detail-field label="Creada en" class="bg-app-surface-alt">
                             <span class="tabular-nums">{{ $compra->created_at?->format('d/m/Y H:i') ?? '—' }}</span>
                         </x-detail-field>
-                        <x-detail-field label="Última edición" class="bg-slate-50">
+                        <x-detail-field label="Última edición" class="bg-app-surface-alt">
                             <span class="tabular-nums">{{ $compra->updated_at?->format('d/m/Y H:i') ?? '—' }}</span>
                         </x-detail-field>
                     </div>
                 </div>
 
                 @if (session('success'))
-                    <div class="mx-5 mt-5 rounded-lg border border-green-200 bg-green-100 p-4 text-sm text-green-700 sm:mx-6">
+                    <div
+                        class="mx-5 mt-5 rounded-lg border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-600 sm:mx-6">
                         {{ session('success') }}
                     </div>
                 @endif
                 @if ($errors->any())
-                    <div class="mx-5 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700 sm:mx-6"
+                    <div class="mx-5 rounded-lg border border-red-500/20 bg-red-500/10 p-4 text-sm text-red-600 sm:mx-6"
                         role="alert">
                         @foreach ($errors->all() as $error)
                             <p>{{ $error }}</p>
@@ -35,7 +38,8 @@
                 @endif
 
                 @if ($compra->estado === 'PENDIENTE')
-                    <div class="mx-5 rounded-lg border border-amber-200 bg-amber-50 p-4 text-sm text-amber-800 sm:mx-6">
+                    <div
+                        class="mx-5 rounded-lg border border-amber-500/20 bg-amber-500/10 p-4 text-sm text-amber-600 sm:mx-6">
                         Esta compra aún no afecta inventario ni precios. El costo promedio se calculará al registrarla.
                     </div>
                 @endif
@@ -43,15 +47,18 @@
                 <div class="grid grid-cols-1 gap-2 p-5 sm:grid-cols-2 xl:grid-cols-3 sm:p-6">
                     <x-detail-field label="Estado">
                         @if ($compra->estado === 'PENDIENTE')
-                            <span class="inline-flex rounded-full bg-amber-100 px-2 py-0.5 text-xs font-semibold text-amber-700">
+                            <span
+                                class="inline-flex rounded-full bg-amber-500/10 px-2 py-0.5 text-xs font-semibold text-amber-600">
                                 Pendiente
                             </span>
                         @elseif ($compra->estado === 'REGISTRADA')
-                            <span class="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-700">
+                            <span
+                                class="inline-flex rounded-full bg-emerald-500/10 px-2 py-0.5 text-xs font-semibold text-emerald-600">
                                 Registrada
                             </span>
                         @else
-                            <span class="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700">
+                            <span
+                                class="inline-flex rounded-full bg-red-500/10 px-2 py-0.5 text-xs font-semibold text-red-600">
                                 {{ ucfirst(strtolower($compra->estado)) }}
                             </span>
                         @endif
@@ -69,7 +76,7 @@
                         {{ number_format((int) $compra->cantidad_total) }}
                     </x-detail-field>
                     <x-detail-field label="Costo total">
-                        <span class="text-base font-semibold text-slate-900">
+                        <span class="text-base font-semibold text-app-text-primary">
                             Q {{ number_format((float) $compra->costo_total, 2) }}
                         </span>
                     </x-detail-field>
@@ -83,6 +90,7 @@
 
             </div>
         </section>
+
 
         <section>
             <x-section-title>Productos de la compra</x-section-title>
@@ -100,16 +108,16 @@
                 </x-slot:headers>
 
                 @forelse ($compra->detalles as $detalle)
-                    <tr class="transition-colors hover:bg-indigo-50/50">
+                    <tr class="transition-colors">
                         <td class="px-4 py-3">
                             @php
                                 $nombreProducto = $detalle->presentacion?->nombre ?? 'Producto no disponible';
                                 $marcaProducto = $detalle->presentacion?->inventario?->marca?->nombre;
                             @endphp
-                            <p class="whitespace-nowrap font-semibold text-slate-900">
+                            <p class="whitespace-nowrap font-normal text-app-text-primary">
                                 {{ $marcaProducto ? "{$nombreProducto} - {$marcaProducto}" : $nombreProducto }}
                             </p>
-                            <p class="mt-1 text-xs text-slate-500">
+                            <p class="mt-1 text-app-text-muted">
                                 SKU: {{ $detalle->presentacion?->codigoSKU ?? '—' }}
                             </p>
                         </td>
@@ -144,13 +152,13 @@
                                 ? 'Q ' . number_format((float) $detalle->precio_ciento_nuevo, 2)
                                 : '—' }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-right font-semibold text-slate-900">
+                        <td class="whitespace-nowrap px-4 py-3 text-right font-semibold">
                             Q {{ number_format((float) $detalle->subtotal, 2) }}
                         </td>
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="9" class="px-6 py-8 text-center text-slate-400">
+                        <td colspan="9" class="px-6 py-8 text-center text-app-text-muted">
                             Esta compra no tiene productos registrados.
                         </td>
                     </tr>
@@ -158,48 +166,50 @@
 
                 @if ($compra->detalles->isNotEmpty())
                     <tr class="bg-slate-50">
-                        <th colspan="8" class="px-4 py-3 text-right text-sm font-semibold text-slate-700">
+                        <th colspan="8" class="px-4 py-3 text-right text-base font-semibold text-app-text-primary">
                             Total de la compra
                         </th>
-                        <th class="whitespace-nowrap px-4 py-3 text-right text-sm font-bold text-slate-900">
+                        <th class="whitespace-nowrap px-4 py-3 text-right font-bold text-app-text-primary">
                             Q {{ number_format((float) $compra->costo_total, 2) }}
                         </th>
                     </tr>
                 @endif
             </x-table>
-            
-                @if ($compra->estado === 'PENDIENTE')
-                    <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:px-6">
-                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
-                        <x-secondary-link href="{{ route('compras.edit', $compra) }}">
-                            Editar pendiente
-                        </x-secondary-link>
-                        <form action="{{ route('compras.destroy', $compra) }}" method="POST"
-                            onsubmit="return confirm('¿Eliminar esta compra pendiente?');">
-                            @csrf
-                            @method('DELETE')
-                            <x-danger-button type="submit">Eliminar pendiente</x-danger-button>
-                        </form>
-                        <form action="{{ route('compras.registrar', $compra) }}" method="POST"
-                            onsubmit="return confirm('¿Registrar esta compra? Se actualizarán inventario y precios.');">
-                            @csrf
-                            <x-primary-button>Registrar compra</x-primary-button>
-                        </form>
-                    </div>
-                @elseif ($compra->estado === 'REGISTRADA')
-                    <div class="flex flex-col-reverse justify-end gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:px-6">
-                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
-                        <form action="{{ route('compras.revertir', $compra) }}" method="POST"
-                            onsubmit="return confirm('¿Revertir esta compra? Esta acción no se puede deshacer.');">
-                            @csrf
-                            <x-danger-button type="submit">Revertir compra</x-danger-button>
-                        </form>
-                    </div>
-                @else
-                    <div class="flex justify-end border-t border-slate-200 px-5 py-4 sm:px-6">
-                        <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
-                    </div>
-                @endif
+
+            @if ($compra->estado === 'PENDIENTE')
+                <div
+                    class="flex flex-col-reverse justify-end gap-3 border-t border-app-border px-5 py-4 sm:flex-row sm:px-6">
+                    <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
+                    <x-secondary-link href="{{ route('compras.edit', $compra) }}">
+                        Editar pendiente
+                    </x-secondary-link>
+                    <form action="{{ route('compras.destroy', $compra) }}" method="POST"
+                        onsubmit="return confirm('¿Eliminar esta compra pendiente?');">
+                        @csrf
+                        @method('DELETE')
+                        <x-danger-button type="submit">Eliminar pendiente</x-danger-button>
+                    </form>
+                    <form action="{{ route('compras.registrar', $compra) }}" method="POST"
+                        onsubmit="return confirm('¿Registrar esta compra? Se actualizarán inventario y precios.');">
+                        @csrf
+                        <x-primary-button>Registrar compra</x-primary-button>
+                    </form>
+                </div>
+            @elseif ($compra->estado === 'REGISTRADA')
+                <div
+                    class="flex flex-col-reverse justify-end gap-3 border-t border-app-border px-5 py-4 sm:flex-row sm:px-6">
+                    <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
+                    <form action="{{ route('compras.revertir', $compra) }}" method="POST"
+                        onsubmit="return confirm('¿Revertir esta compra? Esta acción no se puede deshacer.');">
+                        @csrf
+                        <x-danger-button type="submit">Revertir compra</x-danger-button>
+                    </form>
+                </div>
+            @else
+                <div class="flex justify-end border-t border-app-border px-5 py-4 sm:px-6">
+                    <x-secondary-link href="{{ route('compras.index') }}">Volver</x-secondary-link>
+                </div>
+            @endif
         </section>
     </div>
 </x-app-layout>

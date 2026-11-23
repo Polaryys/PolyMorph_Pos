@@ -22,7 +22,7 @@ class NavigationComposer
     {
         return match (true) {
             Request::routeIs('pos.*', 'ventas.*') => 'pos',
-            Request::routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*') => 'inventario',
+            Request::routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*', 'ajuste.*', 'movimientos.*') => 'inventario',
             Request::routeIs('clientes.*') => 'clientes',
             Request::routeIs('proveedores.*') => 'proveedores',
             Request::routeIs('profile.*') => 'profile',
@@ -44,13 +44,41 @@ class NavigationComposer
             'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
             'profile' => [['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*']],
             'inventario' => [
-                ['label' => 'Artículos', 'route' => 'articulos.index', 'active' => 'articulos.*'],
-                ['label' => 'Presentaciones', 'route' => 'presentaciones.index', 'active' => 'presentaciones.*'],
-                ['label' => 'Categorías', 'route' => 'categorias.index', 'active' => 'categorias.*'],
-                ['label' => 'Marcas', 'route' => 'marcas.index', 'active' => 'marcas.*'],
-                ['label' => 'Compras', 'route' => 'compras.index', 'active' => 'compras.*'],
-                ['label' => 'Ajuste', 'route' => 'inventario.ajuste', 'active' => 'inventario.ajuste'],
-                ['label' => 'Movimientos', 'route' => 'inventario.movimientos', 'active' => 'inventario.movimientos'],
+                [
+                    'label' => 'Artículos',
+                    'route' => 'articulos.index',
+                    'active' => ['articulos.*'],
+                ],
+                [
+                    'label' => 'Presentaciones',
+                    'route' => 'presentaciones.index',
+                    'active' => ['presentaciones.*'],
+                ],
+                [
+                    'label' => 'Categorías',
+                    'route' => 'categorias.index',
+                    'active' => ['categorias.*'],
+                ],
+                [
+                    'label' => 'Marcas',
+                    'route' => 'marcas.index',
+                    'active' => ['marcas.*'],
+                ],
+                [
+                    'label' => 'Compras',
+                    'route' => 'compras.index',
+                    'active' => ['compras.*'],
+                ],
+                [
+                    'label' => 'Ajuste',
+                    'route' => 'inventario.ajuste',
+                    'active' => ['inventario.ajuste', 'inventario.ajustar'],
+                ],
+                [
+                    'label' => 'Movimientos',
+                    'route' => 'inventario.movimientos',
+                    'active' => ['inventario.movimientos'],
+                ],
             ],
             'clientes' => [['label' => 'Clientes', 'route' => 'clientes.index', 'active' => 'clientes.*']],
             'proveedores' => [['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']],

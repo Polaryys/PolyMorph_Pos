@@ -147,14 +147,14 @@
     }" class="space-y-5">
         <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div class="pl-3">
-                <p class="text-sm font-medium text-slate-500">
+                <p class="text-sm font-medium text-app-text-muted">
                     {{ $compra ? 'Editar compra pendiente' : 'Crear compra' }}
                 </p>
-                <h1 class="mt-1 text-2xl font-semibold text-slate-900">
+
+                <h1 class="mt-1 text-2xl font-semibold text-app-text-primary">
                     {{ $compra?->numero_compra ?? 'Nueva compra' }}
                 </h1>
             </div>
-
         </div>
 
         <form action="{{ $compra ? route('compras.update', $compra) : route('compras.store') }}" method="POST"
@@ -170,7 +170,7 @@
                 </div>
             @endif
 
-            <section class="rounded-xl border border-slate-200 bg-white pb-4 shadow-sm sm:pb-6 pl-6 pr-6 pt-2">
+            <section class="rounded-xl border border-app-border bg-app-surface pb-4 pl-6 pr-6 pt-2 shadow-sm sm:pb-6">
                 <div class="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <x-section-title>
@@ -186,9 +186,9 @@
                         </x-input-label>
                         <input id="fecha_compra" name="fecha_compra" type="date" required
                             value="{{ old('fecha_compra', $compra?->fecha_compra?->toDateString() ?? now()->toDateString()) }}"
-                            class="w-full rounded-md border border-slate-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500">
                         @error('fecha_compra')
-                            <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                            <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
                     </div>
 
@@ -197,7 +197,7 @@
                             Proveedor
                         </x-input-label>
                         <select id="proveedor_id" name="proveedor_id"
-                            class="w-full rounded-md border border-slate-300 bg-white p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500">
                             <option value="">Sin proveedor</option>
                             @foreach ($proveedores as $proveedor)
                                 <option value="{{ $proveedor->id }}" @selected((string) old('proveedor_id', $compra?->proveedor_id ?? '') === (string) $proveedor->id)>
@@ -213,7 +213,7 @@
                             Numero de Factura
                         </x-input-label>
                         <x-text-input id="numero_factura" name="numero_factura" type="text" maxlength="50"
-                            :value="old('numero_factura', $compra?->numero_factura ?? '')" :error="$errors->has('numero_factura')" />
+                            :value="old('numero_factura', $compra?->numero_factura ?? '')" :error="$errors->has('numero_factura')" class="bg-app-background text-app-text-primary" />
                         <x-input-error :messages="$errors->get('numero_factura')" />
                     </div>
 
@@ -223,7 +223,7 @@
                         </x-input-label>
                         <input id="observaciones" name="observaciones" type="text"
                             value="{{ old('observaciones', $compra?->observaciones ?? '') }}"
-                            class="w-full rounded-md border border-slate-300 p-2 text-sm shadow-sm focus:border-indigo-500 focus:ring-indigo-500">
+                            class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500">
                         <x-input-error :messages="$errors->get('observaciones')" />
                     </div>
                 </div>
