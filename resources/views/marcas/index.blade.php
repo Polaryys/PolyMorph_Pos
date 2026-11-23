@@ -16,7 +16,7 @@
                     editar = false;
                     abierto = true
                 "
-                class="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white
+                class="px-4 py-2 bg-app-primary-600 hover:bg-app-primary-700 text-white
                        text-sm font-medium rounded-md shadow-sm transition">
                 + Nueva Marca
             </button>
@@ -33,29 +33,29 @@
                 <th class="px-6 py-2.5">Nombre</th>
                 <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Creado</th>
                 <th class="px-6 py-2.5 text-center whitespace-nowrap w-40">Actualizado</th>
-                <th class="px-6 py-2.5 text-center w-64">Acciones</th>
+                <th class="px-6 py-2.5 text-center w-32">Acciones</th>
             </x-slot:headers>
 
             @forelse ($marcas as $marca)
                 <tr class="hover:bg-slate-50 transition-colors">
 
-                    <td class="px-6 py-3 w-24 text-center font-mono text-slate-500">
+                    <td class="px-6 py-3 w-24 text-center font-mono">
                         {{ ($marcas->currentPage() - 1) * $marcas->perPage() + $loop->iteration }}
                     </td>
 
-                    <td class="px-6 py-3 font-medium text-slate-900">
+                    <td class="px-6 py-3 font-medium">
                         {{ $marca->nombre }}
                     </td>
 
-                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap italic">
                         {{ $marca->created_at->format('d/m/Y H:i') }}
                     </td>
 
-                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap text-slate-400 italic">
+                    <td class="px-6 py-3 w-40 text-center whitespace-nowrap italic">
                         {{ $marca->updated_at->format('d/m/Y H:i') }}
                     </td>
 
-                    <td class="w-64 whitespace-nowrap px-6 py-3">
+                    <td class="w-32 whitespace-nowrap px-6 py-3">
                         <div class="flex items-center justify-center gap-3">
                             <x-action-icon
                                 @click="
@@ -84,7 +84,7 @@
 
             @empty
                 <tr>
-                    <td colspan="5" class="px-6 py-8 text-center text-slate-400">
+                    <td colspan="5" class="px-6 py-8 text-center">
                         No se encontraron marcas registradas.
                     </td>
                 </tr>
@@ -94,16 +94,17 @@
 
         <!-- MODAL CREAR / EDITAR -->
         <template x-teleport="body">
-            <div x-cloak x-show="abierto" x-cloak x-transition.opacity
-                class="fixed inset-0 z-100 flex items-center justify-center bg-black/40 p-4"
+            <div x-cloak x-show="abierto" x-transition.opacity
+                class="fixed inset-0 z-40 flex items-center justify-center bg-black/40 p-4"
                 @click.self="abierto = false">
+
                 <div x-show="abierto" x-transition
-                    class="w-full max-w-md rounded-lg border border-gray-200 bg-white p-6 shadow-xl" role="dialog"
-                    aria-modal="true" aria-labelledby="titulo-modal-marca">
+                    class="w-full max-w-md rounded-lg border border-app-border bg-app-background p-6 shadow-xl"
+                    role="dialog" aria-modal="true" aria-labelledby="titulo-modal-marca">
 
                     <!-- TÍTULO -->
                     <h2 id="titulo-modal-marca"
-                        class="mb-5 border-b border-gray-200 pb-3 text-lg font-semibold text-indigo-600"
+                        class="mb-5 border-b border-app-border pb-3 text-lg font-semibold text-app-primary-500"
                         x-text="modo === 'editar' ? 'Editar Marca' : 'Registrar Nueva Marca'">
                     </h2>
 
@@ -120,36 +121,33 @@
                         </template>
 
                         <div>
-                            <label for="nombre" class="mb-1 block text-sm font-medium text-gray-700">
+                            <x-input-label for="nombre" class="mb-1">
                                 Nombre de la marca
                                 <span class="text-red-500">*</span>
-                            </label>
+                            </x-input-label>
 
-                            <input type="text" id="nombre" name="nombre" x-model="nombre" maxlength="55" required
-                                x-effect="if (abierto) $nextTick(() => $el.focus())"
-                                class="w-full rounded-md border border-gray-300 p-2 text-sm shadow-sm
-                                   focus:border-indigo-500 focus:ring-indigo-500
-                                   @error('nombre')
-border-red-500
-@enderror">
+                            <x-text-input type="text" id="nombre" name="nombre" x-model="nombre" maxlength="55" class="text-app-text-primary"
+                                required x-effect="if (abierto) $nextTick(() => $el.focus())" :error="$errors->has('nombre')" />
 
                             @error('nombre')
-                                <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                                <p class="mt-1 text-xs text-red-600">
+                                    {{ $message }}
+                                </p>
                             @enderror
                         </div>
 
                         <!-- BOTONES -->
-                        <div class="flex items-center justify-end gap-3 border-t border-gray-100 pt-4">
+                        <div class="flex items-center justify-end gap-3 border-t border-app-border pt-4">
 
                             <button type="button" @click="abierto = false"
-                                class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium
-                                   text-gray-700 transition hover:bg-gray-50">
+                                class="rounded-md border border-app-border-strong px-4 py-2 text-sm font-medium
+                               text-app-text-secondary transition hover:bg-app-primary-100/20">
                                 Cancelar
                             </button>
 
                             <button type="submit"
-                                class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium
-                                   text-white shadow-sm transition hover:bg-indigo-700"
+                                class="rounded-md bg-app-primary-600 px-4 py-2 text-sm font-medium
+                               text-white shadow-sm transition hover:bg-app-primary-700"
                                 x-text="modo === 'editar' ? 'Guardar cambios' : 'Guardar Marca'">
                             </button>
 

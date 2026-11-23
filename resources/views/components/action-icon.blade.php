@@ -7,9 +7,9 @@
 
 @php
     $colors = [
-        'indigo' => 'text-slate-500 hover:text-indigo-600',
-        'green' => 'text-slate-500 hover:text-green-600',
-        'red' => 'text-slate-500 hover:text-red-600',
+        'indigo' => 'text-app-text-muted hover:text-indigo-600',
+        'green' => 'text-app-text-muted hover:text-green-600',
+        'red' => 'text-app-text-muted hover:text-red-600',
     ];
     $colorClass = $colors[$color] ?? $colors['indigo'];
 @endphp
