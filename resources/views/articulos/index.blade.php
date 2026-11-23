@@ -43,8 +43,8 @@
 
             <x-slot:headers>
                 <th class="text-center w-16 whitespace-nowrap">Imagen</th>
-                <th class="px-4 py-3 text-center whitespace-nowrap">SKU</th>
-                <th class="px-4 py-3 w-16 text-left whitespace-nowrap">Tipo</th>
+                <th class="px-4 py-3 w-24 text-center whitespace-nowrap">SKU</th>
+                <th class="px-4 py-3 w-14 text-left whitespace-nowrap">Tipo</th>
                 <th class="px-4 py-3 text-left whitespace-nowrap">Nombre</th>
                 <th class="px-4 py-3 text-center whitespace-nowrap">Marca</th>
                 <th class="px-4 py-3 text-center whitespace-nowrap">Precio U.</th>
@@ -75,21 +75,21 @@
                         {{ $presentacionBase?->codigoSKU }}
                     </td>
                     <!-- TIPO -->
-                    <td class="px-4 py-3 font-normal  whitespace-nowrap">
+                    <td class="w-14 px-4 py-3 font-normal  whitespace-nowrap">
                         {{ $articulo?->tipo }}
                     </td>
 
                     <!-- NOMBRE -->
-                    <td class="px-4 py-3">
-                        <div class="flex flex-col gap-1">
-                            <span class="font-normal">
+                    <td class="relative px-4 py-3">
+                        <div class="flex min-h-10 items-center">
+                            <span class="absolute inset-y-0 left-4 flex items-center font-normal">
                                 {{ $presentacionBase?->nombre }}
                             </span>
-
-                            <span class="text-[10px] text-app-text-muted">
-                                {{ $presentacionBase?->codigoBarras }}
-                            </span>
                         </div>
+
+                        <span class="block text-[10px] text-app-text-muted">
+                            {{ $presentacionBase?->codigoBarras }}
+                        </span>
                     </td>
 
                     <!-- MARCA -->
@@ -110,13 +110,13 @@
                     <!-- ESTADO -->
                     <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
                         <span @class([
-                        'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
-                        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
-                            $articulo->estado,
-                        'bg-red-500/10 text-red-600 dark:text-red-400' => !$articulo->estado,
-                    ])>
-                        {{ $articulo->estado ? 'Activo' : 'Inactivo' }}
-                    </span>
+                            'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
+                            'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
+                                $articulo->estado,
+                            'bg-red-500/10 text-red-600 dark:text-red-400' => !$articulo->estado,
+                        ])>
+                            {{ $articulo->estado ? 'Activo' : 'Inactivo' }}
+                        </span>
                     </td>
 
                     <!-- ACCIONES -->

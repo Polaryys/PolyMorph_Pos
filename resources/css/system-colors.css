@@ -67,7 +67,7 @@
     --app-surface: var(--color-zinc-900);
     --app-surface-alt: var(--color-zinc-800);
     --app-surface-hover: var(--color-zinc-700);
-    --app-surface-elevated: var(--color-zinc-700);
+    --app-surface-elevated: var(--color-zinc-900);
 
     /* TEXTOS */
     --app-text-primary: var(--color-zinc-50);

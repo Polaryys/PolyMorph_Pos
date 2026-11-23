@@ -227,23 +227,17 @@ export function ventasCarrito(clienteSeleccionado = null, detalles = []) {
             );
 
             if (detalleExistente) {
-                if (!incrementarExistente) {
-                    this.errorFormulario = 'Este producto ya está agregado. Puedes cambiar su cantidad en la tabla.';
-                    this.enfocarBuscadorProductos();
-                    return;
-                }
+               if (Number(detalleExistente.cantidad) >= this.cantidadDisponible(detalleExistente)) {
+                  this.errorFormulario = 'No hay existencias suficientes para agregar otra unidad.';
+                  this.enfocarBuscadorProductos();
+                  return;
+        }
 
-                if (Number(detalleExistente.cantidad) >= this.cantidadDisponible(detalleExistente)) {
-                    this.errorFormulario = 'No hay existencias suficientes para agregar otra unidad.';
-                    this.enfocarBuscadorProductos();
-                    return;
-                }
-
-                this.ajustarCantidad(detalleExistente, 1);
-                this.errorFormulario = '';
-                this.enfocarBuscadorProductos();
-                return;
-            }
+    this.ajustarCantidad(detalleExistente, 1);
+    this.errorFormulario = '';
+    this.enfocarBuscadorProductos();
+    return;
+}
 
             const detalle = {
                 ...producto,

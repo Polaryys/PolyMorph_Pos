@@ -1,7 +1,6 @@
 <x-app-layout>
 
-    <div x-data="ventasCarrito(@js($clienteSeleccionado), @js($detalles))" x-init="init()"
-        class="space-y-3">
+    <div x-data="ventasCarrito(@js($clienteSeleccionado), @js($detalles))" x-init="init()" class="space-y-3">
 
         <form id="formulario-venta" action="{{ route('ventas.store') }}" method="POST" class="space-y-5"
             x-ref="formularioVenta" @submit.prevent="confirmarVenta($event)">
@@ -18,7 +17,7 @@
             {{-- Errores de validación --}}
             @if ($errors->any())
                 <div id="alert-validation-errors" role="alert"
-                    class="mb-4 flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-100 p-4 text-sm text-red-700">
+                    class="mb-4 flex items-center justify-between gap-4 rounded-lg border border-red-200/70 dark:border-red-800/50 bg-red-100/70 dark:bg-red-950/30 p-4 text-sm text-red-700 dark:text-red-400">
                     <div>
                         <p class="font-semibold">No se pudo registrar la venta:</p>
 
@@ -38,7 +37,7 @@
 
             {{-- Errores de Alpine --}}
             <p id="alert-alpine-error" x-cloak x-show="errorFormulario"
-                class="mb-4 flex items-center justify-between gap-4 rounded-lg border border-red-200 bg-red-100 p-4 text-sm text-red-700"
+                class="mb-4 flex items-center justify-between gap-4 rounded-lg border border-red-200/70 dark:border-red-800/50 bg-red-100/70 dark:bg-red-950/30 p-4 text-sm text-red-700 dark:text-red-400"
                 role="alert">
                 <span x-text="errorFormulario"></span>
 
