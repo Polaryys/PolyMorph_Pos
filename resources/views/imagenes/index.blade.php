@@ -28,33 +28,23 @@
 
         {{-- subir imagenes --}}
         <button type="button" @click="modalCargaAbierto = true"
-            class="shrink-0 px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-md shadow-sm transition">
+            class="shrink-0 px-4 py-2 bg-app-primary-600 hover:bg-app-primary-700 text-white text-sm font-medium rounded-md shadow-sm transition">
             + Cargar imágenes
         </button>
 
     </div>
 
     {{-- Mensajes --}}
-    @if (session('success'))
-        <div class="mb-4 p-4 text-sm text-green-700 bg-green-100 rounded-lg border border-green-200">
-            {{ session('success') }}
-        </div>
-    @endif
-
-    @if (session('error'))
-        <div class="mb-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg border border-red-200">
-            {{ session('error') }}
-        </div>
-    @endif
+    @include('components.alert-message')
 
     {{-- Imágenes --}}
-    <div class="bg-white">
+    <div class="">
         @forelse ($imagenes as $imagen)
             @if ($loop->first)
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 xl:grid-cols-6 gap-4">
             @endif
 
-            <div class="min-w-0 border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow">
+            <div class="min-w-0 border border-app-border rounded-md overflow-hidden hover:shadow-md transition-shadow">
                 {{-- Vista previa --}}
                 <div class="aspect-square bg-gray-50 flex items-center justify-center overflow-hidden">
                     <img src="{{ asset('storage/imagenes/' . $imagen->nombre_archivo) }}" alt="{{ $imagen->nombre }}"
@@ -62,13 +52,13 @@
                 </div>
 
                 {{-- Info imageny edicion --}}
-                <div class="p-3 border-t border-gray-200">
-                    <h3 class="text-sm font-medium text-gray-900 truncate" title="{{ $imagen->nombre }}">
+                <div class="p-3 border-t border-app-border">
+                    <h3 class="text-sm font-medium text-app-text-primary truncate" title="{{ $imagen->nombre }}">
                         {{ $imagen->nombre }}
                     </h3>
 
                     <div class="flex items-center justify-between gap-2 pt-1">
-                        <p class="text-xs text-gray-500 min-w-0" data-info-imagen
+                        <p class="text-xs text-app-text-muted min-w-0" data-info-imagen
                             data-src="{{ asset('storage/imagenes/' . $imagen->nombre_archivo) }}">
                             Calculando dimensiones y peso...
                         </p>
@@ -86,7 +76,7 @@
                                 urlEliminar: {{ Js::from(route('imagenes.destroy', $imagen)) }}
                             })
                         "
-                            class="shrink-0 text-sm font-medium text-indigo-600 transition hover:text-indigo-900">
+                            class="shrink-0 text-sm font-medium text-app-primary-600 transition hover:text-app-primary-900">
                             Editar
                         </button>
                     </div>
@@ -109,7 +99,7 @@
             </svg>
         </div>
 
-        <p class="text-sm font-medium text-gray-600">
+        <p class="text-sm font-medium">
             @if (request()->filled('buscar'))
                 No se encontraron imágenes que coincidan con "{{ request('buscar') }}".
             @else
@@ -117,7 +107,7 @@
             @endif
         </p>
 
-        <p class="mt-1 text-sm text-gray-400">
+        <p class="mt-1 text-sm">
             @if (request()->filled('buscar'))
                 Prueba con otro nombre o limpia la búsqueda.
             @else
@@ -129,7 +119,7 @@
 
     {{-- Paginación --}}
     @if ($imagenes->hasPages())
-        <div class="mt-4 pt-3 border-t border-gray-200">
+        <div class="mt-4 pt-3 border-t border-app-border">
             {{ $imagenes->links() }}
         </div>
     @endif
