@@ -33,6 +33,7 @@ class StoreVentaRequest extends FormRequest
             'detalles.*.cantidad' => ['required', 'numeric', 'gt:0', 'decimal:0,2'],
             'detalles.*.tipo_precio' => ['sometimes', 'string', 'in:unitario,docena,ciento'],
             'detalles.*.descuento' => ['sometimes', 'numeric', 'min:0', 'decimal:0,2'],
+            'detalles.*.descuento_adicional' => ['sometimes', 'nullable', 'numeric', 'min:0', 'decimal:0,2'],
             'pagos' => ['sometimes', 'array'],
             'pagos.*.metodo_pago_id' => [
                 'required',
@@ -72,6 +73,18 @@ class StoreVentaRequest extends FormRequest
                     ))
                 ) {
                     $validator->errors()->add('detalles', 'Los artículos seleccionados no corresponden al tipo de operación.');
+                }
+
+                foreach ($datos['detalles'] as $indice => $detalle) {
+                    if (
+                        array_key_exists('descuento_adicional', $detalle)
+                        && $movimientosDetalle[$indice] !== 'ENTREGA_CAMBIO'
+                    ) {
+                        $validator->errors()->add(
+                            "detalles.{$indice}.descuento_adicional",
+                            'El descuento adicional solo se permite en artículos entregados durante un cambio.'
+                        );
+                    }
                 }
 
                 if ($tipoOperacion === 'VENTA' && ! empty($datos['venta_referencia_id'])) {

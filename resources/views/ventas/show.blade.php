@@ -536,7 +536,7 @@
 
             @if ($saldoPendiente !== 0.0 && $venta->estado_venta === 'REGISTRADA')
                 <button type="button" @click="abrirModalPago()"
-                    class="mt-2 rounded-md bg-indigo-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-indigo-800">
+                    class="mt-2 rounded-md bg-app-primary-700 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-app-primary-800">
                     {{ $saldoPendiente < 0 ? 'Registrar reembolso' : 'Completar cobro' }}
                 </button>
                 @include('ventas.partials._modal-completar-pago')

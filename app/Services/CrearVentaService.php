@@ -264,9 +264,12 @@ class CrearVentaService
                             ]);
                         }
 
-                        $descuento = array_key_exists('descuento', $detalle)
-                            ? (float) $detalle['descuento']
-                            : round(max(0, $precioUnitario - $precioAplicado) * $cantidad, 2);
+                        $descuentoVolumen = round(max(0, $precioUnitario - $precioAplicado) * $cantidad, 2);
+                        $descuento = $tipoMovimiento === 'ENTREGA_CAMBIO'
+                            ? round($descuentoVolumen + (float) ($detalle['descuento_adicional'] ?? 0), 2)
+                            : (array_key_exists('descuento', $detalle)
+                                ? (float) $detalle['descuento']
+                                : $descuentoVolumen);
                         $subtotalBruto = round($cantidad * $precioUnitario, 2);
 
                         if ($descuento > $subtotalBruto) {

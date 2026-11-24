@@ -145,6 +145,7 @@
                 ...producto,
                 cantidad: 1,
                 tipo_precio: 'unitario',
+                descuento_adicional: '0.00',
             });
             this.versionBusquedaCambio++;
             this.buscarArticulo = '';
@@ -169,6 +170,21 @@
             return Math.round((cantidad * Number(detalle.precio_unitario_actual || 0) - descuento) * 100) / 100;
         },
     
+        descuentoVolumenProductoCambio(detalle) {
+            const cantidad = Number(detalle.cantidad) || 0;
+            return Math.max(0, Math.round(
+                (cantidad * (Number(detalle.precio_unitario_actual || 0) - this.precioAplicadoCambio(detalle)) +
+                    Number.EPSILON) * 100
+            ) / 100);
+        },
+
+        maxDescuentoAdicionalProductoCambio(detalle) {
+            const subtotalBruto = (Number(detalle.cantidad) || 0) * Number(detalle.precio_unitario_actual || 0);
+            return Math.max(0, Math.round(
+                (subtotalBruto - this.descuentoVolumenProductoCambio(detalle)) * 100
+            ) / 100);
+        },
+
         precioAplicadoCambio(detalle) {
             const cantidadBase = Number(detalle.cantidad || 0) * Number(detalle.factor || 1);
             if (detalle.tipo_precio === 'docena' && cantidadBase >= 12 && detalle.precio_docena_actual !== null) {
@@ -182,11 +198,25 @@
         },
     
         descuentoProductoCambio(detalle) {
-            const cantidad = Number(detalle.cantidad) || 0;
-            return Math.max(0, Math.round(
-                (cantidad * (Number(detalle.precio_unitario_actual || 0) - this.precioAplicadoCambio(detalle)) +
-                    Number.EPSILON) * 100
-            ) / 100);
+            return Math.round(
+                (this.descuentoVolumenProductoCambio(detalle) +
+                    (Number(detalle.descuento_adicional) || 0)) * 100
+            ) / 100;
+        },
+
+        actualizarDescuentoProductoCambio(detalle, event) {
+            const valor = event.target.value;
+            const [entero, ...decimales] = valor.replace(/[^\d.]/g, '').split('.');
+            let valorValidado = decimales.length ?
+                `${entero}.${decimales.join('').slice(0, 2)}` :
+                entero;
+
+            if (valorValidado !== '' && Number(valorValidado) > this.maxDescuentoAdicionalProductoCambio(detalle)) {
+                valorValidado = this.maxDescuentoAdicionalProductoCambio(detalle).toFixed(2);
+            }
+
+            detalle.descuento_adicional = valorValidado;
+            event.target.value = valorValidado;
         },
     
         actualizarPrecioProductoCambio(detalle) {
@@ -196,6 +226,10 @@
                 (detalle.tipo_precio === 'ciento' && cantidadBase < 100)
             ) {
                 detalle.tipo_precio = 'unitario';
+            }
+
+            if (Number(detalle.descuento_adicional) > this.maxDescuentoAdicionalProductoCambio(detalle)) {
+                detalle.descuento_adicional = this.maxDescuentoAdicionalProductoCambio(detalle).toFixed(2);
             }
         },
     
@@ -343,6 +377,7 @@
                 this.productosCambio.every(detalle => {
                     const cantidad = Number(detalle.cantidad);
                     const cantidadBase = cantidad * Number(detalle.factor || 1);
+                    const descuentoAdicional = Number(detalle.descuento_adicional || 0);
                     const precioPorVolumenValido = detalle.tipo_precio === 'unitario' ||
                         (detalle.tipo_precio === 'docena' &&
                             cantidadBase >= 12 &&
@@ -352,6 +387,10 @@
                             detalle.precio_ciento_actual !== null);
                     return Number.isInteger(cantidad) &&
                         cantidad > 0 &&
+                        Number.isFinite(descuentoAdicional) &&
+                        descuentoAdicional >= 0 &&
+                        this.descuentoProductoCambio(detalle) <=
+                            cantidad * Number(detalle.precio_unitario_actual || 0) &&
                         precioPorVolumenValido &&
                         (detalle.tipo_item !== 'PRODUCTO' || Number.isInteger(cantidadBase));
                 });
@@ -502,20 +541,22 @@
                             :value="detalle.cantidad">
                         <input type="hidden" :name="`detalles[${devolucionesCambio.length + indice}][tipo_precio]`"
                             :value="detalle.tipo_precio">
-                        <input type="hidden" :name="`detalles[${devolucionesCambio.length + indice}][descuento]`"
-                            :value="descuentoProductoCambio(detalle).toFixed(2)">
+                        <input type="hidden"
+                            :name="`detalles[${devolucionesCambio.length + indice}][descuento_adicional]`"
+                            :value="Number(detalle.descuento_adicional || 0).toFixed(2)">
                     </div>
                 </template>
 
                 <div class="overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-sm">
                     <div class="overflow-x-auto scrollbar-app">
-                        <table class="w-full min-w-[900px] table-fixed border-collapse text-left text-sm">
+                        <table class="w-full min-w-[1050px] table-fixed border-collapse text-left text-sm">
                             <colgroup>
-                                <col class="w-[28%]">
-                                <col class="w-[14%]">
-                                <col class="w-[17%]">
+                                <col class="w-[24%]">
+                                <col class="w-[12%]">
                                 <col class="w-[17%]">
                                 <col class="w-[16%]">
+                                <col class="w-[16%]">
+                                <col class="w-[15%]">
                             </colgroup>
                             <thead
                                 class="bg-app-table-header text-xs font-semibold uppercase tracking-wider text-app-table-header-text">
@@ -523,6 +564,7 @@
                                     <th class="px-3 py-2 text-left">Artículo</th>
                                     <th class="px-3 py-2 text-right">Cantidad</th>
                                     <th class="px-3 py-2 text-right">Precio aplicado</th>
+                                    <th class="px-3 py-2 text-right">Descuento extra</th>
                                     <th class="px-3 py-2 text-right">Importe</th>
                                     <th class="px-3 py-2 text-right"></th>
                                 </tr>
@@ -537,13 +579,14 @@
                                     <tr class="bg-app-surface transition-colors duration-150">
                                         <td class="px-3 py-2">
                                             <span class="font-normal text-[15px] text-app-text-primary"
-                                                x-text="detalle.nombre"></span>
+                                                x-text="detalle.marca ? `${detalle.nombre} - ${detalle.marca}` : detalle.nombre"></span>
                                             <span class="block text-xs text-rose-600">Devolución</span>
                                         </td>
                                         <td class="px-3 py-2 text-right text-rose-600"
                                             x-text="'-' + Number(detalle.cantidad).toFixed(2)"></td>
                                         <td class="px-3 py-2 text-right text-rose-600"
                                             x-text="'Q -' + Number(detalle.precio_aplicado).toFixed(2)"></td>
+                                        <td class="px-3 py-2 text-right text-app-text-muted">—</td>
                                         <td class="px-3 py-2 text-right font-semibold text-rose-600"
                                             x-text="'Q -' + subtotalDevolucion(detalle).toFixed(2)"></td>
                                         <td class="px-3 py-2">
@@ -566,7 +609,7 @@
                                         {{-- Artículo --}}
                                         <td class="px-3 py-2 text-left">
                                             <span class="font-normal text-[15px] text-app-text-primary"
-                                                x-text="detalle.nombre"></span>
+                                                x-text="detalle.marca ? `${detalle.nombre} - ${detalle.marca}` : detalle.nombre"></span>
                                             <span class="block text-xs text-emerald-700">Entrega</span>
                                         </td>
 
@@ -613,13 +656,30 @@
                                             </div>
                                         </td>
 
+                                        {{-- Descuento adicional --}}
+                                        <td class="px-3 py-2">
+                                            <label class="sr-only"
+                                                :for="`descuento-cambio-${detalle.presentacion_id}`">
+                                                Descuento adicional para <span x-text="detalle.nombre"></span>
+                                            </label>
+                                            <div class="flex items-center justify-end gap-1">
+                                                <span class="text-app-text-muted">Q</span>
+                                                <input type="text" inputmode="decimal"
+                                                    pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
+                                                    :id="`descuento-cambio-${detalle.presentacion_id}`"
+                                                    :value="detalle.descuento_adicional"
+                                                    @input="actualizarDescuentoProductoCambio(detalle, $event)"
+                                                    class="w-24 rounded-md border border-app-border-strong bg-app-background p-2 text-right text-sm text-app-text-primary shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500">
+                                            </div>
+                                        </td>
+
                                         {{-- Importe --}}
                                         <td class="px-3 py-2 text-right font-semibold"
                                             x-text="'Q ' + subtotalProductoCambio(detalle).toFixed(2)">
                                         </td>
 
                                         {{-- Acciones --}}
-                                        <td class="px-3 py-2 text-center">
+                                        <td class="px-3 py-2 text-left">
                                             <button type="button"
                                                 class="text-[15px] font-medium text-rose-600 hover:text-rose-800"
                                                 @click="productosCambio = productosCambio.filter(item => item.presentacion_id !== detalle.presentacion_id)">
@@ -658,7 +718,7 @@
                                 focus-visible:ring-app-primary-500"></textarea>
                         </div>
                         <button type="button" @click="abrirModalPagoCambio()" :disabled="!formularioCambioValido()"
-                            class="rounded-md bg-app-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-app-primary-800 disabled:cursor-not-allowed disabled:opacity-50">
+                            class="rounded-md bg-app-primary-700 px-5 py-2.5 text-sm font-semibold text-app-text-inverse hover:bg-app-primary-800 disabled:cursor-not-allowed disabled:opacity-50">
                             Continuar al pago o reembolso
                         </button>
                     </div>
@@ -670,55 +730,56 @@
                         @keydown.escape.window="modalPagoCambioAbierto = false"
                         class="fixed inset-0 z-100 flex items-center justify-center overflow-y-auto bg-black/40 p-4"
                         role="dialog" aria-modal="true" aria-labelledby="titulo-modal-pago-cambio">
-                        <div class="my-auto w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-xl"
+                        <div class="my-auto w-full max-w-3xl overflow-hidden rounded-lg border border-app-border bg-app-surface p-6 shadow-xl"
                             @click.stop>
-                            <div class="mb-5 flex items-start justify-between border-b border-gray-200 pb-3">
+                            <div class="mb-5 flex items-start justify-between border-b border-app-border pb-3">
                                 <div>
-                                    <h2 id="titulo-modal-pago-cambio" class="text-lg font-semibold text-indigo-600"
+                                    <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                                        <h2 id="titulo-modal-pago-cambio"
+                                            class="text-2xl font-bold text-app-primary-700 sm:text-3xl"
                                         x-text="totalCambio() < 0 ? 'Registrar reembolso' : (totalCambio() > 0 ? 'Registrar cobro' : 'Confirmar operación')">
-                                    </h2>
-                                    <p class="mt-1 text-sm text-gray-500">
+                                        </h2>
+                                        <p class="text-lg font-semibold text-app-text-secondary sm:text-xl">
                                         <span
                                             x-text="totalCambio() < 0 ? 'Monto a reembolsar:' : (totalCambio() > 0 ? 'Monto a cobrar:' : 'Diferencia:')"></span>
-                                        <strong class="text-gray-800"
+                                            <strong class="text-xl font-bold text-app-text-primary sm:text-2xl"
                                             x-text="'Q ' + Math.abs(totalCambio()).toFixed(2)"></strong>
-                                    </p>
+                                        </p>
+                                    </div>
                                 </div>
                                 <button type="button" @click="modalPagoCambioAbierto = false"
                                     aria-label="Volver al carrito"
-                                    class="rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800">
+                                    class="rounded p-1 text-app-text-muted transition hover:bg-app-surface-hover hover:text-app-text-primary">
                                     <x-lucide-x class="h-5 w-5" />
                                 </button>
                             </div>
 
                             <div class="max-h-[70vh] space-y-4 overflow-y-auto">
-                                <p x-show="cargandoMetodosPagoCambio" class="text-sm text-slate-500">
+                                <p x-show="cargandoMetodosPagoCambio" class="text-base text-app-text-muted">
                                     Cargando métodos de pago...
                                 </p>
                                 <p x-show="errorPagoCambio" x-text="errorPagoCambio" role="alert"
-                                    class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                                    class="rounded-md border border-red-200 bg-red-50 p-3 text-base text-red-700">
                                 </p>
                                 <p x-show="!cargandoMetodosPagoCambio && totalCambio() === 0"
-                                    class="rounded-md border border-green-200 bg-green-50 p-3 text-sm text-green-700">
+                                    class="rounded-md border border-app-primary-300 bg-app-primary-100/40 p-3 text-base text-app-primary-800">
                                     La diferencia es cero; la operación quedará liquidada sin movimiento de pago.
                                 </p>
 
                                 <fieldset x-show="totalCambio() !== 0" class="space-y-3"
                                     :disabled="cargandoMetodosPagoCambio || !!errorPagoCambio">
-                                    <legend class="mb-2 text-sm font-semibold text-slate-800">
+                                    <legend class="mb-2 text-base font-semibold text-app-text-primary">
                                         Método para liquidar la diferencia
                                     </legend>
                                     <template x-for="(metodo, indice) in metodosPagoCambio" :key="metodo.id">
-                                        <div class="grid grid-cols-1 gap-3 rounded-md border p-3 sm:grid-cols-4"
-                                            :class="metodo.activo ? 'border-indigo-300 bg-indigo-50/40' :
-                                                'border-gray-200 bg-white'">
+                                        <div class="grid grid-cols-1 gap-2 rounded-md border p-3 sm:grid-cols-[max-content_minmax(0,1fr)] sm:gap-x-4"
+                                            :class="metodo.activo ? 'border-app-primary-400 bg-app-primary-100/40' :
+                                                'border-app-border bg-app-surface'">
                                             <button type="button"
                                                 @click="metodo.activo ? metodo.activo = false : activarMetodoPagoCambio(metodo)"
                                                 :aria-pressed="metodo.activo"
-                                                class="flex items-center gap-2 rounded text-left text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:col-span-1">
+                                                class="flex w-fit items-center gap-2 whitespace-nowrap rounded text-left text-base font-semibold text-app-text-primary focus:border-app-border-strong focus:outline-none focus:ring-1 focus:ring-app-border-strong sm:col-span-1">
                                                 <span x-text="metodo.nombre"></span>
-                                                <span x-show="metodo.activo"
-                                                    class="text-xs font-normal text-indigo-700">Seleccionado</span>
                                             </button>
 
                                             <input type="hidden" form="formulario-cambio"
@@ -726,10 +787,10 @@
                                                 :value="metodo.id">
 
                                             <div x-show="metodo.activo"
-                                                class="grid grid-cols-1 gap-3 sm:col-span-3 sm:grid-cols-2">
+                                                class="grid grid-cols-1 gap-2 sm:col-span-1 sm:grid-cols-2">
                                                 <template x-if="!metodo.permite_montos">
                                                     <div>
-                                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                                        <label class="mb-1 block text-sm font-medium text-app-text-secondary"
                                                             :for="`monto-cambio-${indice}`"
                                                             x-text="totalCambio() < 0 ? 'Monto a reembolsar' : 'Monto a cobrar'"></label>
                                                         <input :id="`monto-cambio-${indice}`" type="text"
@@ -737,7 +798,7 @@
                                                             maxlength="15" :value="metodo.monto"
                                                             @focus="activarMetodoPagoCambio(metodo)"
                                                             @input="actualizarImportePagoCambio(metodo, 'monto', $event)"
-                                                            class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                            class="block w-full rounded-md border border-app-border-strong bg-app-background p-2 text-right text-base text-app-text-primary shadow-sm focus:outline-none focus:ring-1 focus:border-app-primary-500 focus:ring-app-primary-500 focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500">
                                                         <input type="hidden" form="formulario-cambio"
                                                             :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                                             :value="montoAplicadoPagoCambio(metodo).toFixed(2)">
@@ -746,7 +807,7 @@
 
                                                 <template x-if="metodo.permite_montos && totalCambio() > 0">
                                                     <div>
-                                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                                        <label class="mb-1 block text-sm font-medium text-app-text-secondary"
                                                             :for="`monto-recibido-cambio-${indice}`">Monto
                                                             recibido</label>
                                                         <input :id="`monto-recibido-cambio-${indice}`" type="text"
@@ -757,7 +818,7 @@
                                                             :value="metodo.monto_recibido"
                                                             @focus="activarMetodoPagoCambio(metodo)"
                                                             @input="actualizarImportePagoCambio(metodo, 'monto_recibido', $event)"
-                                                            class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                            class="block w-full rounded-md border border-app-border-strong bg-app-background p-2 text-right text-base text-app-text-primary shadow-sm focus:outline-none focus:ring-1 focus:border-app-primary-500 focus:ring-app-primary-500 focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500">
                                                         <input type="hidden" form="formulario-cambio"
                                                             :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                                             :value="montoAplicadoPagoCambio(metodo).toFixed(2)">
@@ -766,7 +827,7 @@
 
                                                 <template x-if="metodo.permite_montos && totalCambio() < 0">
                                                     <div>
-                                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                                        <label class="mb-1 block text-sm font-medium text-app-text-secondary"
                                                             :for="`monto-reembolso-cambio-${indice}`">Monto a
                                                             reembolsar</label>
                                                         <input :id="`monto-reembolso-cambio-${indice}`" type="text"
@@ -774,7 +835,7 @@
                                                             maxlength="15" :value="metodo.monto"
                                                             @focus="activarMetodoPagoCambio(metodo)"
                                                             @input="actualizarImportePagoCambio(metodo, 'monto', $event)"
-                                                            class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                            class="block w-full rounded-md border border-app-border-strong bg-app-background p-2 text-right text-base text-app-text-primary shadow-sm focus:outline-none focus:ring-1 focus:border-app-primary-500 focus:ring-app-primary-500 focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500">
                                                         <input type="hidden" form="formulario-cambio"
                                                             :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                                             :value="montoAplicadoPagoCambio(metodo).toFixed(2)">
@@ -784,8 +845,8 @@
                                                 <template x-if="metodo.permite_montos && totalCambio() > 0">
                                                     <div>
                                                         <span
-                                                            class="mb-1 block text-xs font-medium text-slate-600">Cambio</span>
-                                                        <div class="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm"
+                                                            class="mb-1 block text-sm font-medium text-app-text-secondary">Cambio</span>
+                                                        <div class="rounded-md border border-app-border bg-app-surface-alt px-3 py-2 text-right text-base text-app-text-primary"
                                                             x-text="'Q ' + Math.max(0, Number(metodo.monto_recibido || 0) - montoAplicadoPagoCambio(metodo)).toFixed(2)">
                                                         </div>
                                                     </div>
@@ -793,14 +854,14 @@
 
                                                 <template x-if="!metodo.permite_montos">
                                                     <div>
-                                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                                        <label class="mb-1 block text-sm font-medium text-app-text-secondary"
                                                             :for="`referencia-cambio-${indice}`">Referencia
                                                             (opcional)</label>
                                                         <input :id="`referencia-cambio-${indice}`" type="text"
                                                             maxlength="100" form="formulario-cambio"
                                                             :name="metodo.activo ? `pagos[${indice}][referencia]` : null"
                                                             x-model="metodo.referencia"
-                                                            class="w-full rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                                            class="block w-full rounded-md border border-app-border-strong bg-app-background p-2 text-base text-app-text-primary shadow-sm focus:outline-none focus:ring-1 focus:border-app-primary-500 focus:ring-app-primary-500 focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500">
                                                     </div>
                                                 </template>
                                             </div>
@@ -808,10 +869,10 @@
                                     </template>
 
                                     <p x-show="!cargandoMetodosPagoCambio && metodosPagoCambio.length === 0"
-                                        class="text-sm text-slate-500">No hay métodos de pago activos.</p>
+                                        class="text-base text-app-text-muted">No hay métodos de pago activos.</p>
                                 </fieldset>
 
-                                <p class="text-sm font-semibold text-slate-700" aria-live="polite">
+                                <p class="text-base font-semibold text-app-text-secondary" aria-live="polite">
                                     <span x-text="totalCambio() < 0 ? 'Reembolso:' : 'Cobro:'"></span>
                                     Q <span
                                         x-text="Math.abs(metodosPagoCambio
@@ -821,15 +882,15 @@
                             </div>
 
                             <div
-                                class="mt-4 flex flex-col-reverse gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+                                class="mt-4 flex flex-col-reverse gap-3 border-t border-app-border pt-4 sm:flex-row sm:justify-end">
                                 <button type="button" @click="modalPagoCambioAbierto = false"
-                                    class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                                    class="rounded-md border border-app-border-strong px-4 py-2 text-base font-medium text-app-text-secondary transition hover:bg-app-surface-hover">
                                     Volver al carrito
                                 </button>
                                 <button type="submit" form="formulario-cambio"
                                     :disabled="enviandoCambio || cargandoMetodosPagoCambio || !!errorPagoCambio || !
                                         pagosCambioValidos()"
-                                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">
+                                    class="rounded-md bg-app-primary-700 px-4 py-2 text-base font-medium text-white shadow-sm transition hover:bg-app-primary-800 disabled:cursor-not-allowed disabled:opacity-50">
                                     <span
                                         x-text="enviandoCambio
                                     ? 'Registrando...'
@@ -846,19 +907,19 @@
 
         <div x-cloak x-show="mostrarModalCambio" x-transition.opacity @click.self="mostrarModalCambio = false"
             @keydown.escape.window="mostrarModalCambio = false"
-            class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-slate-900/60 p-4"
+            class="fixed inset-0 z-50 flex items-center justify-center overflow-y-auto bg-black/40 p-4"
             role="dialog" aria-modal="true" aria-labelledby="titulo-modal-cambio">
-            <div class="my-auto w-full max-w-3xl overflow-hidden rounded-xl bg-white shadow-2xl">
-                <div class="flex items-start justify-between border-b border-slate-200 px-5 py-4 sm:px-6">
+            <div class="my-auto w-full max-w-3xl overflow-hidden rounded-xl border border-app-border bg-app-surface shadow-2xl">
+                <div class="flex items-start justify-between border-b border-app-border px-5 py-4 sm:px-6">
                     <div>
-                        <h2 id="titulo-modal-cambio" class="text-lg font-semibold text-slate-900">
+                        <h2 id="titulo-modal-cambio" class="text-lg font-semibold text-app-text-primary">
                             Seleccionar artículos para devolver
                         </h2>
-                        <p class="mt-1 text-sm text-slate-500">Solo puedes devolver cantidades aún disponibles de la
+                        <p class="mt-1 text-sm text-app-text-muted">Solo puedes devolver cantidades aún disponibles de la
                             venta.</p>
                     </div>
                     <button type="button" @click="mostrarModalCambio = false" aria-label="Cerrar"
-                        class="rounded p-1 text-slate-500 hover:bg-slate-100 hover:text-slate-800">
+                        class="rounded p-1 text-app-text-muted hover:bg-app-surface-hover hover:text-app-text-primary">
                         <x-lucide-x class="h-5 w-5" />
                     </button>
                 </div>
@@ -866,12 +927,13 @@
                 <div class="max-h-[65vh] space-y-3 overflow-y-auto px-5 py-5 sm:px-6">
                     <template x-for="detalle in detallesDisponibles" :key="detalle.id">
                         <label
-                            class="flex flex-col gap-3 rounded-lg border border-slate-200 p-3 sm:flex-row sm:items-center">
+                            class="flex flex-col gap-3 rounded-lg border border-app-border p-3 sm:flex-row sm:items-center">
                             <input type="checkbox" x-model="detalle.seleccionada"
-                                class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                                class="rounded border-app-border-strong text-app-primary-600 focus:ring-app-primary-500">
                             <span class="min-w-0 flex-1">
-                                <span class="block font-medium text-slate-900" x-text="detalle.nombre"></span>
-                                <span class="block text-xs text-slate-500">
+                                <span class="block font-medium text-app-text-primary"
+                                    x-text="detalle.marca ? `${detalle.nombre} - ${detalle.marca}` : detalle.nombre"></span>
+                                <span class="block text-xs text-app-text-muted">
                                     Disponible:
                                     <span x-text="Number(detalle.cantidad_disponible).toFixed(2)"></span>
                                     <span x-show="detalle.sku" x-text="' · SKU: ' + detalle.sku"></span>
@@ -881,18 +943,18 @@
                                 <button type="button" @click="ajustarCantidadDevolucion(detalle, -1)"
                                     :disabled="!detalle.seleccionada || Number(detalle.cantidad) <= 0"
                                     aria-label="Disminuir cantidad"
-                                    class="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-lg font-semibold text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">
+                                    class="flex h-9 w-9 items-center justify-center rounded-md border border-app-border-strong text-lg font-semibold text-app-text-secondary hover:bg-app-surface-hover disabled:cursor-not-allowed disabled:opacity-40">
                                     -
                                 </button>
                                 <input type="text" inputmode="decimal" x-model="detalle.cantidad"
                                     :disabled="!detalle.seleccionada"
                                     @input="actualizarCantidadDevolucion(detalle, $event)"
-                                    class="w-20 rounded-md border-slate-300 text-center text-sm disabled:bg-slate-100"
+                                    class="w-20 rounded-md border border-app-border-strong bg-app-background text-center text-sm text-app-text-primary disabled:bg-app-surface-alt"
                                     aria-label="Cantidad a devolver">
                                 <button type="button" @click="ajustarCantidadDevolucion(detalle, 1)"
                                     :disabled="Number(detalle.cantidad || 0) >= Number(detalle.cantidad_disponible)"
                                     aria-label="Aumentar cantidad"
-                                    class="flex h-9 w-9 items-center justify-center rounded-md border border-slate-300 text-lg font-semibold text-slate-700 hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40">
+                                    class="flex h-9 w-9 items-center justify-center rounded-md border border-app-border-strong text-lg font-semibold text-app-text-secondary hover:bg-app-surface-hover disabled:cursor-not-allowed disabled:opacity-40">
                                     +
                                 </button>
                             </span>
@@ -903,13 +965,13 @@
                 </div>
 
                 <div
-                    class="flex flex-col-reverse gap-3 border-t border-slate-200 px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
+                    class="flex flex-col-reverse gap-3 border-t border-app-border px-5 py-4 sm:flex-row sm:justify-end sm:px-6">
                     <button type="button" @click="mostrarModalCambio = false"
-                        class="rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 hover:bg-slate-50">
+                        class="rounded-md border border-app-border-strong px-4 py-2.5 text-sm font-semibold text-app-text-secondary hover:bg-app-surface-hover">
                         Cancelar
                     </button>
                     <button type="button" @click="agregarDevoluciones()"
-                        class="rounded-md bg-indigo-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-indigo-800">
+                        class="rounded-md bg-app-primary-700 px-5 py-2.5 text-sm font-semibold text-app-text-inverse hover:bg-app-primary-800">
                         Continuar al carrito
                     </button>
                 </div>

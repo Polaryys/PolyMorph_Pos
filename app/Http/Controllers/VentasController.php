@@ -309,6 +309,7 @@ class VentasController extends Controller
                     return [
                         'id' => $detalle->id,
                         'nombre' => $detalle->presentacion?->nombre ?? 'Presentación no disponible',
+                        'marca' => $detalle->presentacion?->inventario?->marca?->nombre,
                         'sku' => $detalle->presentacion?->codigoSKU,
                         'tipo_item' => $detalle->tipo_item,
                         'cantidad_original' => (float) $detalle->cantidad,

@@ -200,7 +200,7 @@
                         </div>
 
                         <div class="flex items-center justify-end gap-3 border-t border-app-border pt-4">
-                            <button type="button" @clic&#x6B;*="abierto* *=* fals&#x65;*"*
+                            <button type="button" @click="abierto = false"
                                 class="rounded-md border border-app-border-strong bg-app-surface px-4 py-2 text-sm font-medium text-app-text-secondary transition hover:bg-app-surface-hover">
                                 Cancelar
                             </button>

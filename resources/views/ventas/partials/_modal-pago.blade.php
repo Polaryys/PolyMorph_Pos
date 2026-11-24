@@ -5,47 +5,52 @@
         class="fixed inset-0 z-100 flex items-center justify-center overflow-y-auto bg-black/40 p-4"
         role="dialog" aria-modal="true" aria-labelledby="titulo-modal-pago">
         <div x-show="modalPagoAbierto" x-transition
-            class="my-auto w-full max-w-3xl overflow-hidden rounded-lg border border-gray-200 bg-white p-6 shadow-xl"
+            class="my-auto w-full max-w-3xl overflow-hidden rounded-lg border border-app-border bg-app-surface p-6 shadow-xl"
             @click.stop>
-            <div class="mb-5 flex items-start justify-between border-b border-gray-200 pb-3">
+            <div class="mb-5 flex items-start justify-between border-b border-app-border pb-3">
                 <div>
-                    <h2 id="titulo-modal-pago" class="text-lg font-semibold text-indigo-600">Registrar venta</h2>
-                    <p class="mt-1 text-sm text-gray-500">
-                        Total: <strong class="text-gray-800" x-text="'Q ' + totalVenta().toFixed(2)"></strong>
-                    </p>
+                    <div class="flex flex-wrap items-baseline gap-x-4 gap-y-1">
+                        <h2 id="titulo-modal-pago" class="text-2xl font-bold text-app-primary-700 sm:text-3xl">
+                            Registrar venta
+                        </h2>
+                        <p class="text-lg font-semibold text-app-text-secondary sm:text-xl">
+                            Total:
+                            <strong class="text-xl font-bold text-app-text-primary sm:text-2xl"
+                                x-text="'Q ' + totalVenta().toFixed(2)"></strong>
+                        </p>
+                    </div>
                 </div>
                 <button type="button" @click="cerrarModalPago()" aria-label="Cerrar"
-                    class="rounded p-1 text-gray-500 transition hover:bg-gray-100 hover:text-gray-800">
+                    class="rounded p-1 text-app-text-muted transition hover:bg-app-surface-hover hover:text-app-text-primary">
                     <x-lucide-x class="h-5 w-5" />
                 </button>
             </div>
 
             <div class="max-h-[70vh] space-y-4 overflow-y-auto">
-                <p x-show="cargandoMetodosPago" class="text-sm text-slate-500">Cargando métodos de pago...</p>
+                <p x-show="cargandoMetodosPago" class="text-base text-app-text-muted">Cargando métodos de pago...</p>
                 <p x-show="errorPago" x-text="errorPago" role="alert"
-                    class="rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700"></p>
+                    class="rounded-md border border-red-200 bg-red-50 p-3 text-base text-red-700"></p>
 
                 <fieldset class="space-y-3" :disabled="cargandoMetodosPago">
-                    <legend class="mb-2 text-sm font-semibold text-gray-700">Métodos de pago</legend>
+                    <legend class="mb-2 text-base font-semibold text-app-text-primary">Métodos de pago</legend>
                     <template x-for="(metodo, indice) in metodosPago" :key="metodo.id">
-                        <div class="grid grid-cols-1 gap-3 rounded-md border p-3 sm:grid-cols-4"
-                            :class="metodo.activo ? 'border-indigo-300 bg-indigo-50/40' : 'border-gray-200 bg-white'">
+                        <div class="grid grid-cols-1 gap-2 rounded-md border p-3 sm:grid-cols-[max-content_minmax(0,1fr)] sm:gap-x-4"
+                            :class="metodo.activo ? 'border-app-primary-500/40 bg-app-primary-500/10' : 'border-app-border bg-app-surface'">
                             <button type="button"
                                 @click="metodo.activo ? metodo.activo = false : activarMetodo(metodo)"
                                 :aria-pressed="metodo.activo"
-                                class="flex items-center gap-2 rounded text-left text-sm font-medium text-gray-800 focus:outline-none focus:ring-2 focus:ring-indigo-500 sm:col-span-1">
+                                class="flex w-fit items-center gap-2 whitespace-nowrap rounded text-left text-base font-semibold text-app-text-primary focus:border-app-border-strong focus:outline-none focus:ring-1 focus:ring-app-border-strong sm:col-span-1">
                                 <span x-text="metodo.nombre"></span>
-                                <span x-show="metodo.activo" class="text-xs font-normal text-indigo-700">Seleccionado</span>
                             </button>
 
                             <input type="hidden" form="formulario-venta"
                                 :name="metodo.activo ? `pagos[${indice}][metodo_pago_id]` : null"
                                 :value="metodo.id">
 
-                            <div class="grid grid-cols-1 gap-3 sm:col-span-3 sm:grid-cols-2">
+                            <div class="grid grid-cols-1 gap-2 sm:col-span-1 sm:grid-cols-2 sm:gap-2">
                                 <template x-if="!metodo.permite_montos">
                                     <div>
-                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                        <label class="mb-1 block text-sm font-medium text-app-text-secondary"
                                             :for="`monto-pago-${indice}`">Monto</label>
                                         <input :id="`monto-pago-${indice}`" type="text" inputmode="decimal"
                                             pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
@@ -55,13 +60,13 @@
                                             :value="metodo.monto"
                                             @focus="activarMetodo(metodo)"
                                             @input="actualizarImporte(metodo, 'monto', $event)"
-                                            class="w-full rounded-md border-slate-300 text-right text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            class="block w-full rounded-md border border-app-border-strong bg-app-background p-2 text-right text-base text-app-text-primary shadow-sm focus:outline-none focus:ring-1 focus:border-app-primary-500 focus:ring-app-primary-500 focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500">
                                     </div>
                                 </template>
 
                                 <template x-if="metodo.permite_montos">
                                     <div>
-                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                        <label class="mb-1 block text-sm font-medium text-app-text-secondary"
                                             :for="`recibido-${indice}`">Monto recibido</label>
                                         <input :id="`recibido-${indice}`" type="text" inputmode="decimal"
                                             pattern="[0-9]+([.][0-9]{1,2})?" maxlength="15"
@@ -72,8 +77,7 @@
                                             :value="metodo.monto_recibido"
                                             @focus="activarMetodo(metodo)"
                                             @input="actualizarImporte(metodo, 'monto_recibido', $event)"
-                                            class="w-full rounded-md border border-app-border bg-app-bg px-3 py-2 text-right text-sm font-medium text-app-text shadow-none outline-none transition-colors
-                                            focus:border-primary-focus focus:ring-1 focus:ring-primary-focus">
+                                            class="block w-full rounded-md border border-app-border-strong bg-app-background p-2 text-right text-base font-medium text-app-text-primary shadow-sm transition-colors focus:outline-none focus:ring-1 focus:border-app-primary-500 focus:ring-app-primary-500 focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500">
                                         <input type="hidden" form="formulario-venta"
                                             :name="metodo.activo ? `pagos[${indice}][monto]` : null"
                                             :value="montoAplicado(metodo).toFixed(2)">
@@ -82,8 +86,8 @@
 
                                 <template x-if="metodo.permite_montos">
                                     <div aria-live="polite">
-                                        <span class="mb-1 block text-xs font-medium text-slate-600">Cambio / faltante</span>
-                                        <div class="rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-right text-sm font-medium"
+                                        <span class="mb-1 block text-sm font-medium text-app-text-secondary">Cambio / faltante</span>
+                                        <div class="rounded-md border border-app-border bg-app-surface-alt px-3 py-2 text-right text-base font-medium text-app-text-primary"
                                             :class="diferenciaEfectivo(metodo) < 0 ? 'text-red-700' : 'text-green-700'"
                                             x-text="diferenciaEfectivo(metodo) < 0
                                                 ? 'Falta Q ' + Math.abs(diferenciaEfectivo(metodo)).toFixed(2)
@@ -94,7 +98,7 @@
 
                                 <template x-if="!metodo.permite_montos">
                                     <div>
-                                        <label class="mb-1 block text-xs font-medium text-slate-600"
+                                        <label class="mb-1 block text-sm font-medium text-app-text-secondary"
                                             :for="`referencia-${indice}`">Referencia (opcional)</label>
                                         <input :id="`referencia-${indice}`" type="text" maxlength="100"
                                             form="formulario-venta"
@@ -102,39 +106,39 @@
                                             x-model="metodo.referencia"
                                             @focus="activarMetodo(metodo)"
                                             @input="activarMetodo(metodo)"
-                                            class="w-full rounded-md border-slate-300 text-sm focus:border-indigo-500 focus:ring-indigo-500">
+                                            class="block w-full rounded-md border border-app-border-strong bg-app-background p-2 text-base text-app-text-primary shadow-sm focus:outline-none focus:ring-1 focus:border-app-primary-500 focus:ring-app-primary-500 focus-visible:border-app-primary-500 focus-visible:ring-app-primary-500">
                                     </div>
                                 </template>
                             </div>
                         </div>
                     </template>
 
-                    <p x-show="!cargandoMetodosPago && metodosPago.length === 0" class="text-sm text-slate-500">
+                    <p x-show="!cargandoMetodosPago && metodosPago.length === 0" class="text-base text-app-text-muted">
                         No hay métodos de pago activos. Puedes registrar la venta al crédito.
                     </p>
                 </fieldset>
 
-                <label class="flex cursor-pointer items-center gap-2 text-xs text-slate-500">
+                <label class="flex cursor-pointer items-center gap-2 text-sm text-app-text-secondary">
                     <input type="checkbox" x-model="ventaCredito" data-credit-option="true"
-                        class="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500">
+                        class="rounded border-app-border-strong text-app-primary-600 focus:ring-app-primary-500">
                     <span>Venta al crédito (permitir saldo pendiente)</span>
                 </label>
 
                 <input type="hidden" form="formulario-venta" name="venta_credito" :value="ventaCredito ? 1 : 0">
 
-                <p x-show="ventaCredito && totalPagadoModal() < totalVenta()" class="text-sm text-amber-700">
+                <p x-show="ventaCredito && totalPagadoModal() < totalVenta()" class="text-base text-amber-700">
                     Saldo pendiente: Q <span x-text="Math.max(0, totalVenta() - totalPagadoModal()).toFixed(2)"></span>
                 </p>
             </div>
 
-            <div class="mt-4 flex flex-col-reverse gap-3 border-t border-gray-100 pt-4 sm:flex-row sm:justify-end">
+            <div class="mt-4 flex flex-col-reverse gap-3 border-t border-app-border pt-4 sm:flex-row sm:justify-end">
                 <button type="button" @click="cerrarModalPago()"
-                    class="rounded-md border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-50">
+                    class="rounded-md border border-app-border-strong px-4 py-2 text-base font-medium text-app-text-secondary transition hover:bg-app-surface-hover">
                     Cancelar
                 </button>
                 <button type="submit" form="formulario-venta"
                     :disabled="cargandoMetodosPago || !!errorPago || !pagosValidos()"
-                    class="rounded-md bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-50">
+                    class="rounded-md bg-app-primary-700 px-4 py-2 text-base font-medium text-white shadow-sm transition hover:bg-app-primary-800 disabled:cursor-not-allowed disabled:opacity-50">
                     Confirmar venta
                 </button>
             </div>
