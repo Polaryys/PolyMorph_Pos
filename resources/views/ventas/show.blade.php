@@ -1,85 +1,197 @@
 <x-app-layout>
     <div class="space-y-8">
-        <section class="overflow-hidden bg-white shadow-sm">
+        <section class="overflow-hidden">
             <!-- MENSAJES -->
             <x-alert-message />
-            <div
-                class="flex flex-col justify-between gap-4 border-b border-slate-100 px-5 py-3 sm:flex-row sm:items-start sm:px-6">
+            <div class="flex flex-col justify-between gap-4 px-5 py-3 sm:flex-row sm:items-start sm:px-6">
                 <div class="min-w-0">
-                    <p class="mb-1 text-xs font-medium text-slate-500">Número de venta</p>
-                    <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-slate-900 sm:text-3xl">
+                    <p class="mb-1 text-xs font-medium text-app-text-muted">
+                        Número de venta
+                    </p>
+
+                    <h1
+                        class="wrap-break-word text-2xl font-bold tracking-tight
+               text-app-text-primary sm:text-3xl">
                         {{ $venta->numero_venta }}
                     </h1>
                 </div>
                 <div class="grid shrink-0 grid-cols-2 gap-3 text-sm lg:min-w-[280px]">
-                    <x-detail-field label="Creada en" class="bg-slate-50">
-                        <span class="tabular-nums">{{ $venta->created_at?->format('d/m/Y H:i') ?? '—' }}</span>
-                    </x-detail-field>
-                    <x-detail-field label="Última edición" class="bg-slate-50">
-                        <span class="tabular-nums">{{ $venta->updated_at?->format('d/m/Y H:i') ?? '—' }}</span>
-                    </x-detail-field>
+
+                    <x-detail-item label="Creada en">
+                        {{ $venta->created_at?->format('d/m/Y H:i') ?? '—' }}
+                    </x-detail-item>
+
+                    <x-detail-item label="Última edición">
+                        {{ $venta->updated_at?->format('d/m/Y H:i') ?? '—' }}
+                    </x-detail-item>
+
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 gap-2 px-5 sm:grid-cols-2 xl:grid-cols-3 sm:px-6">
-                <x-detail-field label="Tipo de operación">
-                    {{ ucfirst(strtolower($venta->tipo_operacion)) }}
-                </x-detail-field>
-                <x-detail-field label="Estado de venta">
-                    {{ ucfirst(strtolower($venta->estado_venta)) }}
-                </x-detail-field>
-                <x-detail-field label="Estado de pago">
-                    {{ $estadoPago ? ucfirst(strtolower($estadoPago)) : 'No aplica' }}
-                </x-detail-field>
-                <x-detail-field label="Vendedor">
-                    {{ $venta->vendedor?->nombres ?? '—' }}
-                    @if ($venta->vendedor?->apellidos)
-                        {{ $venta->vendedor->apellidos }}
-                    @endif
-                    @if ($venta->vendedor?->username)
-                        <span class="block text-xs text-slate-500">{{ '@' . $venta->vendedor->username }}</span>
-                    @endif
-                </x-detail-field>
-                <x-detail-field label="Cliente">
-                    @if ($venta->cliente)
-                        {{ trim($venta->cliente->nombres . ' ' . $venta->cliente->apellidos) }}
-                        <span class="block text-xs text-slate-500">
-                            NIT: {{ $venta->cliente->nit }}
-                            @if ($venta->cliente->clasificacion)
-                                · {{ $venta->cliente->clasificacion }}
-                            @endif
+
+            <div class="grid grid-cols-1 gap-3 px-5 sm:grid-cols-2
+            xl:grid-cols-3 sm:px-6">
+
+                {{-- Tipo de operación --}}
+                <x-detail-item label="Tipo de operación">
+                    @php
+                        $tipoOperacion =
+                            [
+                                'VENTA' => 'indigo',
+                                'DEVOLUCION' => 'amber',
+                                'CAMBIO' => 'blue',
+                            ][$venta->tipo_operacion] ?? 'slate';
+                    @endphp
+
+                    <span @class([
+                        'inline-flex items-center rounded-md border px-2.5 py-1 text-sm font-normal',
+                        'bg-app-primary-500/10 text-app-primary-600 border-app-primary-600/20 dark:text-app-primary-400' =>
+                            $tipoOperacion === 'indigo',
+                        'bg-amber-500/10 text-amber-700 border-amber-500/20 dark:text-amber-300' =>
+                            $tipoOperacion === 'amber',
+                        'bg-blue-500/10 text-blue-700 border-blue-500/20 dark:text-blue-300' =>
+                            $tipoOperacion === 'blue',
+                        'bg-slate-500/10 text-slate-700 border-slate-500/20 dark:text-slate-300' =>
+                            $tipoOperacion === 'slate',
+                    ])>
+                        {{ ucfirst(strtolower($venta->tipo_operacion)) }}
+                    </span>
+                </x-detail-item>
+
+                {{-- Estado de venta --}}
+                <x-detail-item label="Estado de venta">
+                    <span @class([
+                        'inline-flex items-center rounded-md border px-2.5 py-1 text-sm font-normal',
+                        'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:text-emerald-400' =>
+                            $venta->estado_venta === 'REGISTRADA',
+                        'bg-red-500/10 text-red-700 border-red-500/20 dark:text-red-300' =>
+                            $venta->estado_venta === 'ANULADA',
+                    ])>
+                        {{ ucfirst(strtolower($venta->estado_venta)) }}
+                    </span>
+                </x-detail-item>
+
+                {{-- Estado de pago --}}
+                <x-detail-item label="Estado de pago">
+                    @php
+                        $estadoPago =
+                            [
+                                'PENDIENTE' => [
+                                    'label' => 'Pendiente',
+                                    'classes' =>
+                                        'bg-amber-500/10 text-amber-700 border-amber-500/20 dark:text-amber-400',
+                                ],
+                                'PARCIAL' => [
+                                    'label' => 'Parcial',
+                                    'classes' => 'bg-blue-500/10 text-blue-700 border-blue-500/20 dark:text-blue-400',
+                                ],
+                                'PAGADO' => [
+                                    'label' => 'Pagado',
+                                    'classes' =>
+                                        'bg-emerald-500/10 text-emerald-700 border-emerald-500/20 dark:text-emerald-400',
+                                ],
+                                'REEMBOLSADO' => [
+                                    'label' => 'Reembolsado',
+                                    'classes' =>
+                                        'bg-violet-500/10 text-violet-700 border-violet-500/20 dark:text-violet-400',
+                                ],
+                            ][$venta->estado_pago] ?? null;
+                    @endphp
+
+                    @if ($estadoPago)
+                        <span @class([
+                            'inline-flex items-center rounded-md border px-2.5 py-1 text-sm font-normal',
+                            $estadoPago['classes'],
+                        ])>
+                            {{ $estadoPago['label'] }}
                         </span>
-                        @if ($venta->cliente->telefono || $venta->cliente->correo)
-                            <span class="block text-xs text-slate-500">
-                                {{ $venta->cliente->telefono ?? '' }}
-                                @if ($venta->cliente->telefono && $venta->cliente->correo)
-                                    ·
-                                @endif
-                                {{ $venta->cliente->correo ?? '' }}
+                    @else
+                        <span class="text-sm font-normal text-app-text-muted">
+                            No aplica
+                        </span>
+                    @endif
+                </x-detail-item>
+
+                {{-- Vendedor --}}
+                <x-detail-item label="Vendedor">
+                    <div class="text-sm font-normal">
+                        {{ $venta->vendedor?->nombres ?? '—' }}
+                        {{ $venta->vendedor?->apellidos }}
+
+                        @if ($venta->vendedor?->username)
+                            <span class="mt-1 block text-sm font-normal text-app-text-muted">
+                                {{ '@' . $venta->vendedor->username }}
                             </span>
                         @endif
+                    </div>
+                </x-detail-item>
+
+                {{-- Cliente --}}
+                <x-detail-item label="Cliente">
+                    @if ($venta->cliente)
+                        <div class="text-sm font-normal">
+                            <div class="flex flex-wrap items-center gap-x-2">
+                                <span>
+                                    {{ trim($venta->cliente->nombres . ' ' . $venta->cliente->apellidos) }}
+                                </span>
+
+                                <span class="text-sm font-normal text-app-text-muted">
+                                    NIT: {{ $venta->cliente->nit }}
+                                </span>
+                            </div>
+
+                            @if ($venta->cliente->clasificacion || $venta->cliente->telefono || $venta->cliente->correo)
+                                <div
+                                    class="mt-1 flex flex-wrap items-center gap-x-2 gap-y-1 text-xs font-normal text-app-text-muted">
+
+                                    @if ($venta->cliente->clasificacion)
+                                        <span>{{ $venta->cliente->clasificacion }}</span>
+                                    @endif
+
+                                    @if ($venta->cliente->telefono)
+                                        <span>{{ $venta->cliente->telefono }}</span>
+                                    @endif
+
+                                    @if ($venta->cliente->correo)
+                                        <span class="break-all">{{ $venta->cliente->correo }}</span>
+                                    @endif
+
+                                </div>
+                            @endif
+                        </div>
                     @else
-                        Venta sin cliente asociado
+                        <span class="font-normal text-app-text-secondary">
+                            Venta sin cliente asociado
+                        </span>
                     @endif
-                </x-detail-field>
-                <x-detail-field label="Venta de referencia">
+                </x-detail-item>
+
+                {{-- Venta de referencia --}}
+                <x-detail-item label="Venta de referencia">
                     @if ($venta->ventaReferencia)
-                        <a href="{{ route('ventas.show', $venta->ventaReferencia) }}"
-                            class="font-medium text-indigo-700 hover:text-indigo-900">
+                        <a href="{{ route('ventas.show', $venta->ventaReferencia) }}" wire:navigate
+                            class="font-semibold text-app-primary-700
+                      hover:text-app-primary-900
+                      dark:text-app-primary-400
+                      dark:hover:text-app-primary-100
+                      transition-colors">
                             {{ $venta->ventaReferencia->numero_venta }}
                         </a>
                     @else
-                        —
+                        <span class="font-normal text-app-text-muted">—</span>
                     @endif
-                </x-detail-field>
+                </x-detail-item>
+
             </div>
+
         </section>
 
         <section class="space-y-3">
             <x-section-title>Artículos de la venta</x-section-title>
             <x-table>
                 <x-slot:headers>
-                    <th class="whitespace-nowrap px-3 py-3 text-center">Tipo</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center">Movimiento</th>
+                    <th class="whitespace-nowrap px-3 py-3 text-center w-16">Tipo</th>
                     <th class="whitespace-nowrap px-3 py-3 text-center">SKU</th>
                     <th class="whitespace-nowrap px-3 py-3">Artículo</th>
                     <th class="whitespace-nowrap px-3 py-3 text-center">Cantidad</th>
@@ -100,8 +212,19 @@
                             ? "{$nombreProducto} - {$marcaProducto}"
                             : $nombreProducto;
                     @endphp
-                    <tr class="transition-colors hover:bg-indigo-50/50">
-                        <td class="whitespace-nowrap px-4 py-3 text-center">
+
+                    <tr class="transition-color">
+                        <td class="text-center">
+                            @if ($detalle->tipo_movimiento === 'DEVOLUCION')
+                                Devuelto
+                            @elseif ($detalle->tipo_movimiento === 'ENTREGA_CAMBIO')
+                                Entrega de cambio
+                            @elseif ($detalle->tipo_movimiento === 'VENTA')
+                                Entregado
+                            @endif
+
+                        </td>
+                        <td class="whitespace-nowrap px-4 py-3 text-center w-16">
                             {{ $detalle->tipo_item }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">
@@ -118,14 +241,15 @@
                                     } catch (error) {
                                         this.errorCopia = true;
                                     }
-
+                            
                                     setTimeout(() => {
                                         this.copiado = false;
                                         this.errorCopia = false;
                                     }, 1500);
                                 }
-                            }" class="group inline-flex max-w-full flex-wrap items-center gap-1">
-                                <span class="font-normal text-sm text-slate-900">{{ $nombreProductoCompleto }}</span>
+                            }"
+                                class="group inline-flex max-w-full flex-wrap items-center gap-1">
+                                <span class="font-normal text-[15px]">{{ $nombreProductoCompleto }}</span>
                                 <button type="button" @click="copiar($el.dataset.copyText)"
                                     data-copy-text="{{ $nombreProductoCompleto }}"
                                     :aria-label="errorCopia ? 'No se pudo copiar' : copiado ? 'Copiado' : 'Copiar nombre y marca'"
@@ -136,16 +260,7 @@
                                     <x-lucide-circle-alert x-show="errorCopia" class="h-4 w-4 text-red-600" />
                                 </button>
                             </div>
-                            <p class="mt-1 text-xs text-slate-500">
-                                
-                                @if ($detalle->tipo_movimiento === 'DEVOLUCION')
-                                    <span class="mx-1">·</span>
-                                    Devolución
-                                @elseif ($detalle->tipo_movimiento === 'ENTREGA_CAMBIO')
-                                    <span class="mx-1">·</span>
-                                    Entrega de cambio
-                                @endif
-                            </p>
+
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">
                             {{ number_format($signoDetalle * (float) $detalle->cantidad, 2) }}
@@ -156,7 +271,7 @@
                         <td class="whitespace-nowrap px-4 py-3 text-center">
                             Q {{ number_format($signoDetalle * (float) $detalle->descuento, 2) }}
                         </td>
-                        <td class="whitespace-nowrap px-4 py-3 text-center font-semibold text-slate-900">
+                        <td class="whitespace-nowrap px-4 py-3 text-center font-semibold ">
                             Q {{ number_format($signoDetalle * (float) $detalle->subtotal, 2) }}
                         </td>
                         @if (auth()->user()->rol === 'Administrador')
@@ -170,7 +285,7 @@
                 @empty
                     <tr>
                         <td colspan="{{ auth()->user()->rol === 'Administrador' ? 8 : 7 }}"
-                            class="px-6 py-8 text-center text-slate-400">
+                            class="px-6 py-8 text-center text-app-border-hover">
                             Esta venta no tiene artículos registrados.
                         </td>
                     </tr>
@@ -180,11 +295,24 @@
                 $venta->estado_venta === 'REGISTRADA' &&
                     in_array($venta->tipo_operacion, ['CAMBIO', 'DEVOLUCION'], true) &&
                     filled($venta->motivo_operacion))
-                <div class="rounded border border-amber-200 bg-amber-50 p-4">
-                    <p class="text-sm font-semibold text-amber-900">
+                <div
+                    class="rounded-lg border border-amber-500/25
+                bg-amber-500/10 p-4
+                dark:border-amber-400/20
+                dark:bg-amber-400/10">
+
+                    <p class="text-sm font-semibold text-amber-800
+                  dark:text-amber-300">
                         {{ $venta->tipo_operacion === 'DEVOLUCION' ? 'Motivo de la devolución' : 'Motivo del cambio' }}
                     </p>
-                    <p class="mt-1 whitespace-pre-line text-sm text-slate-700">{{ $venta->motivo_operacion }}</p>
+
+                    <p
+                        class="mt-1 whitespace-pre-line text-sm
+                  text-amber-950/80
+                  dark:text-amber-100/80">
+                        {{ $venta->motivo_operacion }}
+                    </p>
+
                 </div>
             @endif
         </section>
@@ -204,8 +332,8 @@
                 </x-slot:headers>
 
                 @forelse ($venta->detallesPago as $pago)
-                    <tr class="transition-colors hover:bg-indigo-50/50">
-                        <td class="px-4 py-3 font-medium text-slate-900 text-center">
+                    <tr class="transition-colors">
+                        <td class="px-4 py-3 font-medium text-center">
                             {{ $pago->metodoPago?->nombre ?? 'Método no disponible' }}
                         </td>
                         <td class="whitespace-nowrap px-4 py-3 text-center">
@@ -224,7 +352,7 @@
                     </tr>
                 @empty
                     <tr>
-                        <td colspan="6" class="px-6 py-8 text-center text-slate-400">
+                        <td colspan="6" class="px-6 py-8 text-center">
                             Esta operación aún no tiene movimientos de pago registrados.
                         </td>
                     </tr>
@@ -248,7 +376,7 @@
                         <tr class="transition-colors hover:bg-indigo-50/50">
                             <td class="px-4 py-3">
                                 <a href="{{ route('ventas.show', $operacion) }}"
-                                    class="font-medium text-indigo-700 hover:text-indigo-900">
+                                    class="font-medium text-app-primary-600 hover:text-app-primary-500">
                                     {{ $operacion->numero_venta }}
                                 </a>
                             </td>
@@ -383,20 +511,21 @@
                     Math.round(total * 100) <= Math.round(Math.abs(this.saldoPendiente) * 100);
             },
         }"
-            class="flex flex-col gap-2 rounded border border-slate-200 bg-white p-5 shadow-sm sm:ml-auto sm:w-96">
-            <div class="flex justify-between gap-4 text-sm text-slate-600">
+            class="flex flex-col gap-2 rounded border border-app-border p-5 shadow-sm sm:ml-auto sm:w-96">
+            <div class="flex justify-between gap-4 text-sm">
                 <span>Total de productos</span>
                 <span>Q {{ number_format($totalProductos, 2) }}</span>
             </div>
-            <div class="flex justify-between gap-4 text-sm text-slate-600">
+            <div class="flex justify-between gap-4 text-sm">
                 <span>Total de descuentos</span>
                 <span>Q {{ number_format((float) $venta->total_descuentos, 2) }}</span>
             </div>
-            <div class="flex justify-between gap-4 border-t border-slate-200 pt-3 text-lg font-bold text-slate-900">
+            <div
+                class="flex justify-between gap-4 border-t border-app-border pt-3 text-lg font-bold text-app-text-primary">
                 <span>Total de la operación</span>
                 <span>Q {{ number_format((float) $venta->total, 2) }}</span>
             </div>
-            <div class="flex justify-between gap-4 text-sm font-semibold text-slate-700">
+            <div class="flex justify-between gap-4 text-sm font-semibold text-app-text-secondary">
                 <span>{{ match ($venta->tipo_operacion) {
                     'DEVOLUCION' => 'Reembolsado',
                     'CAMBIO' => $venta->total < 0 ? 'Reembolsado' : ($venta->total > 0 ? 'Cobrado' : 'Diferencia liquidada'),

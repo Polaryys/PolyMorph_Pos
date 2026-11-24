@@ -71,7 +71,7 @@
 
             @if ($accion && $accionKey !== 'index')
                 <span class="text-app-text-muted">/</span>
-                <span class="text-app-primary-600 font-semibold">
+                <span class="text-app-primary-500 font-semibold">
                     {{ $accion }}
                 </span>
             @endif

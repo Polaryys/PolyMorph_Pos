@@ -19,6 +19,10 @@
     --color-app-primary-800: var(--app-primary-800);
     --color-app-primary-900: var(--app-primary-900);
 
+    /* Encabezados de tablas */
+    --color-app-table-header: var(--app-table-header);
+    --color-app-table-header-text: var(--app-table-header-text);
+
 
     /* Superficies */
     --color-app-background: var(--app-background);

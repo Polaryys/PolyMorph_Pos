@@ -1,4 +1,4 @@
-<section class="overflow-hidden border rounded-xl border-app-border shadow-sm">
+<section class="overflow-hidden ">
     <x-table>
         <x-slot:headers>
             <th class="w-16 whitespace-nowrap px-2 py-2">Imagen</th>
@@ -24,7 +24,7 @@
                         </template>
                         <template x-if="detalle.tipo_item === 'PRODUCTO' && detalle.cantidad_actual !== null">
                             <span
-                                class="absolute bottom-0 right-0 rounded-tl-md bg-slate-900/60 px-1 py-0.5 text-[9px] font-medium leading-none text-white/90"
+                                class="absolute bottom-0 right-0 rounded-tl-md bg-slate-900/60 px-1 py-0.5 text-[10px] font-medium leading-none text-white/90"
                                 title="Existencias actuales" x-text="detalle.cantidad_actual"></span>
                         </template>
                     </span>
@@ -116,13 +116,13 @@
         </template>
 
         <tr x-show="detalles.length === 0">
-            <td colspan="7" class="px-6 py-10 text-center text-sm text-slate-500">
+            <td colspan="7" class="px-6 py-10 text-center text-sm text-app-border-hover">
                 Busca y agrega artículos para comenzar la venta.
             </td>
         </tr>
     </x-table>
 
-    <div class="flex flex-col gap-5 border-t border-app-border text-base p-4 sm:p-6">
+    <div class="flex flex-col gap-5 text-base p-4 sm:p-6">
         <dl class="w-full space-y-2 sm:ml-auto sm:max-w-sm">
             <div class="flex justify-between gap-6 text-app-secondary">
                 <dt>Total del importe</dt>

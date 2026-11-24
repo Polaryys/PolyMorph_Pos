@@ -14,6 +14,9 @@
     --app-primary-700: var(--color-indigo-700);
     --app-primary-800: var(--color-indigo-800);
     --app-primary-900: var(--color-indigo-900);
+
+    --app-table-header: var(--color-indigo-100);
+    --app-table-header-text: var(--color-indigo-900);
 }
 
 :root[data-accent="blue"] {
@@ -26,6 +29,9 @@
     --app-primary-700: var(--color-blue-700);
     --app-primary-800: var(--color-blue-800);
     --app-primary-900: var(--color-blue-900);
+
+    --app-table-header: var(--color-blue-100);
+    --app-table-header-text: var(--color-blue-900);
 }
 
 /* ============================================================
@@ -81,4 +87,7 @@
     --app-border-strong: var(--color-zinc-600);
     --app-border-hover: var(--color-zinc-500);
     --app-border-focus: var(--app-primary-400);
+
+    --app-table-header: var(--color-zinc-800);
+    --app-table-header-text: var(--color-zinc-100);
 }

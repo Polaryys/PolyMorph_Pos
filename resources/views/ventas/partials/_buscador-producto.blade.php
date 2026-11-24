@@ -27,9 +27,9 @@
                         </template>
                     </span>
                     <span class="min-w-0">
-                        <span class="block truncate text-base font-semibold text-app-text-primary"
+                        <span class="block truncate text-base font-normal text-base text-app-text-primary"
                             x-text="producto.marca ? `${producto.nombre} - ${producto.marca}` : producto.nombre"></span>
-                        <span class="mt-1 block text-[15px] text-app-text-muted">
+                        <span class="mt-1 block text-sm text-app-text-muted">
                             SKU: <span x-text="producto.sku"></span>
                             <template x-if="producto.ubicacion">
                                 <span class="inline-flex items-center gap-1">
@@ -41,7 +41,7 @@
                     </span>
                 </span>
                 <span class="shrink-0 text-right">
-                    <span class="block text-lg font-bold text-app-primary-600">
+                    <span class="block text-lg font-bold text-app-primary-400">
                         Q <span x-text="Number(producto.precio_unitario_actual).toFixed(2)"></span>
                     </span>
                     <template x-if="producto.tipo_item === 'PRODUCTO'">

@@ -23,7 +23,7 @@
     </div>
 
     {{-- Navegación --}}
-    <div class="flex min-h-0 flex-1 flex-col px-4 py-4">
+    <div class="flex min-h-0 flex-1 flex-col px-4 py-4 scrollbar-app">
 
         <nav class="flex-1 space-y-2 overflow-y-auto">
 
