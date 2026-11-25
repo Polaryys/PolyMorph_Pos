@@ -1,21 +1,21 @@
 <x-guest-layout>
-    <!-- Estado de sesión -->
+    {{-- Estado de sesión --}}
     <x-auth-session-status class="mb-6" :status="session('status')" />
 
     <div
-        class="w-full max-w-md mx-auto px-10 py-10 bg-white shadow-xl shadow-gray-200/50 rounded-2xl border border-gray-200">
-
-        <!-- Encabezado -->
-        <div class="flex justify-center mb-4">
-            <x-icon-sistema class="w-24 h-auto text-indigo-500"></x-icon-sistema>
+        class="mx-auto w-full max-w-md rounded-2xl border border-app-border
+               bg-app-surface px-10 py-10 shadow-xl shadow-black/5">
+        {{-- Encabezado --}}
+        <div class="mb-4 flex justify-center">
+            <x-icon-sistema class="h-auto w-24 text-app-primary-500"></x-icon-sistema>
         </div>
 
-        <div class="text-center mb-6">
-            <h2 class="text-2xl font-bold tracking-wider text-gray-900">
+        <div class="mb-6 text-center">
+            <h2 class="text-2xl font-bold tracking-wider text-app-text-primary">
                 EBEN-EZER
             </h2>
 
-            <p class="text-base text-gray-500 mt-1">
+            <p class="mt-1 text-base text-app-text-secondary">
                 Ingresa tus credenciales para iniciar sesión
             </p>
         </div>
@@ -23,34 +23,38 @@
         <form method="POST" action="{{ route('login') }}" class="space-y-4">
             @csrf
 
-            <!-- Usuario -->
+            {{-- Usuario --}}
             <div>
-                <x-input-label for="username" class="text-gray-900 font-medium text-sm mb-2 block">
+                <x-input-label for="username" class="mb-2 block text-sm font-medium text-app-text-secondary">
                     Usuario
                 </x-input-label>
 
                 <x-text-input type="text" id="username" name="username" :value="old('username')" :error="$errors->has('username')"
-                    class="mt-1 px-3 py-2.5" placeholder="Ingresa tu usuario" autofocus autocomplete="username" />
+                    class="mt-1 px-3 py-2.5 text-app-text-primary" placeholder="Ingresa tu usuario" autofocus autocomplete="username" />
 
                 <x-input-error :messages="$errors->get('username')" />
             </div>
 
-            <!-- Contraseña -->
+            {{-- Contraseña --}}
             <div x-data="{ showPassword: false }">
-                <x-input-label for="password" :value="__('Contraseña')" class="text-gray-900 font-medium text-sm mb-2 block" />
+                <x-input-label for="password" :value="__('Contraseña')"
+                    class="mb-2 block text-sm font-medium text-app-text-secondary" />
 
                 <div class="relative">
-                    <x-text-input id="password"
-                        class="block w-full px-4 py-2.5 rounded-md border border-gray-200 text-gray-900 focus:border-blue-500 focus:ring focus:ring-blue-100 transition duration-200 shadow-sm text-base pr-10"
-                        ::type="showPassword ? 'text' : 'password'" name="password" placeholder="Ingresa la contraseña" :error="$errors->has('password')" 
-                        autocomplete="current-password" />
+                    <x-text-input id="password" class="block w-full pr-10 text-app-text-primary" ::type="showPassword ? 'text' : 'password'" name="password"
+                        placeholder="Ingresa la contraseña" :error="$errors->has('password')" autocomplete="current-password" />
 
-                    <!-- Visibilidad de contraseña -->
+                    {{-- Visibilidad de contraseña --}}
                     <button type="button" @click="showPassword = !showPassword"
-                        class="absolute inset-y-0 right-0 flex items-center rounded-sm pr-3 text-gray-400 hover:text-gray-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
+                        class="absolute inset-y-0 right-0 flex items-center rounded-sm pr-3
+                               text-app-text-muted transition-colors
+                               hover:text-app-text-primary
+                               focus:outline-none focus-visible:ring-2
+                               focus-visible:ring-app-border-focus
+                               focus-visible:ring-offset-2
+                               focus-visible:ring-offset-app-surface"
                         :aria-label="showPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'">
-
-                        <!-- Icono ojo abierto -->
+                        {{-- Icono ojo abierto --}}
                         <svg x-show="showPassword" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor" style="display: none;">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -59,7 +63,7 @@
                                 d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                         </svg>
 
-                        <!-- Icono ojo cerrado -->
+                        {{-- Icono ojo cerrado --}}
                         <svg x-show="!showPassword" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
                             stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
@@ -68,12 +72,20 @@
                     </button>
                 </div>
 
-                <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm text-red-600" />
+                <x-input-error :messages="$errors->get('password')" class="mt-2 text-sm" />
             </div>
-            <!-- botón de ingresar -->
+
+            {{-- Botón de ingresar --}}
             <div class="pt-1">
                 <button type="submit"
-                    class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 px-4 rounded-md transition duration-200 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 text-base">
+                    class="w-full rounded-md bg-app-primary-600 px-4 py-3
+                           text-base font-medium text-white shadow-sm
+                           transition duration-200
+                           hover:bg-app-primary-700
+                           focus:outline-none focus:ring-2
+                           focus:ring-app-border-focus
+                           focus:ring-offset-2
+                           focus:ring-offset-app-surface">
                     Ingresar
                 </button>
             </div>

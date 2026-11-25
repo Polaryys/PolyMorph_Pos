@@ -1,6 +1,6 @@
 <x-app-layout>
 
-    <div class="space-y-8 text-sm">
+    <div class="space-y-4 text-sm">
 
         <!-- datos del proveedor -->
         <div class="space-y-4">
@@ -9,113 +9,82 @@
                 Datos del Proveedor
             </x-section-title>
 
-            <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                 <!-- NIT -->
-                <div class="sm:col-span-3">
-                    <x-input-label>
-                        NIT
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="NIT">
+                    <span class="font-normal">
                         {{ $proveedor->nit }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- NOMBRE -->
-                <div class="sm:col-span-3">
-                    <x-input-label>
-                        Nombre
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Nombre">
+                    <span class="font-normal">
                         {{ $proveedor->nombre }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- TELÉFONO -->
-                <div class="sm:col-span-3">
-                    <x-input-label>
-                        Teléfono
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Teléfono">
+                    <span class="font-normal">
                         {{ $proveedor->telefono }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- CORREO -->
-                <div class="sm:col-span-3">
-                    <x-input-label>
-                        Correo electrónico
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Correo electrónico">
+                    <span class="font-normal break-all">
                         {{ $proveedor->correo ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
             </div>
         </div>
 
-        <!-- detalles de contacto -->
-        <div class="pt-4 space-y-4">
+        <!-- información de contacto -->
+        <div class="space-y-4 pt-4">
 
             <x-section-title>
                 Información de Contacto
             </x-section-title>
 
-            <div class="grid grid-cols-1 gap-y-5 gap-x-4 sm:grid-cols-6">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                 <!-- NOMBRE DEL CONTACTO -->
-                <div class="sm:col-span-3">
-                    <x-input-label>
-                        Nombre del contacto
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Nombre del contacto">
+                    <span class="font-normal">
                         {{ $proveedor->nombre_contacto ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- TELÉFONO DEL CONTACTO -->
-                <div class="sm:col-span-3">
-                    <x-input-label>
-                        Teléfono del contacto
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Teléfono del contacto">
+                    <span class="font-normal">
                         {{ $proveedor->telefono_contacto ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- DIRECCIÓN -->
-                <div class="sm:col-span-6">
-                    <x-input-label>
-                        Dirección
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Dirección">
+                    <span class="font-normal">
                         {{ $proveedor->direccion ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- NOTAS -->
-                <div class="sm:col-span-6">
-                    <x-input-label>
-                        Notas
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
-                        {{ $proveedor->notas ?: '—' }}
-                    </div>
+                <div class="sm:col-span-2">
+                    <x-detail-item label="Notas">
+                        <span class="font-normal whitespace-pre-line">
+                            {{ $proveedor->notas ?: '—' }}
+                        </span>
+                    </x-detail-item>
                 </div>
 
             </div>
         </div>
-
     </div>
-        <div class="mt-4 flex justify-end gap-3">
+    <div class="mt-4 flex justify-end gap-3">
         <x-secondary-link href="{{ route('proveedores.index') }}">
             Volver
         </x-secondary-link>

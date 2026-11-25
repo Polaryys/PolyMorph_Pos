@@ -25,58 +25,70 @@
                     </div>
 
                     <div class="min-w-0 space-y-5">
-                        <div
-                            class="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
+                        <div class="flex flex-col justify-between gap-4 lg:flex-row lg:items-start">
                             <div class="min-w-0">
-                                <p class="mb-1 text-xs font-medium text-slate-500">Nombre y marca</p>
-                                <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-app-text-primary sm:text-3xl">
+                                <p class="mb-1 text-xs font-medium text-app-text-muted">Nombre y marca</p>
+                                <h1
+                                    class="wrap-break-word text-2xl font-bold tracking-tight text-app-text-primary sm:text-3xl">
                                     {{ $nombreArticulo ?: 'Artículo sin nombre' }}
                                 </h1>
                             </div>
 
                             <div class="grid shrink-0 grid-cols-2 gap-3 text-sm lg:min-w-[280px]">
-                                <x-detail-field label="Creado en" class="bg-app-background">
-                                    <span
-                                        class="tabular-nums">{{ $articulo->created_at?->format('d/m/Y H:i') ?? '—' }}</span>
-                                </x-detail-field>
-                                <x-detail-field label="Última edición" class="bg-app-background">
-                                    <span
-                                        class="tabular-nums">{{ $articulo->updated_at?->format('d/m/Y H:i') ?? '—' }}</span>
-                                </x-detail-field>
+                                <x-detail-item label="Creado en">
+                                    <span class="font-normal tabular-nums">
+                                        {{ $articulo->created_at?->format('d/m/Y H:i') ?? '—' }}
+                                    </span>
+                                </x-detail-item>
+
+                                <x-detail-item label="Última edición">
+                                    <span class="font-normal tabular-nums">
+                                        {{ $articulo->updated_at?->format('d/m/Y H:i') ?? '—' }}
+                                    </span>
+                                </x-detail-item>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                            <x-detail-field label="Tipo">
+                            <x-detail-item label="Tipo">
                                 {{ $articulo->tipo === 'PRODUCTO' ? 'Producto' : 'Servicio' }}
-                            </x-detail-field>
-                            <x-detail-field label="Estado">
-    <span @class([
-        'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
-        'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' => $articulo->estado,
-        'bg-red-500/10 text-red-600 dark:text-red-400' => !$articulo->estado,
-    ])>
-        {{ $articulo->estado ? 'Activo' : 'Inactivo' }}
-    </span>
-</x-detail-field>
-                            <x-detail-field label="SKU">
+                            </x-detail-item>
+
+                            <x-detail-item label="Estado">
+                                <span @class([
+                                    'inline-flex items-center rounded-full px-2.5 py-1 text-sm font-normal whitespace-nowrap',
+                                    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
+                                        $articulo->estado,
+                                    'bg-red-500/10 text-red-600 dark:text-red-400' => !$articulo->estado,
+                                ])>
+                                    {{ $articulo->estado ? 'Activo' : 'Inactivo' }}
+                                </span>
+                            </x-detail-item>
+
+                            <x-detail-item label="SKU">
                                 {{ $presentacion?->codigoSKU ?? '—' }}
-                            </x-detail-field>
-                            <x-detail-field label="Categoría">
-                                {{ $articulo->categoria?->nombre ?? '-' }}
-                            </x-detail-field>
-                            <x-detail-field label="Código de barras">
+                            </x-detail-item>
+
+                            <x-detail-item label="Categoría">
+                                {{ $articulo->categoria?->nombre ?? '—' }}
+                            </x-detail-item>
+
+                            <x-detail-item label="Código de barras">
                                 {{ $presentacion?->codigoBarras ?? '—' }}
-                            </x-detail-field>
-                            <x-detail-field label="Vencimiento">
+                            </x-detail-item>
+
+                            <x-detail-item label="Vencimiento">
                                 {{ $presentacion?->fecha_vencimiento
                                     ? \Carbon\Carbon::parse($presentacion->fecha_vencimiento)->format('d/m/Y')
                                     : 'No registrada' }}
-                            </x-detail-field>
+                            </x-detail-item>
                         </div>
-                        <x-detail-field label="Detalles">
-                            {{ $presentacion?->detalle ?? 'Sin descripción registrada.' }}
-                        </x-detail-field>
+
+                        <x-detail-item label="Detalles">
+                            <span class="font-normal">
+                                {{ $presentacion?->detalle ?? 'Sin descripción registrada.' }}
+                            </span>
+                        </x-detail-item>
                     </div>
                 </div>
             </div>
@@ -162,8 +174,9 @@
                     </x-slot:headers>
 
                     <tr>
-                        <td class="px-4 py-4 font-medium text-slate-800">Precio unitario del servicio</td>
-                        <td class="whitespace-nowrap px-4 py-4 text-base font-semibold tabular-nums text-app-primary-700">
+                        <td class="px-4 py-4 font-medium">Precio unitario del servicio</td>
+                        <td
+                            class="whitespace-nowrap px-4 py-4 text-base font-semibold tabular-nums text-app-primary-700">
                             Q {{ number_format($presentacion?->precioUnitario ?? 0, 2) }}
                         </td>
                     </tr>

@@ -39,7 +39,15 @@ class NavigationComposer
         return [
             'pos' => [
                 ['label' => 'Punto de venta', 'route' => 'ventas.create', 'active' => 'ventas.create'],
-                ['label' => 'Ventas registradas', 'route' => 'ventas.index', 'active' => 'ventas.index'],
+                [
+                    'label' => 'Ventas registradas',
+                    'route' => 'ventas.index',
+                    'active' => [
+                        'ventas.index',
+                        'ventas.show',
+                        'ventas.edit',
+                    ]
+                ],
             ],
             'dashboard' => [['label' => 'Inicio', 'route' => 'dashboard', 'active' => 'dashboard']],
             'profile' => [['label' => 'Perfil', 'route' => 'profile.show', 'active' => 'profile.*']],

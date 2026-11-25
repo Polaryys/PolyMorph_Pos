@@ -36,95 +36,75 @@
                 Información del usuario
             </x-section-title>
 
-            <div class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
 
                 <!-- NOMBRES -->
-                <div>
-                    <x-input-label>
-                        {{ __('Nombres') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Nombres">
+                    <span class="font-normal">
                         {{ $usuario->nombres }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- APELLIDOS -->
-                <div>
-                    <x-input-label>
-                        {{ __('Apellidos') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Apellidos">
+                    <span class="font-normal">
                         {{ $usuario->apellidos }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- USUARIO -->
-                <div>
-                    <x-input-label>
-                        {{ __('Usuario') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Usuario">
+                    <span class="font-normal">
                         {{ $usuario->username }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- ROL -->
-                <div>
-                    <x-input-label>
-                        {{ __('Rol') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Rol">
+                    <span class="font-normal">
                         {{ $usuario->rol }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- TELÉFONO -->
-                <div>
-                    <x-input-label>
-                        {{ __('Teléfono') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Teléfono">
+                    <span class="font-normal">
                         {{ $usuario->telefono ?: 'No registrado' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- CORREO ELECTRÓNICO -->
-                <div>
-                    <x-input-label>
-                        {{ __('Correo electrónico') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Correo electrónico">
+                    <span class="font-normal break-all">
                         {{ $usuario->email ?: 'No registrado' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- ESTADO -->
-                <div>
-                    <x-input-label>
-                        {{ __('Estado') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
-                        {{ $usuario->estado ? 'Activo' : 'Inactivo' }}
-                    </div>
-                </div>
+                <x-detail-item label="Estado">
+                    @if ($usuario->estado)
+                        <span
+                            class="inline-flex items-center rounded-md border border-emerald-500/20
+                             bg-emerald-500/10 px-2.5 py-1 text-sm font-normal
+                             text-emerald-700 dark:text-emerald-400">
+                            Activo
+                        </span>
+                    @else
+                        <span
+                            class="inline-flex items-center rounded-md border border-red-500/20
+                             bg-red-500/10 px-2.5 py-1 text-sm font-normal
+                             text-red-700 dark:text-red-400">
+                            Inactivo
+                        </span>
+                    @endif
+                </x-detail-item>
 
                 <!-- FECHA DE CREACIÓN -->
-                <div>
-                    <x-input-label>
-                        {{ __('Fecha de creación') }}
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Fecha de creación">
+                    <span class="font-normal tabular-nums">
                         {{ $usuario->created_at->format('d/m/Y H:i') }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
             </div>
 

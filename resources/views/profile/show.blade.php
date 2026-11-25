@@ -36,73 +36,49 @@
                 Información del Usuario
             </x-section-title>
 
-            <div class="grid grid-cols-1 gap-x-4 gap-y-4 md:grid-cols-3 text-sm">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
 
                 <!-- NOMBRES -->
-                <div>
-                    <x-input-label>
-                        Nombres
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Nombres">
+                    <span class="font-normal">
                         {{ $user->nombres }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- APELLIDOS -->
-                <div>
-                    <x-input-label>
-                        Apellidos
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Apellidos">
+                    <span class="font-normal">
                         {{ $user->apellidos }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- USUARIO -->
-                <div>
-                    <x-input-label>
-                        Usuario
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Usuario">
+                    <span class="font-normal">
                         {{ $user->username }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- ROL -->
-                <div>
-                    <x-input-label>
-                        Rol
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Rol">
+                    <span class="font-normal">
                         {{ $user->rol }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- TELÉFONO -->
-                <div>
-                    <x-input-label>
-                        Telefono
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Teléfono">
+                    <span class="font-normal">
                         {{ $user->telefono ?: 'No registrado' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- CORREO ELECTRÓNICO -->
-                <div>
-                    <x-input-label>
-                        Correo electrónico
-                    </x-input-label>
-
-                    <div class="mt-1 block w-full rounded-md border border-app-border-strong px-3 py-2">
+                <x-detail-item label="Correo electrónico">
+                    <span class="font-normal break-all">
                         {{ $user->email ?: 'No registrado' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
             </div>
 

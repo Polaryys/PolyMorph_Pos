@@ -1,49 +1,59 @@
 <x-app-layout>
 
-
-
     <div class="space-y-7">
 
         <!-- DATOS DEL CLIENTE -->
-        <section class="space-y-3">
+        <section class="space-y-4">
 
             <x-section-title>
                 Datos del Cliente
             </x-section-title>
 
-            <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                 <!-- NIT -->
-                <div class="sm:col-span-3">
-                    <x-input-label>NIT</x-input-label>
-                    <div class="mt-1 block w-full rounded-md border text-sm border-app-border-strong px-3 py-2">
+                <x-detail-item label="NIT">
+                    <span class="font-normal">
                         {{ $cliente->nit ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- CLASIFICACIÓN -->
-                <div class="sm:col-span-3">
-                    <x-input-label>Clasificación</x-input-label>
-                    <div class="mt-1 block w-full rounded-md border text-sm border-app-border-strong px-3 py-2">
-                        {{ $cliente->clasificacion ?: '—' }}
-                    </div>
-                </div>
+                <x-detail-item label="Clasificación">
+                    @if ($cliente->clasificacion === 'Mayorista')
+                        <span
+                            class="inline-flex items-center rounded-md border border-blue-500/20
+                             bg-blue-500/10 px-2.5 py-1 text-sm font-normal
+                             text-blue-700 dark:text-blue-400">
+                            Mayorista
+                        </span>
+                    @elseif ($cliente->clasificacion === 'Minorista')
+                        <span
+                            class="inline-flex items-center rounded-md border border-violet-500/20
+                             bg-violet-500/10 px-2.5 py-1 text-sm font-normal
+                             text-violet-700 dark:text-violet-400">
+                            Minorista
+                        </span>
+                    @else
+                        <span class="font-normal">
+                            {{ $cliente->clasificacion ?: '—' }}
+                        </span>
+                    @endif
+                </x-detail-item>
 
                 <!-- NOMBRES -->
-                <div class="sm:col-span-3">
-                    <x-input-label>Nombres</x-input-label>
-                    <div class="mt-1 block w-full rounded-md border text-sm border-app-border-strong px-3 py-2">
+                <x-detail-item label="Nombres">
+                    <span class="font-normal">
                         {{ $cliente->nombres ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- APELLIDOS -->
-                <div class="sm:col-span-3">
-                    <x-input-label>Apellidos</x-input-label>
-                    <div class="mt-1 block w-full rounded-md border text-sm border-app-border-strong px-3 py-2">
+                <x-detail-item label="Apellidos">
+                    <span class="font-normal">
                         {{ $cliente->apellidos ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
             </div>
 
@@ -51,38 +61,35 @@
 
 
         <!-- INFORMACIÓN DE CONTACTO -->
-        <section class="space-y-5">
+        <section class="space-y-4">
 
             <x-section-title>
-            Información de Contacto
+                Información de Contacto
             </x-section-title>
 
-            <div class="grid grid-cols-1 gap-x-6 gap-y-5 sm:grid-cols-6">
+            <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
 
                 <!-- TELÉFONO -->
-                <div class="sm:col-span-3">
-                    <x-input-label>Teléfono</x-input-label>
-                    <div class="mt-1 block w-full rounded-md border text-sm border-app-border-strong px-3 py-2">
+                <x-detail-item label="Teléfono">
+                    <span class="font-normal">
                         {{ $cliente->telefono ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- CORREO -->
-                <div class="sm:col-span-3">
-                    <x-input-label>Correo electrónico</x-input-label>
-                    <div class="mt-1 block w-full rounded-md border text-sm border-app-border-strong px-3 py-2">
+                <x-detail-item label="Correo electrónico">
+                    <span class="font-normal break-all">
                         {{ $cliente->correo ?: '—' }}
-                    </div>
-                </div>
+                    </span>
+                </x-detail-item>
 
                 <!-- NOTAS -->
-                <div class="sm:col-span-6">
-                    <x-input-label>Notas</x-input-label>
-
-                    <div
-                        class="mt-1 block w-full rounded-md border text-sm border-app-border-strong px-3 py-2">
-                        {{ $cliente->notas ?: '—' }}
-                    </class=>
+                <div class="sm:col-span-2">
+                    <x-detail-item label="Notas">
+                        <span class="font-normal whitespace-pre-line">
+                            {{ $cliente->notas ?: '—' }}
+                        </span>
+                    </x-detail-item>
                 </div>
 
             </div>

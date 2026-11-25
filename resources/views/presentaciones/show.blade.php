@@ -1,8 +1,8 @@
-
 <x-app-layout>
     @php
         $nombrePresentacion = trim(
-            $presentacion->nombre . ($presentacion->inventario?->marca?->nombre ? ' - ' . $presentacion->inventario->marca->nombre : ''),
+            $presentacion->nombre .
+                ($presentacion->inventario?->marca?->nombre ? ' - ' . $presentacion->inventario->marca->nombre : ''),
         );
         $presentacionBase = $presentacion->inventario?->presentaciones->first();
     @endphp
@@ -29,56 +29,65 @@
                             class="flex flex-col justify-between gap-4 border-b border-app-border pb-4 lg:flex-row lg:items-start">
                             <div class="min-w-0">
                                 <p class="mb-1 text-xs font-medium text-app-text-muted">Nombre y marca</p>
-                                <h1 class="wrap-break-word text-2xl font-bold tracking-tight text-app-text-primary sm:text-3xl">
+                                <h1
+                                    class="wrap-break-word text-2xl font-bold tracking-tight text-app-text-primary sm:text-3xl">
                                     {{ $nombrePresentacion }}
                                 </h1>
                             </div>
 
                             <div class="grid shrink-0 grid-cols-2 gap-3 text-sm lg:min-w-[280px]">
-                                <x-detail-field label="Creado en" class="bg-app-background">
-                                    <span class="tabular-nums">{{ $presentacion->created_at?->format('d/m/Y H:i') ?? '—' }}</span>
-                                </x-detail-field>
-                                <x-detail-field label="Última edición" class="bg-app-background">
-                                    <span class="tabular-nums">{{ $presentacion->updated_at?->format('d/m/Y H:i') ?? '—' }}</span>
-                                </x-detail-field>
+                                <x-detail-item label="Creado en">
+                                    <span class="font-normal tabular-nums">
+                                        {{ $presentacion->created_at?->format('d/m/Y H:i') ?? '—' }}
+                                    </span>
+                                </x-detail-item>
+
+                                <x-detail-item label="Última edición">
+                                    <span class="font-normal tabular-nums">
+                                        {{ $presentacion->updated_at?->format('d/m/Y H:i') ?? '—' }}
+                                    </span>
+                                </x-detail-item>
                             </div>
                         </div>
 
                         <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 xl:grid-cols-3">
-                            <x-detail-field label="Estado">
+                            <x-detail-item label="Estado">
                                 <span @class([
                                     'inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold whitespace-nowrap',
-                                    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' => $presentacion->estado,
+                                    'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
+                                        $presentacion->estado,
                                     'bg-red-500/10 text-red-600 dark:text-red-400' => !$presentacion->estado,
                                 ])>
                                     {{ $presentacion->estado ? 'Activa' : 'Inactiva' }}
                                 </span>
-                            </x-detail-field>
+                            </x-detail-item>
 
-                            <x-detail-field label="SKU">
+                            <x-detail-item label="SKU">
                                 {{ $presentacion->codigoSKU }}
-                            </x-detail-field>
+                            </x-detail-item>
 
-                            <x-detail-field label="Código de barras">
+                            <x-detail-item label="Código de barras">
                                 {{ $presentacion->codigoBarras ?? '—' }}
-                            </x-detail-field>
+                            </x-detail-item>
 
-                            <x-detail-field label="Artículo base">
+                            <x-detail-item label="Artículo base">
                                 {{ $presentacionBase?->nombre ?? '—' }}
-                            </x-detail-field>
+                            </x-detail-item>
 
-                            <x-detail-field label="Categoría">
+                            <x-detail-item label="Categoría">
                                 {{ $presentacion->inventario?->categoria?->nombre ?? '—' }}
-                            </x-detail-field>
+                            </x-detail-item>
 
-                            <x-detail-field label="Vencimiento">
+                            <x-detail-item label="Vencimiento">
                                 {{ $presentacion->fecha_vencimiento?->format('d/m/Y') ?? 'No registrada' }}
-                            </x-detail-field>
+                            </x-detail-item>
                         </div>
 
-                        <x-detail-field label="Detalles">
-                            {{ $presentacion->detalle ?? 'Sin descripción registrada.' }}
-                        </x-detail-field>
+                        <x-detail-item label="Detalles">
+                            <span class="font-normal">
+                                {{ $presentacion->detalle ?? 'Sin descripción registrada.' }}
+                            </span>
+                        </x-detail-item>
                     </div>
                 </div>
             </div>
@@ -134,7 +143,8 @@
                 <tr>
                     <td class="whitespace-nowrap px-4 py-3 font-medium text-app-text-primary">Unitario</td>
                     <td class="whitespace-nowrap px-4 py-3 text-app-text-secondary">1 unidad</td>
-                    <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-app-primary-700 dark:text-app-primary-300">
+                    <td
+                        class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-app-primary-700 dark:text-app-primary-300">
                         Q {{ number_format((float) ($presentacion->precioUnitario ?? 0), 2) }}
                     </td>
                 </tr>
@@ -142,7 +152,8 @@
                 <tr>
                     <td class="whitespace-nowrap px-4 py-3 font-medium text-app-text-primary">Docena</td>
                     <td class="whitespace-nowrap px-4 py-3 text-app-text-secondary">12 unidades</td>
-                    <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-app-primary-700 dark:text-app-primary-300">
+                    <td
+                        class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-app-primary-700 dark:text-app-primary-300">
                         @if ($presentacion->precioUnitarioDocena !== null)
                             Q {{ number_format((float) $presentacion->precioUnitarioDocena, 2) }}
                         @else
@@ -154,7 +165,8 @@
                 <tr>
                     <td class="whitespace-nowrap px-4 py-3 font-medium text-app-text-primary">Ciento</td>
                     <td class="whitespace-nowrap px-4 py-3 text-app-text-secondary">100 unidades</td>
-                    <td class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-app-primary-700 dark:text-app-primary-300">
+                    <td
+                        class="whitespace-nowrap px-4 py-3 font-semibold tabular-nums text-app-primary-700 dark:text-app-primary-300">
                         @if ($presentacion->precioUnitarioCiento !== null)
                             Q {{ number_format((float) $presentacion->precioUnitarioCiento, 2) }}
                         @else

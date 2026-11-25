@@ -14,20 +14,43 @@
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
 
     <!-- Scripts -->
+    <script>
+        (() => {
+            const theme = localStorage.getItem('app-theme') ?? 'light';
+            const accent = localStorage.getItem('app-accent') ?? 'indigo';
+
+            document.documentElement.dataset.theme = theme;
+            document.documentElement.dataset.accent = accent;
+        })();
+    </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="font-sans text-gray-900 antialiased">
+<body class="font-sans text-app-text-primary antialiased">
 
-    <div class="min-h-screen flex flex-col justify-center items-center px-4 py-6 bg-[#F8FAFC] relative overflow-hidden">
+    <div
+        class="relative flex min-h-screen flex-col items-center justify-center
+                overflow-hidden bg-app-background px-4 py-6">
 
-        <!-- Luz difusa -->
+        <!-- Fondo degradado -->
         <div
-            class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] bg-linear-to-br from-[#CCE2F6] to-[#9BADDC] rounded-full blur-[120px] opacity-70 pointer-events-none">
+            class="pointer-events-none absolute inset-0
+                   bg-linear-to-br
+                   from-app-primary-500/10
+                   via-app-background
+                   to-app-primary-700/15">
         </div>
 
-        <!-- Contenido de Login o Register -->
-        <div class="w-full relative z-10">
+        <!-- Patrón geométrico -->
+        <div
+            class="pointer-events-none absolute inset-0
+                   opacity-[0.12]
+                   [background-image:linear-gradient(var(--app-border)_1px,transparent_1px),linear-gradient(90deg,var(--app-border)_1px,transparent_1px)]
+                   [background-size:42px_42px]">
+        </div>
+
+        <!-- Contenido -->
+        <div class="relative z-10 w-full">
             {{ $slot }}
         </div>
 

@@ -725,7 +725,7 @@
 
                         <button type="button" @click="abrirModalPagoCambio()" :disabled="!formularioCambioValido()"
                             class="rounded-md bg-app-primary-700 px-5 py-2.5 text-sm font-semibold
-                            text-app-text-primary hover:bg-app-primary-800
+                            text-white hover:bg-app-primary-800
                             disabled:cursor-not-allowed disabled:opacity-50">
                             Continuar al pago o reembolso
                         </button>
@@ -898,7 +898,7 @@
                                 <button type="submit" form="formulario-cambio"
                                     :disabled="enviandoCambio || cargandoMetodosPagoCambio || !!errorPagoCambio || !
                                         pagosCambioValidos()"
-                                    class="rounded-md bg-app-primary-700 px-4 py-2 text-base font-medium text-white shadow-sm transition hover:bg-app-primary-800 disabled:cursor-not-allowed disabled:opacity-50">
+                                    class="rounded-md bg-app-primary-700 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-app-primary-800 disabled:cursor-not-allowed disabled:opacity-50">
                                     <span
                                         x-text="enviandoCambio
                                     ? 'Registrando...'
@@ -982,7 +982,7 @@
                         Cancelar
                     </button>
                     <button type="button" @click="agregarDevoluciones()"
-                        class="rounded-md bg-app-primary-700 px-5 py-2.5 text-sm font-semibold text-app-text-primary hover:bg-app-primary-800">
+                        class="rounded-md bg-app-primary-700 px-5 py-2.5 text-sm font-semibold text-white hover:bg-app-primary-800">
                         Continuar al carrito
                     </button>
                 </div>
