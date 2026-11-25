@@ -376,7 +376,7 @@
                         <tr class="transition-colors hover:bg-indigo-50/50">
                             <td class="px-4 py-3">
                                 <a href="{{ route('ventas.show', $operacion) }}"
-                                    class="font-medium text-app-primary-600 hover:text-app-primary-500">
+                                    class="font-medium text-app-primary-500 hover:text-app-primary-600">
                                     {{ $operacion->numero_venta }}
                                 </a>
                             </td>

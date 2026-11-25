@@ -2,16 +2,16 @@
     <x-input-label for="buscar-producto" class="mb-2">
         Buscar productos
     </x-input-label>
-    <div class="flex items-center gap-2">
+    <div class="flex min-w-0 items-center gap-2">
         <x-lucide-search class="h-5 w-5 shrink-0 text-slate-400" />
         <x-text-input id="buscar-producto" x-ref="buscadorProductos" type="search" x-model="buscar"
             @input.debounce.300ms="buscarProductos()" @keydown.enter.prevent="agregarProductoConEnter()"
-            placeholder="Buscar por nombre o SKU..." autocomplete="off" class="w-full" />
+            placeholder="Buscar por nombre o SKU..." autocomplete="off" class="w-full min-w-0" />
         <span x-show="cargando" x-cloak class="text-sm text-app-border-strong">Buscando...</span>
     </div>
 
     <div x-cloak x-show="buscar.trim().length > 0"
-        class="absolute z-30 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border border-app-border bg-app-surface-elevated shadow-lg sm:max-w-2xl">
+        class="absolute z-30 mt-1 max-h-80 w-full max-w-[90vw] overflow-y-auto rounded-xl border border-app-border bg-app-surface-elevated shadow-lg sm:max-w-2xl">
         <template x-for="producto in resultados" :key="producto.presentacion_id">
             <button type="button" @click="seleccionar(producto)"
                 class="flex w-full items-center justify-between gap-4 border-b border-app-border px-4 py-3 text-left transition">
@@ -41,11 +41,11 @@
                     </span>
                 </span>
                 <span class="shrink-0 text-right">
-                    <span class="block text-lg font-bold text-app-primary-400">
+                    <span class="block text-lg font-bold text-green-500">
                         Q <span x-text="Number(producto.precio_unitario_actual).toFixed(2)"></span>
                     </span>
                     <template x-if="producto.tipo_item === 'PRODUCTO'">
-                        <span class="mt-1 block text-xs text-app-text-muted">
+                        <span class="mt-1 block text-sm text-app-text-primary">
                             <span x-text="cantidadDisponible(producto)"></span>
                             <span x-text="cantidadDisponible(producto) === 1 ? 'disponible' : 'disponibles'"></span>
                         </span>

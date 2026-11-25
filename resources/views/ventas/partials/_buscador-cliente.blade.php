@@ -20,17 +20,17 @@
     </template>
 
     <template x-if="!clienteSeleccionado">
-        <div class="flex items-center gap-2">
+        <div class="flex min-w-0 items-center gap-2">
             <x-lucide-search class="h-5 w-5 shrink-0 text-app-text-muted" />
             <x-text-input id="buscar-cliente" type="search" x-model="buscarCliente"
-                @input.debounce.300ms="buscarClientes()" @keydown.enter.prevent
+                @input.debounce.300ms="buscarClientes()" @keydown.enter.prevent="$event.preventDefault()"
                 placeholder="Buscar por nombre, NIT o teléfono..." autocomplete="off" class="w-full" />
             <span x-show="cargandoClientes" x-cloak class="text-sm text-app-text-muted">Buscando...</span>
         </div>
     </template>
 
     <div x-cloak x-show="!clienteSeleccionado && buscarCliente.trim().length > 0"
-        class="absolute z-30 mt-1 max-h-80 w-full overflow-y-auto rounded-xl border border-app-border bg-app-surface-elevated shadow-lg">
+        class="absolute z-30 mt-1 max-h-80 w-full max-w-[90vw] overflow-y-auto rounded-xl border border-app-border bg-app-surface-elevated shadow-lg">
         <template x-for="cliente in resultadosClientes" :key="cliente.id">
             <button type="button" @click="seleccionarCliente(cliente)"
                 class="w-full border-b border-app-border px-4 py-3 text-left transition hover:bg-app-surface-hover">

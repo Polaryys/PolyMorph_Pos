@@ -1,8 +1,7 @@
 <x-app-layout>
 
-    <div x-data="ventasCarrito(@js($clienteSeleccionado), @js($detalles))" x-init="init()" class="space-y-3">
-
-        <form id="formulario-venta" action="{{ route('ventas.store') }}" method="POST" class="space-y-5"
+    <div x-data="ventasCarrito(@js($clienteSeleccionado), @js($detalles))" x-init="init()" class="w-full min-w-0 overflow-x-hidden space-y-3">
+        <form id="formulario-venta" action="{{ route('ventas.store') }}" method="POST" class="w-full min-w-0 space-y-5"
             x-ref="formularioVenta" @submit.prevent="confirmarVenta($event)">
             @csrf
             <input type="hidden" name="idempotency_key"

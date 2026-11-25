@@ -506,7 +506,7 @@ export function ventasCarrito(clienteSeleccionado = null, detalles = []) {
 
         diferenciaEfectivo(metodo) {
             return Math.round(
-                ((Number(metodo.monto_recibido) || 0) - this.montoAplicado(metodo) + Number.EPSILON) * 100
+                ((Number(metodo.monto_recibido) || 0) - this.montoDisponiblePara(metodo) + Number.EPSILON) * 100
             ) / 100;
         },
 
