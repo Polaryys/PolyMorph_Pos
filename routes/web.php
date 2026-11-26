@@ -35,13 +35,15 @@ Route::middleware('auth')->group(function () {
 
     Route::resource('articulos', InventarioController::class)
         ->only(['index', 'show'])
-        ->parameters(['articulos' => 'inventario']);
+        ->parameters(['articulos' => 'inventario'])
+        ->where(['inventario' => '[0-9]+']);
 
 
     // Ver presentaciones adicionales a la base.
     Route::resource('presentaciones', PresentacionController::class)
         ->only(['index', 'show'])
-        ->parameters(['presentaciones' => 'presentacion']);
+        ->parameters(['presentaciones' => 'presentacion'])
+        ->where(['presentacion' => '[0-9]+']);
 
     // Búsqueda, registro, consulta, anulación y pagos de ventas.
     Route::get('/ventas/create', [VentasController::class, 'create'])

@@ -26,7 +26,7 @@ class NavigationComposer
     {
         return match (true) {
             Request::routeIs('pos.*', 'ventas.*') => 'pos',
-            Request::routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*', 'ajuste.*', 'movimientos.*') => 'inventario',
+            Request::routeIs('inventario.*', 'articulos.*', 'marcas.*', 'categorias.*', 'compras.*', 'ajuste.*', 'movimientos.*','presentaciones.*') => 'inventario',
             Request::routeIs('clientes.*') => 'clientes',
             Request::routeIs('proveedores.*') => 'proveedores',
             Request::routeIs('profile.*') => 'profile',
@@ -68,7 +68,7 @@ class NavigationComposer
                 ],
 
                 // Opciones exclusivas del administrador
-                ...$user?->esAdministrador() ? [
+                ...($user?->esAdministrador() ? [
                     [
                         'label' => 'Categorías',
                         'route' => 'categorias.index',
@@ -94,7 +94,7 @@ class NavigationComposer
                         'route' => 'inventario.movimientos',
                         'active' => ['inventario.movimientos'],
                     ],
-                ] : [],
+                ] : []),
             ],
             'clientes' => [['label' => 'Clientes', 'route' => 'clientes.index', 'active' => 'clientes.*']],
             'proveedores' => [['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']],
