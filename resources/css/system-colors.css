@@ -1,9 +1,31 @@
+/* ============================================================
+   TIPOGRAFÍAS
+   ============================================================ */
+
+:root {
+    --app-font-family: 'Figtree', sans-serif;
+}
+
+:root[data-font="figtree"] {
+    --app-font-family: 'Figtree', sans-serif;
+}
+
+:root[data-font="inter"] {
+    --app-font-family: 'Inter', sans-serif;
+}
+
+:root[data-font="roboto"] {
+    --app-font-family: 'Roboto', sans-serif;
+}
+
+:root[data-font="nunito"] {
+    --app-font-family: 'Nunito Sans', sans-serif;
+}
 
 /* ============================================================
    PALETAS PRINCIPALES
    ============================================================ */
 
-:root,
 :root[data-accent="indigo"] {
     --app-primary-100: var(--color-indigo-100);
     --app-primary-200: var(--color-indigo-200);
@@ -32,6 +54,21 @@
 
     --app-table-header: var(--color-blue-100);
     --app-table-header-text: var(--color-blue-900);
+}
+
+:root[data-accent="teal"] {
+    --app-primary-100: var(--color-teal-100);
+    --app-primary-200: var(--color-teal-200);
+    --app-primary-300: var(--color-teal-300);
+    --app-primary-400: var(--color-teal-400);
+    --app-primary-500: var(--color-teal-500);
+    --app-primary-600: var(--color-teal-600);
+    --app-primary-700: var(--color-teal-700);
+    --app-primary-800: var(--color-teal-800);
+    --app-primary-900: var(--color-teal-900);
+
+    --app-table-header: var(--color-teal-100);
+    --app-table-header-text: var(--color-teal-900);
 }
 
 /* ============================================================
@@ -90,4 +127,35 @@
 
     --app-table-header: var(--color-zinc-800);
     --app-table-header-text: var(--color-zinc-100);
+}
+
+/* ============================================================
+   APARIENCIA CREPÚSCULO (DIM)
+   ============================================================ */
+
+:root[data-theme="dim"] {
+
+    /* BACKGROUNDS */
+    --app-background: var(--color-zinc-300);
+    --app-surface: var(--color-zinc-200);
+    --app-surface-alt: var(--color-zinc-300);
+    --app-surface-hover: var(--color-zinc-400);
+    --app-surface-elevated: var(--color-zinc-100);
+
+    /* TEXTOS */
+    --app-text-primary: var(--color-zinc-900);
+    --app-text-secondary: var(--color-zinc-700);
+    --app-text-muted: var(--color-zinc-600);
+    --app-text-inverse: var(--color-white);
+    --app-nav-active-text: var(--app-primary-800);
+
+    /* BORDES */
+    --app-border: var(--color-zinc-300);
+    --app-border-strong: var(--color-zinc-400);
+    --app-border-hover: var(--color-zinc-600);
+    --app-border-focus: var(--app-primary-600);
+
+    /* ENCABEZADOS DE TABLAS */
+    --app-table-header: var(--color-zinc-300);
+    --app-table-header-text: var(--color-zinc-900);
 }

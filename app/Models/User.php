@@ -79,4 +79,14 @@ class User extends Authenticatable
     {
         return $this->hasMany(SolicitudIdempotencia::class, 'usuario_id');
     }
+
+    public function esAdministrador(): bool
+    {
+        return $this->rol === 'Administrador';
+    }
+
+    public function esVendedor(): bool
+    {
+        return $this->rol === 'Vendedor';
+    }
 }

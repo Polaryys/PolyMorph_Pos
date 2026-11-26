@@ -11,16 +11,29 @@
 
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
-    <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+    <link
+        href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|inter:400,500,600,700|roboto:400,500,600,700|nunito-sans:400,500,600,700&display=swap"
+        rel="stylesheet" />
 
     <!-- Scripts -->
     <script>
         (() => {
-            const theme = localStorage.getItem('app-theme') ?? 'light';
-            const accent = localStorage.getItem('app-accent') ?? 'indigo';
+            const temas = ['light', 'dim', 'dark'];
+            const acentos = ['indigo', 'blue', 'teal'];
+            const fuentes = ['figtree', 'inter', 'roboto', 'nunito'];
 
-            document.documentElement.dataset.theme = theme;
-            document.documentElement.dataset.accent = accent;
+            const theme = localStorage.getItem('app-theme');
+            const accent = localStorage.getItem('app-accent');
+            const font = localStorage.getItem('app-font');
+
+            document.documentElement.dataset.theme =
+                temas.includes(theme) ? theme : 'light';
+
+            document.documentElement.dataset.accent =
+                acentos.includes(accent) ? accent : 'indigo';
+
+            document.documentElement.dataset.font =
+                fuentes.includes(font) ? font : 'figtree';
         })();
     </script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])

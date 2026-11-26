@@ -1,17 +1,82 @@
 <x-app-layout>
 
-    <!-- Encabezado y acciones -->
+    {{-- Encabezado y acciones --}}
     <div class="mb-5">
+        <div class="flex flex-col gap-3 xl:flex-row xl:items-center">
 
-        <x-search-bar :action="route('presentaciones.index')" :buscar="$buscar"
-            placeholder="Buscar presentaciones por nombre, código o artículo">
+            {{-- Búsqueda --}}
+            <div class="min-w-0 flex-1">
+                <x-search-bar :action="route('presentaciones.index')" :buscar="$buscar"
+                    placeholder="Buscar presentaciones por nombre, código o artículo">
 
-            <x-primary-link href="{{ route('presentaciones.create') }}" wire:navigate>
-                + Agregar presentación
-            </x-primary-link>
+                    <x-primary-link href="{{ route('presentaciones.create') }}" wire:navigate>
+                        + Agregar presentación
+                    </x-primary-link>
 
-        </x-search-bar>
+                </x-search-bar>
+            </div>
 
+            {{-- Filtros --}}
+            <form action="{{ route('presentaciones.index') }}" method="GET" class="flex flex-col gap-2 sm:flex-row">
+
+                <input type="hidden" name="buscar" value="{{ $buscar }}">
+
+                {{-- Categorías --}}
+                <div class="relative w-full sm:w-44">
+                    <select name="categoria" onchange="this.form.submit()"
+                        class="scrollbar-app w-full appearance-none rounded-md border border-app-primary-500
+                        bg-transparent py-2 pl-3 pr-9 text-sm font-medium
+                        text-app-primary-500 dark:text-app-primary-300
+                        focus:border-app-primary-400 focus:outline-none
+                        focus:ring-1 focus:ring-app-primary-500">
+
+                        <option value="" class="bg-app-background text-app-text-primary">
+                            Todas las categorías
+                        </option>
+
+                        @foreach ($categorias as $categoria)
+                            <option value="{{ $categoria->id }}" @selected((string) $categoriaId === (string) $categoria->id)
+                                class="bg-app-background text-app-text-primary">
+                                {{ $categoria->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <x-lucide-chevron-down
+                        class="pointer-events-none absolute right-3 top-1/2
+                        h-4 w-4 -translate-y-1/2 text-app-primary-600
+                        dark:text-app-primary-300" />
+                </div>
+
+                {{-- Marcas --}}
+                <div class="relative w-full sm:w-40">
+                    <select name="marca" onchange="this.form.submit()"
+                        class="scrollbar-app w-full appearance-none rounded-md border border-app-primary-500
+                        bg-transparent py-2 pl-3 pr-9 text-sm font-medium
+                        text-app-primary-500 dark:text-app-primary-300
+                        focus:border-app-primary-400 focus:outline-none
+                        focus:ring-1 focus:ring-app-primary-500">
+
+                        <option value="" class="bg-app-background text-app-text-primary">
+                            Todas las marcas
+                        </option>
+
+                        @foreach ($marcas as $marca)
+                            <option value="{{ $marca->id }}" @selected((string) $marcaId === (string) $marca->id)
+                                class="bg-app-background text-app-text-primary">
+                                {{ $marca->nombre }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    <x-lucide-chevron-down
+                        class="pointer-events-none absolute right-3 top-1/2
+                        h-4 w-4 -translate-y-1/2 text-app-primary-600
+                        dark:text-app-primary-300" />
+                </div>
+
+            </form>
+        </div>
     </div>
 
     <!-- MENSAJES -->
@@ -90,15 +155,15 @@
 
                 <!-- ESTADO DE LA PRESENTACIÓN -->
                 <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
-                        <span @class([
-                        'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
+                    <span @class([
+                        'inline-flex items-center rounded-full text-sm px-2.5 py-1 font-normal whitespace-nowrap',
                         'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
                             $presentacion->estado,
                         'bg-red-500/10 text-red-600 dark:text-red-400' => !$presentacion->estado,
                     ])>
                         {{ $presentacion->estado ? 'Activo' : 'Inactivo' }}
                     </span>
-                    </td>
+                </td>
 
                 <!-- ACCIONES -->
                 <td class="px-4 py-3 whitespace-nowrap">

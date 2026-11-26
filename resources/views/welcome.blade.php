@@ -8,16 +8,29 @@
     <title>{{ config('app.name', 'Laravel') }}</title>
 
     <!-- Fonts -->
-    <link rel="preconnect" href="https://bunny.net">
-    <link href="https://bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
+    <link rel="preconnect" href="https://fonts.bunny.net">
+    <link
+        href="https://fonts.bunny.net/css?family=figtree:400,500,600,700|inter:400,500,600,700|roboto:400,500,600,700|nunito-sans:400,500,600,700&display=swap"
+        rel="stylesheet" />
 
     <script>
         (() => {
-            const theme = localStorage.getItem('app-theme') ?? 'light';
-            const accent = localStorage.getItem('app-accent') ?? 'indigo';
+            const temas = ['light', 'dim', 'dark'];
+            const acentos = ['indigo', 'blue', 'teal'];
+            const fuentes = ['figtree', 'inter', 'roboto', 'nunito'];
 
-            document.documentElement.dataset.theme = theme;
-            document.documentElement.dataset.accent = accent;
+            const theme = localStorage.getItem('app-theme');
+            const accent = localStorage.getItem('app-accent');
+            const font = localStorage.getItem('app-font');
+
+            document.documentElement.dataset.theme =
+                temas.includes(theme) ? theme : 'light';
+
+            document.documentElement.dataset.accent =
+                acentos.includes(accent) ? accent : 'indigo';
+
+            document.documentElement.dataset.font =
+                fuentes.includes(font) ? font : 'figtree';
         })();
     </script>
     <!-- Styles / Scripts -->
@@ -37,7 +50,7 @@
 
             <!-- Imagen / Logo Centrado -->
             <div class="flex justify-center">
-                <x-icon-sistema class="h-24 w-auto text-app-primary-600" />
+                <x-icon-sistema class="h-32 w-auto text-app-primary-600" />
             </div>
 
             <!-- Botones de Acción -->

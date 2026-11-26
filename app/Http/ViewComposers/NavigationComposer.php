@@ -1,7 +1,8 @@
 <?php
 
 namespace App\Http\ViewComposers;
-
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Contracts\View\View;
 use Illuminate\Support\Facades\Request;
 
@@ -9,8 +10,11 @@ class NavigationComposer
 {
     public function compose(View $view): void
     {
+        /** @var User|null $user */
+        $user = Auth::user();
+
         $module = $this->resolveModule();
-        $menus = $this->resolveMenus();
+        $menus = $this->resolveMenus($user);
 
         $view->with([
             'navModule' => $module,
@@ -34,7 +38,7 @@ class NavigationComposer
         };
     }
 
-    private function resolveMenus(): array
+    private function resolveMenus(?User $user): array
     {
         return [
             'pos' => [
@@ -97,10 +101,13 @@ class NavigationComposer
                 ['label' => 'Pagos', 'route' => null, 'active' => '', 'disabled' => true],
             ],
             'medios' => [['label' => 'Medios', 'route' => 'imagenes.index', 'active' => 'imagenes.*']],
-            'configuracion' => [
-                ['label' => 'Metodos de Pago', 'route' => 'metodos-pago.index', 'active' => 'metodos-pago.*'],
+            'configuracion' => array_filter([
                 ['label' => 'Temas', 'route' => 'configuracion', 'active' => 'configuracion'],
-            ],
+
+                $user?->esAdministrador()
+                ? ['label' => 'Metodos de Pago', 'route' => 'metodos-pago.index', 'active' => 'metodos-pago.*']
+                : null,
+            ]),
         ];
     }
 }

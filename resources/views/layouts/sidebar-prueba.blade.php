@@ -1,6 +1,6 @@
 <aside
     class="fixed inset-y-0 left-0 z-40 flex w-56 flex-col
-           overflow-y-auto border-r border-app-border bg-app-surface
+           overflow-y-auto border-r border-app-border bg-app-surface-alt
            transform transition-transform duration-300 ease-in-out
            -translate-x-full md:translate-x-0"
     :class="{ 'translate-x-0': open, '-translate-x-full': !open }">
@@ -19,7 +19,7 @@
 
     {{-- Separador --}}
     <div class="py-1">
-        <hr class="mx-4 border-app-border">
+        <hr class="mx-4 border-app-border-strong">
     </div>
 
     {{-- Navegación --}}
@@ -67,7 +67,8 @@
 
                 Clientes
             </x-sidebar-link>
-
+            
+            @if (auth()->user()->esAdministrador())
             <x-sidebar-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.*')" wire:navigate>
 
                 <x-slot:icon>
@@ -76,18 +77,19 @@
 
                 Proveedores
             </x-sidebar-link>
-
+            
             {{-- Separador --}}
             <div class="py-2">
-                <hr class="border-app-border">
+                <hr class="border-app-border-strong">
             </div>
-
+            
             {{-- Sección de administración --}}
             <p
                 class="mb-3 px-3 text-xs font-semibold
                       tracking-wider text-app-text-muted uppercase">
                 Administración
             </p>
+            
 
             <x-sidebar-link :href="route('reportes.inventario')" :active="request()->routeIs('reportes.*')" wire:navigate>
 
@@ -115,8 +117,8 @@
 
                 Medios
             </x-sidebar-link>
-
-            <x-sidebar-link :href="route('metodos-pago.index')" :active="request()->routeIs('metodos-pago.*', 'configuracion', 'configuracion.*')" wire:navigate>
+            @endif
+            <x-sidebar-link :href="route('configuracion')" :active="request()->routeIs('configuracion', 'metodos-pago.*')" wire:navigate>
                 <x-slot:icon>
                     <x-lucide-settings class="h-5 w-5" />
                 </x-slot:icon>

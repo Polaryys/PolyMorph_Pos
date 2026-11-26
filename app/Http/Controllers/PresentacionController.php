@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Inventario;
+use App\Models\Marca;
+use App\Models\Categoria;
 use App\Models\Presentacion;
 use App\Models\Imagen;
 use Illuminate\Http\JsonResponse;
@@ -18,7 +20,16 @@ class PresentacionController extends Controller
 
     public function index(Request $request)
     {
-        $buscar = trim($request->input('buscar', ''));
+        // Validar parámetros de búsqueda y filtros.
+        $filtros = $request->validate([
+            'buscar' => ['nullable', 'string', 'max:100'],
+            'categoria' => ['nullable', 'integer', 'exists:categorias,id'],
+            'marca' => ['nullable', 'integer', 'exists:marcas,id'],
+        ]);
+
+        $buscar = trim($filtros['buscar'] ?? '');
+        $categoriaId = $filtros['categoria'] ?? null;
+        $marcaId = $filtros['marca'] ?? null;
 
         $presentaciones = Presentacion::with([
             'inventario.presentaciones' => function ($query) {
@@ -28,28 +39,54 @@ class PresentacionController extends Controller
             'imagen',
         ])
             ->where('base', false)
+
+            // Búsqueda por datos de la presentación o presentación base.
             ->when($buscar !== '', function ($query) use ($buscar) {
                 $query->where(function ($query) use ($buscar) {
 
-                    // Buscar en los datos de la presentación adicional.
                     $query->where('nombre', 'like', "%{$buscar}%")
                         ->orWhere('codigoSKU', 'like', "%{$buscar}%")
                         ->orWhere('codigoBarras', 'like', "%{$buscar}%")
 
-                        // Buscar por el nombre de la presentación base.
                         ->orWhereHas('inventario.presentaciones', function ($subquery) use ($buscar) {
-                        $subquery->where('base', true)
-                            ->where('nombre', 'like', "%{$buscar}%");
-                    });
+                            $subquery->where('base', true)
+                                ->where('nombre', 'like', "%{$buscar}%");
+                        });
                 });
             })
+
+            // Filtrar por categoría del producto asociado.
+            ->when($categoriaId, function ($query) use ($categoriaId) {
+                $query->whereHas('inventario', function ($subquery) use ($categoriaId) {
+                    $subquery->where('categoria_id', $categoriaId);
+                });
+            })
+
+            // Filtrar por marca del producto asociado.
+            ->when($marcaId, function ($query) use ($marcaId) {
+                $query->whereHas('inventario', function ($subquery) use ($marcaId) {
+                    $subquery->where('marca_id', $marcaId);
+                });
+            })
+
             ->orderByDesc('id')
             ->paginate(10)
             ->withQueryString();
 
+        // Opciones disponibles para los filtros.
+        $categorias = Categoria::orderBy('nombre')
+            ->get(['id', 'nombre']);
+
+        $marcas = Marca::orderBy('nombre')
+            ->get(['id', 'nombre']);
+
         return view('presentaciones.index', compact(
             'presentaciones',
-            'buscar'
+            'buscar',
+            'categoriaId',
+            'marcaId',
+            'categorias',
+            'marcas'
         ));
     }
 

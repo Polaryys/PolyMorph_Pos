@@ -3,11 +3,27 @@
 
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-@theme {
-    --font-sans: "Figtree", sans-serif;
+/* ============================================================
+   TIPOGRAFÍA PREDETERMINADA
+   ============================================================ */
+
+:root {
+    --app-font-family: 'Figtree', sans-serif;
 }
 
+/* ============================================================
+   CONFIGURACIÓN DE TAILWIND
+   ============================================================ */
+
 @theme inline {
+    /* Tipografías */
+    --font-sans: var(--app-font-family);
+
+    --font-figtree: 'Figtree', sans-serif;
+    --font-inter: 'Inter', sans-serif;
+    --font-roboto: 'Roboto', sans-serif;
+    --font-nunito: 'Nunito Sans', sans-serif;
+
     /* PALETA PRINCIPAL */
     --color-app-primary-100: var(--app-primary-100);
     --color-app-primary-200: var(--app-primary-200);
@@ -22,7 +38,6 @@
     /* Encabezados de tablas */
     --color-app-table-header: var(--app-table-header);
     --color-app-table-header-text: var(--app-table-header-text);
-
 
     /* Superficies */
     --color-app-background: var(--app-background);
@@ -44,25 +59,6 @@
     --color-app-border-hover: var(--app-border-hover);
     --color-app-border-focus: var(--app-border-focus);
 }
-
-
-/* ENFOQUE GLOBAL */
-@layer base {
-    input:focus,
-    select:focus,
-    textarea:focus,
-    button:focus,
-    input:focus-visible,
-    select:focus-visible,
-    textarea:focus-visible,
-    button:focus-visible {
-        @apply outline-none ring-1;
-
-        border-color: var(--primary-focus);
-        --tw-ring-color: var(--primary-focus);
-    }
-}
-
 
 /* Scrollbar personalizada */
 .scrollbar-app {

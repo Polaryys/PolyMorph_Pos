@@ -23,16 +23,80 @@
     }" @keydown.escape.window="if (modalImportacionAbierto) cerrarModalImportacion()">
 
         <!-- Encabezado y acciones -->
-        <div class="mb-5">
+        {{-- Encabezado y acciones --}}
+        <div class="mb-5 space-y-3">
 
-            <x-search-bar :action="route('articulos.index')" :buscar="$buscar" placeholder="Buscar artículos por nombre, código o marca">
+            <div class="flex flex-col gap-3 xl:flex-row xl:items-center">
 
-                <x-primary-link href="{{ route('articulos.create') }}" wire:navigate>
-                    + Agregar Artículos
-                </x-primary-link>
+                {{-- Búsqueda --}}
+                <div class="min-w-0 flex-1">
+                    <x-search-bar :action="route('articulos.index')" :buscar="$buscar"
+                        placeholder="Buscar artículos por nombre, código o marca">
+                        <x-primary-link href="{{ route('articulos.create') }}" wire:navigate>
+                            + Agregar Artículos
+                        </x-primary-link>
+                    </x-search-bar>
+                </div>
 
-            </x-search-bar>
+                {{-- Filtros --}}
+                <form action="{{ route('articulos.index') }}" method="GET" class="flex flex-col gap-2 sm:flex-row">
+                    {{-- Conservar búsqueda --}}
+                    <input type="hidden" name="buscar" value="{{ $buscar }}">
 
+                    {{-- Categorías --}}
+                    <div class="relative w-full sm:w-44">
+                        <select name="categoria" onchange="this.form.submit()"
+                            class="scrollbar-app w-full appearance-none rounded-md border border-app-primary-500
+                            bg-transparent py-2 pl-3 pr-9 text-sm font-medium
+                            text-app-primary-700 dark:text-app-primary-300
+                            focus:border-app-primary-600 focus:outline-none
+                            focus:ring-1 focus:ring-app-primary-500">
+                            <option value="" class="bg-app-background text-app-text-primary">
+                                Todas las categorías
+                            </option>
+
+                            @foreach ($categorias as $categoria)
+                                <option value="{{ $categoria->id }}" @selected((string) $categoriaId === (string) $categoria->id)
+                                    class="bg-app-background text-app-text-primary">
+                                    {{ $categoria->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <x-lucide-chevron-down
+                            class="pointer-events-none absolute right-3 top-1/2
+                            h-4 w-4 -translate-y-1/2 text-app-primary-600
+                            dark:text-app-primary-300" />
+                    </div>
+
+                    {{-- Marcas --}}
+                    <div class="relative w-full sm:w-40">
+                        <select name="marca" onchange="this.form.submit()"
+                            class="scrollbar-app w-full appearance-none rounded-md border border-app-primary-500
+                            bg-transparent py-2 pl-3 pr-9 text-sm font-medium
+                            text-app-primary-500 dark:text-app-primary-300
+                            focus:border-app-primary-400 focus:outline-none
+                            focus:ring-1 focus:ring-app-primary-500">
+                            <option value="" class="bg-app-background text-app-text-primary">
+                                Todas las marcas
+                            </option>
+
+                            @foreach ($marcas as $marca)
+                                <option value="{{ $marca->id }}" @selected((string) $marcaId === (string) $marca->id)
+                                    class="bg-app-background text-app-text-primary">
+                                    {{ $marca->nombre }}
+                                </option>
+                            @endforeach
+                        </select>
+
+                        <x-lucide-chevron-down
+                            class="pointer-events-none absolute right-3 top-1/2
+                            h-4 w-4 -translate-y-1/2 text-app-primary-600
+                            dark:text-app-primary-300" />
+                    </div>
+
+                </form>
+            </div>
         </div>
 
         <!-- MENSAJES -->
@@ -110,7 +174,7 @@
                     <!-- ESTADO -->
                     <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
                         <span @class([
-                            'inline-flex items-center rounded-full text-xs px-2.5 py-1 font-semibold whitespace-nowrap',
+                            'inline-flex items-center rounded-full text-sm px-2.5 py-1 font-normal whitespace-nowrap',
                             'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
                                 $articulo->estado,
                             'bg-red-500/10 text-red-600 dark:text-red-400' => !$articulo->estado,
@@ -214,6 +278,43 @@
                                 </ul>
                             </div>
                         @endif
+
+                        {{-- Descargar plantilla --}}
+                        <div class="rounded-lg border border-app-border bg-app-surface-alt p-4">
+                            <div class="flex items-start gap-3">
+
+                                <div class="rounded-lg bg-app-primary-100 p-2 dark:bg-app-primary-900/40">
+                                    <i data-lucide="file-down"
+                                        class="h-5 w-5 text-app-primary-600 dark:text-app-primary-300">
+                                    </i>
+                                </div>
+
+                                <div class="min-w-0 flex-1">
+                                    <p class="text-sm font-semibold text-app-text-primary">
+                                        ¿No tienes el archivo preparado?
+                                    </p>
+
+                                    <p class="mt-1 text-sm text-app-text-secondary">
+                                        Descarga la plantilla con las columnas requeridas para
+                                        completar los datos de tu inventario.
+                                    </p>
+
+                                    <a href="{{ route('inventario.plantilla.csv') }}"
+                                        class="mt-3 inline-flex items-center gap-2 rounded-md
+                                        border border-app-primary-500/30 bg-app-primary-50
+                                        px-3 py-2 text-sm font-medium text-app-primary-700
+                                        transition hover:bg-app-primary-100
+                                        dark:bg-app-primary-900/20 dark:text-app-primary-300
+                                        dark:hover:bg-app-primary-900/40">
+
+                                        <i data-lucide="download" class="h-4 w-4"></i>
+
+                                        Descargar plantilla CSV
+                                    </a>
+                                </div>
+
+                            </div>
+                        </div>
 
                         {{-- Archivo --}}
                         <div>

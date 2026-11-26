@@ -159,7 +159,16 @@ class InventarioController extends Controller
 
     public function index(Request $request)
     {
-        $buscar = trim($request->input('buscar', ''));
+        // Validar parámetros de búsqueda y filtros.
+        $filtros = $request->validate([
+            'buscar' => ['nullable', 'string', 'max:100'],
+            'categoria' => ['nullable', 'integer', 'exists:categorias,id'],
+            'marca' => ['nullable', 'integer', 'exists:marcas,id'],
+        ]);
+
+        $buscar = trim($filtros['buscar'] ?? '');
+        $categoriaId = $filtros['categoria'] ?? null;
+        $marcaId = $filtros['marca'] ?? null;
 
         $articulos = Inventario::with([
             'marca',
@@ -178,6 +187,8 @@ class InventarioController extends Controller
                 $query->select('id', 'nombre_archivo');
             },
         ])
+
+            // Búsqueda por nombre, SKU, código de barras o marca.
             ->when($buscar !== '', function ($query) use ($buscar) {
                 $query->where(function ($query) use ($buscar) {
                     $query->whereHas('presentaciones', function ($subquery) use ($buscar) {
@@ -188,17 +199,41 @@ class InventarioController extends Controller
                                     ->orWhere('codigoBarras', 'like', "%{$buscar}%");
                             });
                     })
-
                         ->orWhereHas('marca', function ($subquery) use ($buscar) {
                             $subquery->where('nombre', 'like', "%{$buscar}%");
                         });
                 });
             })
+
+            // Filtrar por categoría.
+            ->when($categoriaId, function ($query) use ($categoriaId) {
+                $query->where('categoria_id', $categoriaId);
+            })
+
+            // Filtrar por marca.
+            ->when($marcaId, function ($query) use ($marcaId) {
+                $query->where('marca_id', $marcaId);
+            })
+
             ->latest()
             ->paginate(15)
             ->withQueryString();
 
-        return view('articulos.index', compact('articulos', 'buscar'));
+        // Opciones disponibles para los filtros.
+        $categorias = Categoria::orderBy('nombre')
+            ->get(['id', 'nombre']);
+
+        $marcas = Marca::orderBy('nombre')
+            ->get(['id', 'nombre']);
+
+        return view('articulos.index', compact(
+            'articulos',
+            'buscar',
+            'categoriaId',
+            'marcaId',
+            'categorias',
+            'marcas'
+        ));
     }
 
     public function exportarCsv()
@@ -259,7 +294,7 @@ class InventarioController extends Controller
                                 $presentacion->precioUnitarioCiento,
                             ];
                             $precios = array_map(
-                                fn ($precio) => $precio === null
+                                fn($precio) => $precio === null
                                     ? ''
                                     : number_format((float) $precio, 2, '.', ''),
                                 $precios
@@ -652,5 +687,41 @@ class InventarioController extends Controller
         return redirect()
             ->route('articulos.index')
             ->with('success', 'Artículo eliminado correctamente.');
+    }
+
+    /**
+     * Descargar plantilla para importación CSV
+     */
+    public function descargarPlantillaCsv()
+    {
+        $columnas = [
+            'SKU',
+            'Nombre',
+            'Marca',
+            'Ubicación',
+            'Existencias actuales',
+            'Costo unitario',
+            'Precio unitario',
+            'Precio unitario por docena',
+            'Precio unitario por ciento',
+            'Stock mínimo',
+        ];
+        $nombreArchivo = 'plantilla_inventario_inicial.csv';
+
+        return response()->streamDownload(function () use ($columnas) {
+
+            $archivo = fopen('php://output', 'w');
+
+            // BOM para facilitar la lectura de caracteres UTF-8 en Excel.
+            fwrite($archivo, "\xEF\xBB\xBF");
+
+            // Encabezados.
+            fputcsv($archivo, $columnas, ',', '"', '');
+
+            fclose($archivo);
+
+        }, $nombreArchivo, [
+            'Content-Type' => 'text/csv; charset=UTF-8',
+        ]);
     }
 }
