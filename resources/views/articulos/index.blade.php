@@ -32,9 +32,11 @@
                 <div class="min-w-0 flex-1">
                     <x-search-bar :action="route('articulos.index')" :buscar="$buscar"
                         placeholder="Buscar artículos por nombre, código o marca">
+                        @if (auth()->user()->esAdministrador())
                         <x-primary-link href="{{ route('articulos.create') }}" wire:navigate>
                             + Agregar Artículos
                         </x-primary-link>
+                        @endif
                     </x-search-bar>
                 </div>
 
@@ -192,7 +194,7 @@
                                 title="Ver artículo">
                                 <x-lucide-eye class="w-5 h-5" />
                             </x-action-icon>
-
+                            @if (auth()->user()->esAdministrador())
                             <!-- Editar -->
                             <x-action-icon element="a" href="{{ route('articulos.edit', $articulo) }}" wire:navigate
                                 title="Editar artículo" color="green">
@@ -210,7 +212,7 @@
                                     <x-lucide-trash-2 class="w-5 h-5" />
                                 </x-action-icon>
                             </form>
-
+                            @endif
                         </div>
                     </td>
                 </tr>
@@ -224,7 +226,7 @@
             @endforelse
 
         </x-table>
-
+        @if (auth()->user()->esAdministrador())
         <div class="mt-4 flex flex-col justify-end gap-2 sm:flex-row">
             <x-secondary-link href="{{ route('articulos.exportar-csv') }}">
                 Exportar CSV
@@ -413,6 +415,6 @@
                 </div>
             </div>
         </template>
-
+        @endif
     </div>
 </x-app-layout>

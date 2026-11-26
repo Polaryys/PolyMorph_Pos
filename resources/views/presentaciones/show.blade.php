@@ -100,8 +100,10 @@
                     <th class="whitespace-nowrap px-4 py-3">Existencias del artículo base</th>
                     <th class="whitespace-nowrap px-4 py-3">Factor</th>
                     <th class="whitespace-nowrap text-center px-4 py-3">Disponibilidad</th>
+                    @if (auth()->user()->esAdministrador())
                     <th class="whitespace-nowrap px-4 py-3">Costo promedio por unidad base</th>
                     <th class="whitespace-nowrap px-4 py-3">Costo promedio de esta presentación</th>
+                    @endif
                     <th class="whitespace-nowrap px-4 py-3">Ubicación</th>
                 </x-slot:headers>
 
@@ -118,12 +120,14 @@
                             max(1, (int) ($presentacion->factor ?? 1)),
                         ) }}
                     </td>
+                    @if (auth()->user()->esAdministrador())
                     <td class="whitespace-nowrap px-4 py-4 tabular-nums text-app-text-secondary">
                         Q {{ number_format((float) ($presentacion->inventario?->costoPromedioUnitario ?? 0), 2) }}
                     </td>
                     <td class="whitespace-nowrap px-4 py-4 font-semibold tabular-nums text-app-text-primary">
                         Q {{ number_format($costoPromedioPresentacion, 2) }}
                     </td>
+                    @endif
                     <td class="px-4 py-4 text-app-text-secondary">
                         {{ $presentacion->ubicacion ?? 'Sin ubicación registrada' }}
                     </td>
@@ -183,9 +187,11 @@
             <x-secondary-link href="{{ route('presentaciones.index') }}">
                 Volver
             </x-secondary-link>
+            @if (auth()->user()->esAdministrador())
             <x-primary-link href="{{ route('presentaciones.edit', $presentacion->id) }}">
                 Editar presentación
             </x-primary-link>
+            @endif
         </div>
     </div>
 </x-app-layout>

@@ -9,9 +9,9 @@
     <div class="flex h-32 shrink-0 flex-col items-center justify-center
                  px-4">
 
-        <x-icon-sistema class="h-24 w-auto shrink-0 text-app-primary-600 drop-shadow-sm" />
+        <x-icon-sistema class="h-24 w-auto shrink-0 text-app-primary-500 drop-shadow-sm" />
 
-        <p class="text-sm font-semibold tracking-wide text-app-text-primary">
+        <p class="text-sm font-normal tracking-wide text-app-text-primary">
             EBEN-EZER
         </p>
 
@@ -67,7 +67,7 @@
 
                 Clientes
             </x-sidebar-link>
-            
+
             @if (auth()->user()->esAdministrador())
             <x-sidebar-link :href="route('proveedores.index')" :active="request()->routeIs('proveedores.*')" wire:navigate>
 

@@ -8,11 +8,11 @@
             <div class="min-w-0 flex-1">
                 <x-search-bar :action="route('presentaciones.index')" :buscar="$buscar"
                     placeholder="Buscar presentaciones por nombre, código o artículo">
-
+                    @if (auth()->user()->esAdministrador())
                     <x-primary-link href="{{ route('presentaciones.create') }}" wire:navigate>
                         + Agregar presentación
                     </x-primary-link>
-
+                    @endif
                 </x-search-bar>
             </div>
 
@@ -174,7 +174,7 @@
                             wire:navigate title="Ver presentación">
                             <x-lucide-eye class="w-5 h-5" />
                         </x-action-icon>
-
+                        @if (auth()->user()->esAdministrador())
                         <!-- Editar -->
                         <x-action-icon element="a" href="{{ route('presentaciones.edit', $presentacion) }}"
                             wire:navigate title="Editar presentación" color="green">
@@ -192,7 +192,7 @@
                                 <x-lucide-trash-2 class="w-5 h-5" />
                             </x-action-icon>
                         </form>
-
+                        @endif
                     </div>
                 </td>
             </tr>

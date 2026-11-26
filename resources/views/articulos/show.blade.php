@@ -101,7 +101,9 @@
                     <x-slot:headers>
                         <th class="whitespace-nowrap px-4 py-3">Existencias actuales</th>
                         <th class="whitespace-nowrap px-4 py-3">Umbral de inventario</th>
+                        @if (auth()->user()->esAdministrador())
                         <th class="whitespace-nowrap px-4 py-3">Costo promedio unitario</th>
+                        @endif
                         <th class="whitespace-nowrap px-4 py-3">Ubicación</th>
                     </x-slot:headers>
 
@@ -112,9 +114,11 @@
                         <td class="whitespace-nowrap px-4 py-4 tabular-nums ">
                             {{ number_format($articulo->umbral ?? 0, 0) }} unidades
                         </td>
+                        @if (auth()->user()->esAdministrador())
                         <td class="whitespace-nowrap px-4 py-4 font-semibold tabular-nums">
                             Q {{ number_format($articulo->costoPromedioUnitario ?? 0, 2) }}
                         </td>
+                        @endif
                         <td class="px-4 py-4">
                             {{ $presentacion?->ubicacion ?? 'Sin ubicación registrada' }}
                         </td>
@@ -192,9 +196,11 @@
             <x-secondary-link href="{{ route('articulos.index') }}">
                 Volver
             </x-secondary-link>
+            @if (auth()->user()->esAdministrador())
             <x-primary-link href="{{ route('articulos.edit', $articulo->id) }}">
                 Editar artículo
             </x-primary-link>
+            @endif
         </div>
     </div>
 </x-app-layout>

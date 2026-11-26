@@ -1,6 +1,5 @@
 @php
     $modulos = [
-        'Inicio' => ['dashboard', 'inicio'],
         'Punto de venta' => ['ventas.*', 'pos.*'],
         'Inventario' => ['ajuste.*', 'movimientos.*'],
         'Categorías registradas' => ['categorias.*'],
