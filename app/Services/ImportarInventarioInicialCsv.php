@@ -15,7 +15,6 @@ class ImportarInventarioInicialCsv
     // Este contrato fija el encabezado del archivo exportado; las demás columnas se ignoran.
     private const COLUMNAS_REQUERIDAS = [
         'SKU',
-        'Tipo',
         'Nombre',
         'Marca',
         'Existencias actuales',
@@ -66,7 +65,7 @@ class ImportarInventarioInicialCsv
                 }
 
                 $inventario = Inventario::create([
-                    'tipo' => $fila['tipo'],
+                    'tipo' => 'PRODUCTO',
                     'costoPromedioUnitario' => $fila['costo_unitario'],
                     'cantidad' => $fila['cantidad'],
                     'umbral' => $fila['umbral'],
@@ -133,7 +132,7 @@ class ImportarInventarioInicialCsv
 
             $encabezados[0] = preg_replace('/^\xEF\xBB\xBF/', '', (string) $encabezados[0]);
             $encabezados = array_map(
-                static fn ($encabezado) => trim((string) $encabezado),
+                static fn($encabezado) => trim((string) $encabezado),
                 $encabezados
             );
 
@@ -146,7 +145,7 @@ class ImportarInventarioInicialCsv
             $faltantes = array_diff(self::COLUMNAS_REQUERIDAS, $encabezados);
             if ($faltantes !== []) {
                 throw ValidationException::withMessages([
-                    'archivo' => 'Faltan estas columnas requeridas: '.implode(', ', $faltantes).'.',
+                    'archivo' => 'Faltan estas columnas requeridas: ' . implode(', ', $faltantes) . '.',
                 ]);
             }
 
@@ -157,7 +156,7 @@ class ImportarInventarioInicialCsv
 
             while (($valores = fgetcsv($stream, 0, ',', '"', '')) !== false) {
                 $numeroFila++;
-                if (count(array_filter($valores, static fn ($valor) => trim((string) $valor) !== '')) === 0) {
+                if (count(array_filter($valores, static fn($valor) => trim((string) $valor) !== '')) === 0) {
                     continue;
                 }
 
@@ -178,7 +177,7 @@ class ImportarInventarioInicialCsv
                 }
 
                 foreach ($datos as $valor) {
-                    if (! mb_check_encoding((string) $valor, 'UTF-8')) {
+                    if (!mb_check_encoding((string) $valor, 'UTF-8')) {
                         $this->agregarError($errores, "Fila {$numeroFila}: el archivo debe estar codificado en UTF-8.");
 
                         continue 2;
@@ -222,8 +221,8 @@ class ImportarInventarioInicialCsv
     {
         // Los campos de texto se limpian; los numéricos conservan espacios para que el validador los rechace.
         $erroresAntes = count($errores);
-        $valor = static fn (string $columna) => trim((string) ($datos[$columna] ?? ''));
-        $valorNumerico = static fn (string $columna) => (string) ($datos[$columna] ?? '');
+        $valor = static fn(string $columna) => trim((string) ($datos[$columna] ?? ''));
+        $valorNumerico = static fn(string $columna) => (string) ($datos[$columna] ?? '');
 
         $sku = $valor('SKU');
         if ($sku === '' || mb_strlen($sku, 'UTF-8') > 50) {
@@ -233,11 +232,6 @@ class ImportarInventarioInicialCsv
         $nombre = $valor('Nombre');
         if ($nombre === '' || mb_strlen($nombre, 'UTF-8') > 100) {
             $this->agregarError($errores, "Fila {$numeroFila}: Nombre es obligatorio y debe tener hasta 100 caracteres.");
-        }
-
-        $tipo = mb_strtoupper($valor('Tipo'), 'UTF-8');
-        if (! in_array($tipo, ['PRODUCTO', 'SERVICIO'], true)) {
-            $this->agregarError($errores, "Fila {$numeroFila}: Tipo debe ser Producto o Servicio.");
         }
 
         $marca = $this->normalizarEspacios($valor('Marca'));
@@ -250,20 +244,18 @@ class ImportarInventarioInicialCsv
             $this->agregarError($errores, "Fila {$numeroFila}: Ubicación debe tener hasta 100 caracteres.");
         }
 
-        $permitirCero = $tipo === 'SERVICIO';
+
         $cantidad = $this->entero(
             $valorNumerico('Existencias actuales'),
             'Existencias actuales',
             $numeroFila,
             $errores,
-            $permitirCero
         );
         $umbral = $this->entero(
             $valorNumerico('Stock mínimo'),
             'Stock mínimo',
             $numeroFila,
             $errores,
-            $permitirCero
         );
         $costo = $this->decimal($valorNumerico('Costo unitario'), 'Costo unitario', $numeroFila, $errores);
         $precioUnitario = $this->decimal($valorNumerico('Precio unitario'), 'Precio unitario', $numeroFila, $errores);
@@ -289,7 +281,6 @@ class ImportarInventarioInicialCsv
             'numero' => $numeroFila,
             'sku' => $sku,
             'nombre' => $nombre,
-            'tipo' => $tipo,
             'marca' => $marca,
             'ubicacion' => $ubicacion === '' ? null : $ubicacion,
             'cantidad' => $cantidad,
@@ -307,14 +298,13 @@ class ImportarInventarioInicialCsv
         int $fila,
         array &$errores,
         bool $permitirCero = false
-    ): ?int
-    {
-        if (! preg_match('/^\d+$/D', $valor) || (float) $valor > 2147483647) {
+    ): ?int {
+        if (!preg_match('/^\d+$/D', $valor) || (float) $valor > 2147483647) {
             $this->agregarError(
                 $errores,
                 "Fila {$fila}: {$columna} debe ser un entero "
-                    .($permitirCero ? 'no negativo' : 'positivo')
-                    .' sin espacios ni otros caracteres.'
+                . ($permitirCero ? 'no negativo' : 'positivo')
+                . ' sin espacios ni otros caracteres.'
             );
 
             return null;
@@ -325,7 +315,7 @@ class ImportarInventarioInicialCsv
             $this->agregarError(
                 $errores,
                 "Fila {$fila}: {$columna} debe ser "
-                    .($permitirCero ? 'mayor o igual que cero.' : 'mayor que cero.')
+                . ($permitirCero ? 'mayor o igual que cero.' : 'mayor que cero.')
             );
 
             return null;
@@ -345,7 +335,7 @@ class ImportarInventarioInicialCsv
             return null;
         }
 
-        if (! preg_match('/^\d{1,8}(?:\.\d{1,2})?$/D', $valor) || (float) $valor <= 0) {
+        if (!preg_match('/^\d{1,8}(?:\.\d{1,2})?$/D', $valor) || (float) $valor <= 0) {
             $this->agregarError(
                 $errores,
                 "Fila {$fila}: {$columna} debe ser un decimal positivo sin espacios ni otros caracteres y con hasta 2 decimales."
@@ -366,7 +356,7 @@ class ImportarInventarioInicialCsv
                 ->pluck('codigoSKU')
                 ->all();
             $clavesExistentes = array_fill_keys(
-                array_map(fn ($sku) => $this->claveSku($sku), $existentes),
+                array_map(fn($sku) => $this->claveSku($sku), $existentes),
                 true
             );
 
