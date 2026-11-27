@@ -100,9 +100,9 @@ class NavigationComposer
             'proveedores' => [['label' => 'Proveedores', 'route' => 'proveedores.index', 'active' => 'proveedores.*']],
             'usuarios' => [['label' => 'Colaboradores', 'route' => 'usuarios.index', 'active' => 'usuarios.*']],
             'reportes' => [
-                ['label' => 'Resumen general', 'route' => null, 'active' => '', 'disabled' => true],
+                ['label' => 'Resumen general', 'route' => 'reportes.resumen-general', 'active' => 'reportes.resumen-general'],
                 ['label' => 'Inventario', 'route' => 'reportes.inventario', 'active' => 'reportes.inventario'],
-                ['label' => 'Pagos', 'route' => null, 'active' => '', 'disabled' => true],
+                ['label' => 'Pagos', 'route' => 'reportes.pagos', 'active' => 'reportes.pagos'],
             ],
             'medios' => [['label' => 'Medios', 'route' => 'imagenes.index', 'active' => 'imagenes.*']],
             'configuracion' => array_filter([

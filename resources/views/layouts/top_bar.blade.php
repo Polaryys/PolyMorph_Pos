@@ -13,6 +13,8 @@
 
         'Proveedores' => ['proveedores.*', 'proveedor.*'],
         'Visión general de Inventario' => ['reportes.inventario'],
+        'Distribución de cobros' => ['reportes.pagos'],
+        'Estadísticas Generales' => ['reportes.resumen-general'],
         'Usuarios' => ['usuarios.*'],
         'Imagenes' => ['imagenes.*'],
         'Apariencia del Sistema' => ['configuracion'],

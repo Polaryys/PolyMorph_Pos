@@ -87,6 +87,17 @@
     background: var(--app-border-hover);
 }
 
+input[type="date"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    opacity: 0.8;
+    filter: none;
+}
+
+.dark input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.85;
+}
+
 @layer utilities {
     [x-cloak] {
         display: none !important;

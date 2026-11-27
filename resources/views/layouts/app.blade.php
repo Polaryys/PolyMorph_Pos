@@ -61,6 +61,7 @@
     </div>
 
     @include('imagenes.partials.selector')
+    @stack('scripts')
 </body>
 
 </html>

@@ -13,7 +13,9 @@ use App\Http\Controllers\PresentacionController;
 use App\Http\Controllers\ComprasController;
 use App\Http\Controllers\VentasController;
 use App\Http\Controllers\Reportes\ReporteInventarioController;
+use App\Http\Controllers\Reportes\ReporteMetodosPagoController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Reportes\ReporteGeneral;
 
 // Entrada pública y acceso al panel; el dashboard requiere sesión verificada.
 Route::get('/', function () {
@@ -146,12 +148,18 @@ Route::middleware('auth')->group(function () {
         Route::get('/compras/{compra}', [ComprasController::class, 'show'])
             ->name('compras.show');
 
+        // Reportes
         Route::get('/reportes/inventario', [
             ReporteInventarioController::class,
             'inventarioReporte'
         ])->name('reportes.inventario');
 
 
+        Route::get('/reportes/pagos', [ReporteMetodosPagoController::class, 'index'])
+            ->name('reportes.pagos');
+
+        Route::get('/reportes/resumen-general', [ReporteGeneral::class, 'index'])
+            ->name('reportes.resumen-general');
 
     });
 
