@@ -9,9 +9,9 @@
                 <x-search-bar :action="route('presentaciones.index')" :buscar="$buscar"
                     placeholder="Buscar presentaciones por nombre, código o artículo">
                     @if (auth()->user()->esAdministrador())
-                    <x-primary-link href="{{ route('presentaciones.create') }}" wire:navigate>
-                        + Agregar presentación
-                    </x-primary-link>
+                        <x-primary-link href="{{ route('presentaciones.create') }}" wire:navigate>
+                            + Agregar presentación
+                        </x-primary-link>
                     @endif
                 </x-search-bar>
             </div>
@@ -87,14 +87,14 @@
 
         <x-slot:headers>
             <th class="text-center w-16 whitespace-nowrap">Imagen</th>
-            <th class="px-4 py-3 text-left whitespace-nowrap">SKU</th>
+            <th class="px-4 py-3 w-16 text-left whitespace-nowrap">SKU</th>
             <th class="px-4 py-3 text-left whitespace-nowrap">Presentación</th>
-            <th class="px-2 py-3 text-left whitespace-nowrap">Marca</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Factor</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Precio U.</th>
+            <th class="px-2 w-24 py-3 text-left whitespace-nowrap">Marca</th>
+            <th class="px-4 w-16 py-3 text-center whitespace-nowrap">Factor</th>
+            <th class="px-4 w-24 py-3 text-center whitespace-nowrap">Precio U.</th>
             <th class="px-4 w-16 py-3 text-center whitespace-nowrap">Disponibilidad</th>
             <th class="px-4 w-16 py-3 text-center whitespace-nowrap">Estado</th>
-            <th class="px-4 py-3 text-center whitespace-nowrap">Acciones</th>
+            <th class="px-4 w-24 py-3 text-center whitespace-nowrap">Acciones</th>
         </x-slot:headers>
 
         @forelse ($presentaciones as $presentacion)
@@ -119,9 +119,9 @@
                 </td>
 
                 <!-- NOMBRE DE LA PRESENTACIÓN -->
-                <td class="relative px-4 py-3">
+                <td class="px-4 py-3 min-w-64">
                     <div class="flex min-h-10 items-center">
-                        <span class="absolute inset-y-0 left-4 flex items-center font-normal">
+                        <span class="font-normal">
                             {{ $presentacion->nombre }}
                         </span>
                     </div>
@@ -175,23 +175,23 @@
                             <x-lucide-eye class="w-5 h-5" />
                         </x-action-icon>
                         @if (auth()->user()->esAdministrador())
-                        <!-- Editar -->
-                        <x-action-icon element="a" href="{{ route('presentaciones.edit', $presentacion) }}"
-                            wire:navigate title="Editar presentación" color="green">
-                            <x-lucide-pencil class="w-5 h-5" />
-                        </x-action-icon>
-
-                        <!-- Desactivar -->
-                        <form action="{{ route('presentaciones.destroy', $presentacion) }}" method="POST"
-                            onsubmit="return confirm('¿Deseas desactivar esta presentación?')">
-
-                            @csrf
-                            @method('DELETE')
-
-                            <x-action-icon type="submit" title="Desactivar presentación" color="red">
-                                <x-lucide-trash-2 class="w-5 h-5" />
+                            <!-- Editar -->
+                            <x-action-icon element="a" href="{{ route('presentaciones.edit', $presentacion) }}"
+                                wire:navigate title="Editar presentación" color="green">
+                                <x-lucide-pencil class="w-5 h-5" />
                             </x-action-icon>
-                        </form>
+
+                            <!-- Eliminar / Desactivar -->
+                            <form action="{{ route('presentaciones.destroy', $presentacion) }}" method="POST"
+                                onsubmit="return confirm('¿Deseas eliminar esta presentación? Si tiene registros de ventas o compras, se desactivará para conservar su historial. Si no tiene registros asociados, se eliminará definitivamente.')">
+
+                                @csrf
+                                @method('DELETE')
+
+                                <x-action-icon type="submit" title="Eliminar o desactivar presentación" color="red">
+                                    <x-lucide-trash-2 class="w-5 h-5" />
+                                </x-action-icon>
+                            </form>
                         @endif
                     </div>
                 </td>

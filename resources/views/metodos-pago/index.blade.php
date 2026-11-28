@@ -163,7 +163,7 @@
                                 Descripción
                             </label>
                             <textarea id="descripcion" name="descripcion" x-model="descripcion" rows="3" maxlength="255"
-                                class="w-full rounded-md border border-app-border-strong bg-app-background p-2 text-sm text-app-text-primary shadow-sm placeholder:text-app-text-muted focus:border-app-primary-500 focus:ring-app-primary-500 @error('descripcion') border-red-500 @enderror"></textarea>
+                                class="w-full rounded-md border border-app-border-strong bg-app-surface-alt p-2 text-sm text-app-text-primary shadow-sm placeholder:text-app-text-muted focus:border-app-primary-500 focus:ring-app-primary-500 @error('descripcion') border-red-500 @enderror"></textarea>
                             @error('descripcion')
                                 <p class="mt-1 text-xs text-red-600 dark:text-red-400">{{ $message }}</p>
                             @enderror

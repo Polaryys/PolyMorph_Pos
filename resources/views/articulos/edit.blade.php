@@ -163,7 +163,7 @@
                         <div>
                             <x-input-label for="detalle">Detalles</x-input-label>
                             <textarea id="detalle" name="detalle" rows="2"
-                                class="mt-1 block w-full rounded-lg border-app-border-strong text-sm shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500"
+                                class="mt-1 block w-full rounded-lg bg-app-surface-alt border-app-border-strong text-sm shadow-sm focus:border-app-primary-500 focus:ring-app-primary-500"
                                 placeholder="Descripción adicional del artículo...">{{ old('detalle', $presentacion?->detalle) }}</textarea>
                             <x-input-error :messages="$errors->get('detalle')" />
                         </div>

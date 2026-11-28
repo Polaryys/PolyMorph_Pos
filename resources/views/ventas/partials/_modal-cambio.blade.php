@@ -717,7 +717,7 @@
                             <textarea id="motivo-cambio" name="motivo_operacion" x-model="motivoCambio" maxlength="1000" required
                                 rows="1"
                                 class="block min-w-0 flex-1 rounded-md border border-app-border-strong
-                bg-app-background p-2 text-sm text-app-text-primary shadow-sm
+                bg-app-surface-alt p-2 text-sm text-app-text-primary shadow-sm
                 focus:border-app-primary-500 focus:outline-none focus:ring-1
                 focus:ring-app-primary-500">
             </textarea>

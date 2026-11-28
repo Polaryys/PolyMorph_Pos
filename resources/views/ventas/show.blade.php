@@ -254,7 +254,7 @@
                                     data-copy-text="{{ $nombreProductoCompleto }}"
                                     :aria-label="errorCopia ? 'No se pudo copiar' : copiado ? 'Copiado' : 'Copiar nombre y marca'"
                                     :title="errorCopia ? 'No se pudo copiar' : copiado ? 'Copiado' : 'Copiar nombre y marca'"
-                                    class="inline-flex rounded p-1 text-slate-400 opacity-0 transition hover:bg-indigo-100 hover:text-indigo-700 focus:opacity-100 group-hover:opacity-100">
+                                    class="inline-flex rounded p-1 text-slate-400 opacity-0 transition hover:bg-app-primary-100 hover:text-app-primary-700 focus:opacity-100 group-hover:opacity-100">
                                     <x-lucide-copy x-show="!copiado && !errorCopia" class="h-4 w-4" />
                                     <x-lucide-check x-show="copiado" class="h-4 w-4 text-green-600" />
                                     <x-lucide-circle-alert x-show="errorCopia" class="h-4 w-4 text-red-600" />

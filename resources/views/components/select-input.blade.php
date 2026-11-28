@@ -4,7 +4,7 @@
     @disabled($disabled)
     {{ $attributes->merge([
         'class' => 'block rounded-md border p-2 text-sm shadow-sm 
-            bg-app-background border-app-border-strong text-app-text-primary
+            bg-app-surface-alt border-app-border-strong text-app-text-primary
             focus:outline-none focus:ring-1
             focus:border-app-app-primary-500 focus:ring-app-primary-500
             focus-visible:border-app-primary-500 focus-visible:ring-app-app-primary-500

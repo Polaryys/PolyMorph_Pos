@@ -95,7 +95,7 @@
                 Descripción o detalle
             </x-input-label>
             <textarea id="detalle" name="detalle" rows="3" placeholder="Agrega características o información adicional..."
-                class="mt-1 block w-full rounded-md border border-app-border-strong p-2 text-sm shadow-sm 
+                class="mt-1 block w-full rounded-md border border-app-border-strong p-2 text-sm shadow-sm bg-app-surface-alt
                 focus:border-app-primary-500
                 focus:ring-app-primary-500
                 focus-visible:borderapp-primary-500

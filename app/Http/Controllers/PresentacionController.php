@@ -435,10 +435,18 @@ class PresentacionController extends Controller
     {
         abort_if($presentacion->base, 404);
 
-        $presentacion->update(['estado' => false]);
+        if ($presentacion->ventaDetalles()->exists()) {
+            $presentacion->update(['estado' => false]);
+
+            return redirect()
+                ->route('presentaciones.index')
+                ->with('success', 'La presentación tiene operaciones registradas y fue desactivada correctamente.');
+        }
+
+        $presentacion->delete();
 
         return redirect()
             ->route('presentaciones.index')
-            ->with('success', 'Presentación desactivada correctamente.');
+            ->with('success', 'Presentación eliminada correctamente.');
     }
 }

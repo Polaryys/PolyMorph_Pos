@@ -42,7 +42,7 @@
                         rows="3"
                         maxlength="255"
                         placeholder="Agrega una descripción del método de pago..."
-                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
+                        class="w-full rounded-md bg-app-surface-alt border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 text-sm"
                     >{{ old('descripcion') }}</textarea>
 
                     @error('descripcion')

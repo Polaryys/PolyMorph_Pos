@@ -174,7 +174,7 @@
                         <div>
                             <x-input-label for="detalle">Detalles</x-input-label>
                             <textarea id="detalle" name="detalle" rows="2"
-                                class="mt-1 block w-full rounded-lg border border-app-border-strong bg-app-background px-3 py-2 text-sm text-app-text-primary shadow-sm placeholder:text-app-text-muted focus:border-app-primary-500 focus:outline-none focus:ring-1 focus:ring-app-primary-500"
+                                class="mt-1 block w-full rounded-lg border border-app-border-strong bg-app-surface-alt px-3 py-2 text-sm text-app-text-primary shadow-sm placeholder:text-app-text-muted focus:border-app-primary-500 focus:outline-none focus:ring-1 focus:ring-app-primary-500"
                                 placeholder="Descripción adicional de la presentación...">{{ old('detalle', $presentacion->detalle) }}</textarea>
                             <x-input-error :messages="$errors->get('detalle')" />
                         </div>

@@ -107,7 +107,7 @@
                             Notas
                         </x-input-label>
                         <textarea id="notas" name="notas" maxlength="255" rows="3"
-                            class="mt-1 block w-full rounded-md border border-app-border-strong p-2
+                            class="mt-1 block w-full rounded-md bg-app-surface-alt border border-app-border-strong p-2
                 text-sm shadow-sm focus:ring-app-primary-500 focus:border-app-primary-400
                 @error('notas') border-red-500 focus:border-red-500 focus:ring-red-500 @enderror">{{ old('notas', $cliente->notas) }}</textarea>
                         <x-input-error :messages="$errors->get('notas')" />
