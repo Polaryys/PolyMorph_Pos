@@ -15,7 +15,7 @@ return new class extends Migration {
 
             $table->foreignId('presentacion_id')
                 ->constrained('presentaciones')
-                ->restrictOnDelete();
+                ->cascadeOnDelete();
 
             // Precios anteriores
             $table->decimal('precio_unitario_anterior', 10, 2)->nullable();

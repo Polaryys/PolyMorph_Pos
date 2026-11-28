@@ -1,7 +1,7 @@
 @php
     $modulos = [
-        'Registrar Venta' => ['ventas.create', 'pos.*'],
-        'Transacciones' => ['ventas.index', 'pos.*'],
+        'Registrar Venta' => ['ventas.create'],
+        'Transacciones' => ['ventas.index','ventas.show'],
         'Inventario' => ['ajuste.*', 'movimientos.*'],
         'Categorías registradas' => ['categorias.*'],
         'Productos y Servicios' => ['articulos.*'],

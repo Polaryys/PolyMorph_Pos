@@ -13,7 +13,7 @@
 
         @forelse ($historialPrecios as $historialPrecio)
             <tr>
-                <td class="whitespace-nowrap px-4 py-3 tabular-nums text-slate-700">
+                <td class="whitespace-nowrap px-4 py-3 tabular-nums">
                     {{ $historialPrecio->created_at?->format('d/m/Y H:i') ?? '—' }}
                 </td>
                 @foreach ([
@@ -24,7 +24,7 @@
                     $historialPrecio->precio_ciento_anterior,
                     $historialPrecio->precio_ciento_nuevo,
                 ] as $precio)
-                    <td class="whitespace-nowrap px-4 py-3 tabular-nums text-slate-700">
+                    <td class="whitespace-nowrap px-4 py-3 tabular-nums">
                         @if ($precio !== null)
                             Q {{ number_format((float) $precio, 2) }}
                         @else
@@ -35,7 +35,7 @@
             </tr>
         @empty
             <tr>
-                <td colspan="7" class="px-4 py-6 text-center text-sm text-slate-500">
+                <td colspan="7" class="px-4 py-6 text-center text-sm">
                     No hay cambios de precio registrados.
                 </td>
             </tr>
