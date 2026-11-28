@@ -22,7 +22,6 @@
         },
     }" @keydown.escape.window="if (modalImportacionAbierto) cerrarModalImportacion()">
 
-        <!-- Encabezado y acciones -->
         {{-- Encabezado y acciones --}}
         <div class="mb-5 space-y-3">
 
@@ -33,9 +32,9 @@
                     <x-search-bar :action="route('articulos.index')" :buscar="$buscar"
                         placeholder="Buscar artículos por nombre, código o marca">
                         @if (auth()->user()->esAdministrador())
-                        <x-primary-link href="{{ route('articulos.create') }}" wire:navigate>
-                            + Agregar Artículos
-                        </x-primary-link>
+                            <x-primary-link href="{{ route('articulos.create') }}" wire:navigate>
+                                + Agregar Artículos
+                            </x-primary-link>
                         @endif
                     </x-search-bar>
                 </div>
@@ -108,12 +107,12 @@
         <x-table :paginator="$articulos">
 
             <x-slot:headers>
-                <th class="text-center w-16 whitespace-nowrap">Imagen</th>
+                <th class="text-center w-16 ">Imagen</th>
                 <th class="px-4 py-3 w-24 text-center whitespace-nowrap">SKU</th>
                 <th class="px-4 py-3 w-14 text-left whitespace-nowrap">Tipo</th>
-                <th class="px-4 py-3 text-left whitespace-nowrap">Nombre</th>
-                <th class="px-4 py-3 text-center whitespace-nowrap">Marca</th>
-                <th class="px-4 py-3 text-center whitespace-nowrap">Precio U.</th>
+                <th class="px-4 py-3 w-96 text-left whitespace-nowrap">Nombre</th>
+                <th class="px-4 py-3 w-16 text-center whitespace-nowrap">Marca</th>
+                <th class="px-4 py-3 w-24 text-center whitespace-nowrap">Precio U.</th>
                 <th class="px-4 py-3 w-16 text-center whitespace-nowrap">Cantidad</th>
                 <th class="px-4 py-3 w-16 text-center whitespace-nowrap">Estado</th>
                 <th class="px-4 py-3 w-16 text-center whitespace-nowrap">Acciones</th>
@@ -141,14 +140,14 @@
                         {{ $presentacionBase?->codigoSKU }}
                     </td>
                     <!-- TIPO -->
-                    <td class="w-14 px-4 py-3 font-normal  whitespace-nowrap">
+                    <td class="w-14 px-4 py-3 font-normal">
                         {{ $articulo?->tipo }}
                     </td>
 
                     <!-- NOMBRE -->
-                    <td class="relative px-4 py-3">
+                    <td class="px-4 py-3 w-96 min-w-64">
                         <div class="flex min-h-10 items-center">
-                            <span class="absolute inset-y-0 left-4 flex items-center font-normal">
+                            <span class="font-normal">
                                 {{ $presentacionBase?->nombre }}
                             </span>
                         </div>
@@ -159,7 +158,7 @@
                     </td>
 
                     <!-- MARCA -->
-                    <td class="px-4 py-3 text-center font-medium  whitespace-nowrap">
+                    <td class="px-4 py-3 text-center font-medium whitespace-nowrap">
                         {{ $articulo->marca?->nombre }}
                     </td>
 
@@ -169,14 +168,14 @@
                     </td>
 
                     <!-- CANTIDAD -->
-                    <td class="px-4 py-3 text-center font-medium whitespace-nowrap">
+                    <td class="px-4 py-3 text-center font-medium">
                         {{ $articulo->cantidad }}
                     </td>
 
                     <!-- ESTADO -->
-                    <td class="px-4 py-3 text-center font-medium text-slate-900 whitespace-nowrap">
+                    <td class="px-4 py-3 text-center font-medium text-slate-900 ">
                         <span @class([
-                            'inline-flex items-center rounded-full text-sm px-2.5 py-1 font-normal whitespace-nowrap',
+                            'inline-flex items-center rounded-full text-sm px-2.5 py-1 font-normal ',
                             'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400' =>
                                 $articulo->estado,
                             'bg-red-500/10 text-red-600 dark:text-red-400' => !$articulo->estado,
@@ -195,23 +194,23 @@
                                 <x-lucide-eye class="w-5 h-5" />
                             </x-action-icon>
                             @if (auth()->user()->esAdministrador())
-                            <!-- Editar -->
-                            <x-action-icon element="a" href="{{ route('articulos.edit', $articulo) }}" wire:navigate
-                                title="Editar artículo" color="green">
-                                <x-lucide-pencil class="w-5 h-5" />
-                            </x-action-icon>
-
-                            <!-- Eliminar -->
-                            <form action="{{ route('articulos.destroy', $articulo) }}" method="POST"
-                                onsubmit="return confirm('¿Deseas eliminar este artículo? Esta acción eliminará toda presentación asociada al artículo seleccionado')">
-
-                                @csrf
-                                @method('DELETE')
-
-                                <x-action-icon type="submit" title="Eliminar artículo" color="red">
-                                    <x-lucide-trash-2 class="w-5 h-5" />
+                                <!-- Editar -->
+                                <x-action-icon element="a" href="{{ route('articulos.edit', $articulo) }}"
+                                    wire:navigate title="Editar artículo" color="green">
+                                    <x-lucide-pencil class="w-5 h-5" />
                                 </x-action-icon>
-                            </form>
+
+                                <!-- Eliminar -->
+                                <form action="{{ route('articulos.destroy', $articulo) }}" method="POST"
+                                    onsubmit="return confirm('¿Deseas eliminar este artículo? Esta acción eliminará toda presentación asociada al artículo seleccionado')">
+
+                                    @csrf
+                                    @method('DELETE')
+
+                                    <x-action-icon type="submit" title="Eliminar artículo" color="red">
+                                        <x-lucide-trash-2 class="w-5 h-5" />
+                                    </x-action-icon>
+                                </form>
                             @endif
                         </div>
                     </td>
@@ -227,110 +226,110 @@
 
         </x-table>
         @if (auth()->user()->esAdministrador())
-        <div class="mt-4 flex flex-col justify-end gap-2 sm:flex-row">
-            <x-secondary-link href="{{ route('articulos.exportar-csv') }}">
-                Exportar CSV
-            </x-secondary-link>
-            <button type="button" @click="modalImportacionAbierto = true"
-                class="inline-flex items-center justify-center rounded-md bg-app-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-app-primary-700">
-                Importar inventario inicial
-            </button>
-        </div>
+            <div class="mt-4 flex flex-col justify-end gap-2 sm:flex-row">
+                <x-secondary-link href="{{ route('articulos.exportar-csv') }}">
+                    Exportar CSV
+                </x-secondary-link>
+                <button type="button" @click="modalImportacionAbierto = true"
+                    class="inline-flex items-center justify-center rounded-md bg-app-primary-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-app-primary-700">
+                    Importar inventario inicial
+                </button>
+            </div>
 
 
-        <template x-teleport="body">
-            {{-- Modal de importación --}}
-            <div x-cloak x-show="modalImportacionAbierto" x-transition.opacity
-                class="fixed inset-0 z-100 flex items-center justify-center
+            <template x-teleport="body">
+                {{-- Modal de importación --}}
+                <div x-cloak x-show="modalImportacionAbierto" x-transition.opacity
+                    class="fixed inset-0 z-100 flex items-center justify-center
             bg-black/40 p-4"
-                @click.self="cerrarModalImportacion()">
+                    @click.self="cerrarModalImportacion()">
 
-                <div x-show="modalImportacionAbierto" x-transition
-                    class="w-full max-w-lg overflow-hidden rounded-xl border
+                    <div x-show="modalImportacionAbierto" x-transition
+                        class="w-full max-w-lg overflow-hidden rounded-xl border
                 border-app-border bg-app-surface p-6 shadow-2xl"
-                    role="dialog" aria-modal="true" aria-labelledby="titulo-modal-importacion" @click.stop>
+                        role="dialog" aria-modal="true" aria-labelledby="titulo-modal-importacion" @click.stop>
 
-                    {{-- Encabezado --}}
-                    <h2 id="titulo-modal-importacion"
-                        class="mb-4 border-b border-app-border pb-3
+                        {{-- Encabezado --}}
+                        <h2 id="titulo-modal-importacion"
+                            class="mb-4 border-b border-app-border pb-3
                     text-lg font-semibold text-app-text-primary">
-                        Importar inventario inicial
-                    </h2>
+                            Importar inventario inicial
+                        </h2>
 
-                    <form action="{{ route('articulos.importar-csv') }}" method="POST" enctype="multipart/form-data"
-                        class="space-y-4" @submit="iniciarImportacion($event)">
+                        <form action="{{ route('articulos.importar-csv') }}" method="POST"
+                            enctype="multipart/form-data" class="space-y-4" @submit="iniciarImportacion($event)">
 
-                        @csrf
-                        <input type="hidden" name="modal_importacion" value="1">
+                            @csrf
+                            <input type="hidden" name="modal_importacion" value="1">
 
-                        @if ($errors->has('archivo'))
-                            <div class="rounded-md border border-red-300/50
+                            @if ($errors->has('archivo'))
+                                <div class="rounded-md border border-red-300/50
                         bg-red-50 p-3 text-sm text-red-700
                         dark:border-red-800 dark:bg-red-950/30 dark:text-red-300"
-                                role="alert">
+                                    role="alert">
 
-                                <p class="font-medium">
-                                    No se pudo importar el inventario:
-                                </p>
+                                    <p class="font-medium">
+                                        No se pudo importar el inventario:
+                                    </p>
 
-                                <ul class="mt-1 list-inside list-disc">
-                                    @foreach ($errors->get('archivo') as $error)
-                                        <li>{{ $error }}</li>
-                                    @endforeach
-                                </ul>
-                            </div>
-                        @endif
-
-                        {{-- Descargar plantilla --}}
-                        <div class="rounded-lg border border-app-border bg-app-surface-alt p-4">
-                            <div class="flex items-start gap-3">
-
-                                <div class="rounded-lg bg-app-primary-100 p-2 dark:bg-app-primary-900/40">
-                                    <i data-lucide="file-down"
-                                        class="h-5 w-5 text-app-primary-600 dark:text-app-primary-300">
-                                    </i>
+                                    <ul class="mt-1 list-inside list-disc">
+                                        @foreach ($errors->get('archivo') as $error)
+                                            <li>{{ $error }}</li>
+                                        @endforeach
+                                    </ul>
                                 </div>
+                            @endif
 
-                                <div class="min-w-0 flex-1">
-                                    <p class="text-sm font-semibold text-app-text-primary">
-                                        ¿No tienes el archivo preparado?
-                                    </p>
+                            {{-- Descargar plantilla --}}
+                            <div class="rounded-lg border border-app-border bg-app-surface-alt p-4">
+                                <div class="flex items-start gap-3">
 
-                                    <p class="mt-1 text-sm text-app-text-secondary">
-                                        Descarga la plantilla con las columnas requeridas para
-                                        completar los datos de tu inventario.
-                                    </p>
+                                    <div class="rounded-lg bg-app-primary-100 p-2 dark:bg-app-primary-900/40">
+                                        <i data-lucide="file-down"
+                                            class="h-5 w-5 text-app-primary-600 dark:text-app-primary-300">
+                                        </i>
+                                    </div>
 
-                                    <a href="{{ route('inventario.plantilla.csv') }}"
-                                        class="mt-3 inline-flex items-center gap-2 rounded-md
+                                    <div class="min-w-0 flex-1">
+                                        <p class="text-sm font-semibold text-app-text-primary">
+                                            ¿No tienes el archivo preparado?
+                                        </p>
+
+                                        <p class="mt-1 text-sm text-app-text-secondary">
+                                            Descarga la plantilla con las columnas requeridas para
+                                            completar los datos de tu inventario.
+                                        </p>
+
+                                        <a href="{{ route('inventario.plantilla.csv') }}"
+                                            class="mt-3 inline-flex items-center gap-2 rounded-md
                                         border border-app-primary-500/30 bg-app-primary-50
                                         px-3 py-2 text-sm font-medium text-app-primary-700
                                         transition hover:bg-app-primary-100
                                         dark:bg-app-primary-900/20 dark:text-app-primary-300
                                         dark:hover:bg-app-primary-900/40">
 
-                                        <i data-lucide="download" class="h-4 w-4"></i>
+                                            <i data-lucide="download" class="h-4 w-4"></i>
 
-                                        Descargar plantilla CSV
-                                    </a>
+                                            Descargar plantilla CSV
+                                        </a>
+                                    </div>
+
                                 </div>
-
                             </div>
-                        </div>
 
-                        {{-- Archivo --}}
-                        <div>
-                            <label for="archivo-inventario"
-                                class="mb-1 block text-sm font-medium
+                            {{-- Archivo --}}
+                            <div>
+                                <label for="archivo-inventario"
+                                    class="mb-1 block text-sm font-medium
                             text-app-text-secondary">
-                                Archivo CSV
-                            </label>
+                                    Archivo CSV
+                                </label>
 
-                            <input x-ref="archivoInventario" type="file" id="archivo-inventario" name="archivo"
-                                accept=".csv,text/csv" required
-                                @change="archivoSeleccionado = $event.target.files.length
+                                <input x-ref="archivoInventario" type="file" id="archivo-inventario"
+                                    name="archivo" accept=".csv,text/csv" required
+                                    @change="archivoSeleccionado = $event.target.files.length
                             ? $event.target.files[0].name : ''"
-                                class="block w-full rounded-md border
+                                    class="block w-full rounded-md border
                             border-app-border-strong bg-app-background
                             text-sm text-app-text-secondary
                             file:mr-4 file:border-0
@@ -343,78 +342,81 @@
                             dark:file:text-app-primary-200
                             dark:hover:file:bg-app-primary-900/60">
 
-                            <p class="mt-2 text-xs text-app-text-muted">
-                                Sube el CSV de inventario con las columnas esperadas.
-                                Tamaño máximo: 10 MB.
-                            </p>
+                                <p class="mt-2 text-xs text-app-text-muted">
+                                    Sube el CSV de inventario con las columnas esperadas.
+                                    Tamaño máximo: 10 MB.
+                                </p>
 
-                            <p x-show="archivoSeleccionado" class="mt-1 text-xs font-medium text-app-text-secondary">
-                                <span x-text="archivoSeleccionado"></span>
-                            </p>
-                        </div>
+                                <p x-show="archivoSeleccionado"
+                                    class="mt-1 text-xs font-medium text-app-text-secondary">
+                                    <span x-text="archivoSeleccionado"></span>
+                                </p>
+                            </div>
 
-                        {{-- Acciones --}}
-                        <div
-                            class="flex items-center justify-end gap-3
+                            {{-- Acciones --}}
+                            <div
+                                class="flex items-center justify-end gap-3
                     border-t border-app-border pt-4">
 
-                            <button type="button" @click="cerrarModalImportacion()" :disabled="importandoInventario"
-                                class="rounded-md border border-app-border-strong
+                                <button type="button" @click="cerrarModalImportacion()"
+                                    :disabled="importandoInventario"
+                                    class="rounded-md border border-app-border-strong
                             px-4 py-2 text-sm font-medium
                             text-app-text-secondary transition
                             hover:bg-app-surface-hover
                             disabled:cursor-not-allowed disabled:opacity-50">
-                                Cancelar
-                            </button>
+                                    Cancelar
+                                </button>
 
-                            <button type="submit" :disabled="importandoInventario || !archivoSeleccionado"
-                                class="rounded-md bg-app-primary-600 px-4 py-2
+                                <button type="submit" :disabled="importandoInventario || !archivoSeleccionado"
+                                    class="rounded-md bg-app-primary-600 px-4 py-2
                             text-sm font-medium text-white shadow-sm
                             transition hover:bg-app-primary-700
                             focus:outline-none focus:ring-2
                             focus:ring-app-primary-500 focus:ring-offset-2
                             focus:ring-offset-app-surface
                             disabled:cursor-not-allowed disabled:opacity-50">
-                                <span
-                                    x-text="importandoInventario
+                                    <span
+                                        x-text="importandoInventario
                             ? 'Importando...' : 'Importar CSV'"></span>
-                            </button>
-                        </div>
-                    </form>
+                                </button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </div>
 
-            {{-- Indicador de importación --}}
-            <div x-cloak x-show="importandoInventario" x-transition.opacity
-                class="fixed inset-0 z-110 flex items-center justify-center
+                {{-- Indicador de importación --}}
+                <div x-cloak x-show="importandoInventario" x-transition.opacity
+                    class="fixed inset-0 z-110 flex items-center justify-center
             bg-black/60 p-4"
-                role="status" aria-live="polite">
+                    role="status" aria-live="polite">
 
-                <div
-                    class="w-full max-w-sm rounded-xl border
+                    <div
+                        class="w-full max-w-sm rounded-xl border
             border-app-border bg-app-surface p-6 text-center shadow-2xl">
 
-                    <svg class="mx-auto h-12 w-12 animate-spin text-app-primary-600"
-                        xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" aria-hidden="true">
+                        <svg class="mx-auto h-12 w-12 animate-spin text-app-primary-600"
+                            xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            aria-hidden="true">
 
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
-                            stroke-width="4"></circle>
+                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor"
+                                stroke-width="4"></circle>
 
-                        <path class="opacity-75" stroke="currentColor" stroke-linecap="round" stroke-width="4"
-                            d="M12 2a10 10 0 0 1 10 10"></path>
-                    </svg>
+                            <path class="opacity-75" stroke="currentColor" stroke-linecap="round" stroke-width="4"
+                                d="M12 2a10 10 0 0 1 10 10"></path>
+                        </svg>
 
-                    <p class="mt-4 text-base font-semibold text-app-text-primary">
-                        Importando inventario...
-                    </p>
+                        <p class="mt-4 text-base font-semibold text-app-text-primary">
+                            Importando inventario...
+                        </p>
 
-                    <p class="mt-2 text-sm text-app-text-secondary">
-                        No cierres esta ventana ni vuelvas a enviar el archivo.
-                        Espera a que termine el proceso.
-                    </p>
+                        <p class="mt-2 text-sm text-app-text-secondary">
+                            No cierres esta ventana ni vuelvas a enviar el archivo.
+                            Espera a que termine el proceso.
+                        </p>
+                    </div>
                 </div>
-            </div>
-        </template>
+            </template>
         @endif
     </div>
 </x-app-layout>

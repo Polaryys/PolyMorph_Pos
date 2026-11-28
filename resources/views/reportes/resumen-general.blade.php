@@ -124,7 +124,7 @@
     </div>
 
     {{-- Productos más vendidos --}}
-    <div class="bg-app-surface border border-app-border rounded-xl shadow-sm p-5">
+    <div class="bg-app-surface border border-app-border rounded-xl shadow-sm p-5 mt-3">
 
         {{-- Encabezado --}}
         <div class="mb-4">

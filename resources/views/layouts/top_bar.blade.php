@@ -1,6 +1,7 @@
 @php
     $modulos = [
-        'Punto de venta' => ['ventas.*', 'pos.*'],
+        'Registrar Venta' => ['ventas.create', 'pos.*'],
+        'Transacciones' => ['ventas.index', 'pos.*'],
         'Inventario' => ['ajuste.*', 'movimientos.*'],
         'Categorías registradas' => ['categorias.*'],
         'Productos y Servicios' => ['articulos.*'],
@@ -11,12 +12,12 @@
         'Movimientos de inventario' => ['inventario.movimientos'],
         'Clientes registrados' => ['clientes.*'],
 
-        'Proveedores' => ['proveedores.*', 'proveedor.*'],
+        'Proveedores registrados' => ['proveedores.*', 'proveedor.*'],
         'Visión general de Inventario' => ['reportes.inventario'],
         'Distribución de cobros' => ['reportes.pagos'],
         'Estadísticas Generales' => ['reportes.resumen-general'],
         'Usuarios' => ['usuarios.*'],
-        'Imagenes' => ['imagenes.*'],
+        'Imágenes del sistema' => ['imagenes.*'],
         'Apariencia del Sistema' => ['configuracion'],
         'Métodos de pago' => ['metodos-pago.*'],
         'Mi perfil' => ['profile.*'],
@@ -35,7 +36,7 @@
     if (request()->routeIs('*.index')) {
         $accion = 'Listado';
         $accionKey = 'index';
-    } elseif (request()->routeIs('*.create')) {
+    } elseif (request()->routeIs('*.create') && !request()->routeIs('ventas.create')) {
         $accion = 'Crear';
         $accionKey = 'create';
     } elseif (request()->routeIs('*.edit')) {

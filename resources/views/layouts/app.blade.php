@@ -44,7 +44,7 @@
 <body class="font-sans antialiased bg-app-background">
     <div x-data="{ open: false }" class="h-screen flex flex-col overflow-hidden">
 
-        @include('layouts.sidebar-prueba')
+        @include('layouts.sidebar')
         @include('layouts.navigation')
 
         <div class="flex-1 flex flex-col min-h-0 bg-app-surface">
